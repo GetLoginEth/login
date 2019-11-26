@@ -10,10 +10,6 @@ const Main = lazy(() => import('../Main'));
 const Dashboard = lazy(() => import('../Dashboard'));
 const LoginForm = lazy(() => import('../LoginForm'));
 
-const fakeAuth = {
-    isAuthenticated: false
-};
-
 function PrivateRoute({children, state, ...rest}) {
     console.log(state);
     return (
@@ -27,39 +23,22 @@ function PrivateRoute({children, state, ...rest}) {
     );
 }
 
-/*
-function LoginPage() {
-    let history = useHistory();
-    let location = useLocation();
-
-    let {from} = location.state || {from: {pathname: "/"}};
-    let login = () => {
-        fakeAuth.authenticate(() => {
-            history.replace(from);
-        });
-    };
-
-    return (
-        <div>
-            <p>You must log in to view the page at {from.pathname}</p>
-            <button onClick={login}>Log in</button>
-        </div>
-    );
-}
-*/
-
 class App extends Component {
     render() {
         return (
             <StateProvider initialState={initialState} reducer={reducer}>
                 <StateContext.Consumer>
                     {({state}) => {
-                        //console.log(state);
+                        console.log(state);
                         return <Router>
                             <Header/>
                             <main role="main">
                                 <div className="container">
-                                    <Suspense fallback={<div>Loading...</div>}>
+                                    <Suspense fallback={<div className="App-loading text-center">
+                                        <div className="spinner-border text-light" role="status">
+                                            <span className="sr-only">Loading...</span>
+                                        </div>
+                                    </div>}>
                                         <Switch>
                                             <Route path="/public">
                                                 <Main/>

@@ -1,4 +1,9 @@
-import {ACTION_CHECK_CREDENTIALS_COMPLETE, ACTION_CHECK_CREDENTIALS_START} from "./mainReducer";
+import {
+    ACTION_CHECK_CREDENTIALS_COMPLETE,
+    ACTION_CHECK_CREDENTIALS_START,
+    ACTION_SIGNIN_COMPLETE,
+    ACTION_SIGNIN_START
+} from "./mainReducer";
 
 let dispatch = null;
 
@@ -25,4 +30,9 @@ export const setDispatch = (newDispatch) => {
 
 export const getDispatch = () => {
     return dispatch;
+};
+
+export const signInUsernamePassword = (username, password) => {
+    doDispatch(ACTION_SIGNIN_START);
+    doDispatch(ACTION_SIGNIN_COMPLETE);
 };
