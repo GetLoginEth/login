@@ -3,10 +3,11 @@ import './Main.css';
 import {StateContext} from '../reducers/state';
 import {changeTheme} from "../reducers/actions";
 
-class Main extends Component {
+/*class Main extends Component {
     render() {
-        const [{theme}] = this.context;
-
+        //const [{theme}] = this.context;
+        //console.log(this.context);
+console.log(this.context);
         return <div>
 
             <p>Main public page</p>
@@ -14,12 +15,29 @@ class Main extends Component {
             <button onClick={_ => {
                 changeTheme('lololo');
             }}>
-                Boom -- {theme.primary}
+                Boom --
             </button>
         </div>;
     }
 }
 
-Main.contextType = StateContext;
+//Main.contextType = StateContext;
 
-export default Main;
+export default Main;*/
+
+export default function Main() {
+    return (
+        <StateContext.Consumer>
+            {(one,two) => (
+               <div>theme here {JSON.stringify(one)} {JSON.stringify(two)}
+
+                   <button onClick={_ => {
+                       changeTheme('lololo');
+                   }}>
+                       Boom --
+                   </button>
+               </div>
+            )}
+        </StateContext.Consumer>
+    );
+}

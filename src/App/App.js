@@ -77,10 +77,6 @@ function LoginPage() {
     );
 }
 
-const UserContext = React.createContext({
-    name: 'Guest',
-});
-
 class App extends Component {
     render() {
         return (
