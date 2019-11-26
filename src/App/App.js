@@ -1,63 +1,32 @@
 import React, {Component, lazy, Suspense} from 'react';
 import {BrowserRouter as Router, Link, Redirect, Route, Switch, useHistory, useLocation} from "react-router-dom";
 import './App.css';
-import {StateProvider} from '../reducers/state';
-import {initialState, reducer} from '../reducers/mainReducer';
+import {StateProvider, StateContext} from '../reducers/state';
+import {initialState, reducer, USER_STATUS_LOGGED} from '../reducers/mainReducer';
+import Header from "../Header";
 
 const Main = lazy(() => import('../Main'));
 const Dashboard = lazy(() => import('../Dashboard'));
+const LoginForm = lazy(() => import('../LoginForm'));
 
 const fakeAuth = {
-    isAuthenticated: false,
-    authenticate(cb) {
-        fakeAuth.isAuthenticated = true;
-        setTimeout(cb, 100); // fake async
-    },
-    signout(cb) {
-        fakeAuth.isAuthenticated = false;
-        setTimeout(cb, 100);
-    }
+    isAuthenticated: false
 };
 
-function AuthButton() {
-    let history = useHistory();
-
-    return fakeAuth.isAuthenticated ? (
-        <p>
-            Welcome!{" "}
-            <button
-                onClick={() => {
-                    fakeAuth.signout(() => history.push("/"));
-                }}
-            >
-                Sign out
-            </button>
-        </p>
-    ) : (
-        <p>You are not logged in.</p>
-    );
-}
-
-function PrivateRoute({children, ...rest}) {
+function PrivateRoute({children, state, ...rest}) {
+    console.log(state);
     return (
         <Route
             {...rest}
             render={({location}) =>
-                fakeAuth.isAuthenticated ? (
-                    children
-                ) : (
-                    <Redirect
-                        to={{
-                            pathname: "/login",
-                            state: {from: location}
-                        }}
-                    />
-                )
+                state.user.isLoggedIn() ? (children) : (
+                    <Redirect to={{pathname: "/login", state: {from: location}}}/>)
             }
         />
     );
 }
 
+/*
 function LoginPage() {
     let history = useHistory();
     let location = useLocation();
@@ -76,43 +45,40 @@ function LoginPage() {
         </div>
     );
 }
+*/
 
 class App extends Component {
     render() {
         return (
             <StateProvider initialState={initialState} reducer={reducer}>
-                <Router>
-                        <AuthButton/>
-
-                        <ul>
-                            <li>
-                                <Link to="/public">Public Page</Link>
-                            </li>
-                            <li>
-                                <Link to="/protected">Protected Page</Link>
-                            </li>
-                            <li>
-                                <Link to="/settings">Settings</Link>
-                            </li>
-                        </ul>
-
-                        <Suspense fallback={<div>Loading...</div>}>
-                            <Switch>
-                                <Route path="/public">
-                                    <Main/>
-                                </Route>
-                                <Route path="/settings">
-                                    <div>Settings hehehehehe</div>
-                                </Route>
-                                <Route path="/login">
-                                    <LoginPage/>
-                                </Route>
-                                <PrivateRoute path="/protected">
-                                    <Dashboard/>
-                                </PrivateRoute>
-                            </Switch>
-                        </Suspense>
-                </Router>
+                <StateContext.Consumer>
+                    {({state}) => {
+                        //console.log(state);
+                        return <Router>
+                            <Header/>
+                            <main role="main">
+                                <div className="container">
+                                    <Suspense fallback={<div>Loading...</div>}>
+                                        <Switch>
+                                            <Route path="/public">
+                                                <Main/>
+                                            </Route>
+                                            <Route path="/settings">
+                                                <div>Settings hehehehehe</div>
+                                            </Route>
+                                            <Route path="/login">
+                                                <LoginForm/>
+                                            </Route>
+                                            <PrivateRoute path="/protected" state={state}>
+                                                <Dashboard/>
+                                            </PrivateRoute>
+                                        </Switch>
+                                    </Suspense>
+                                </div>
+                            </main>
+                        </Router>;
+                    }}
+                </StateContext.Consumer>
             </StateProvider>);
     }
 }

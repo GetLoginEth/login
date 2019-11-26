@@ -4,7 +4,7 @@ export const reducer = (state, action) => {
         case ACTION_CHECK_CREDENTIALS_COMPLETE:
             return {
                 ...state,
-                user: action.data
+                user: {...state.user, ...action.data}
             };
 
         default:
@@ -12,12 +12,17 @@ export const reducer = (state, action) => {
     }
 };
 
+export const USER_STATUS_NOT_LOGGED = 'not_logged';
+export const USER_STATUS_LOGGED = 'logged';
+
 export const initialState = {
-    theme: {
-        primary: 'green',
+    user: {
+        isLoggedIn: function () {
+            return this.status === USER_STATUS_LOGGED;
+        },
+        status: USER_STATUS_NOT_LOGGED
     }
 };
 
-export const ACTION_CHANGE_THEME = 'change_theme';
 export const ACTION_CHECK_CREDENTIALS_START = 'check_credentials_start';
 export const ACTION_CHECK_CREDENTIALS_COMPLETE = 'check_credentials_complete';
