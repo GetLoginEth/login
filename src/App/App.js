@@ -1,9 +1,10 @@
 import React, {Component, lazy, Suspense} from 'react';
-import {BrowserRouter as Router, Link, Redirect, Route, Switch, useHistory, useLocation} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import './App.css';
-import {StateProvider, StateContext} from '../reducers/state';
-import {initialState, reducer, USER_STATUS_LOGGED} from '../reducers/mainReducer';
+import {StateContext, StateProvider} from '../reducers/state';
+import {initialState, reducer} from '../reducers/mainReducer';
 import Header from "../Header";
+import Footer from "../Footer";
 
 const Main = lazy(() => import('../Main'));
 const Dashboard = lazy(() => import('../Dashboard'));
@@ -76,6 +77,7 @@ class App extends Component {
                                     </Suspense>
                                 </div>
                             </main>
+                            <Footer/>
                         </Router>;
                     }}
                 </StateContext.Consumer>
