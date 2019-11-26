@@ -1,18 +1,11 @@
 import React, {Component} from 'react';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect,
-    useHistory,
-    useLocation
-} from "react-router-dom";
+import {BrowserRouter as Router, Link, Redirect, Route, Switch, useHistory, useLocation} from "react-router-dom";
 import './App.css';
 import Main from "../Main";
 import Dashboard from "../Dashboard";
 import {StateProvider} from '../reducers/state';
-import {reducer, initialState} from '../reducers/mainReducer';
+import {initialState, reducer} from '../reducers/mainReducer';
+import Container from "../Container";
 
 const fakeAuth = {
     isAuthenticated: false,
@@ -84,14 +77,16 @@ function LoginPage() {
     );
 }
 
+const UserContext = React.createContext({
+    name: 'Guest',
+});
+
 class App extends Component {
-
     render() {
-
         return (
             <StateProvider initialState={initialState} reducer={reducer}>
                 <Router>
-                    <div>
+                    <Container>
                         <AuthButton/>
 
                         <ul>
@@ -120,7 +115,7 @@ class App extends Component {
                                 <Dashboard/>
                             </PrivateRoute>
                         </Switch>
-                    </div>
+                    </Container>
                 </Router>
             </StateProvider>);
     }

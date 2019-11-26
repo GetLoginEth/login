@@ -1,7 +1,3 @@
-import {StateContext, useStateValue} from './state';
-
-//const [{}, dispatch] = useStateValue();
-
 export const reducer = (state, action) => {
     console.log('dispatch', action);
     switch (action.type) {
@@ -18,7 +14,7 @@ export const reducer = (state, action) => {
 
 export const initialState = {
     theme: {
-        primary: 'green'
+        primary: 'green',
     }
 };
 
