@@ -1,18 +1,14 @@
 import React, {createContext, useContext, useReducer} from 'react';
 
 export const StateContext = createContext();
-export const OnlyStateContext = createContext();
 
-export const StateProvider = ({reducer, initialState, children}) => (
-    <StateContext.Provider value={useReducer(reducer, initialState)}>
-        {children}
-    </StateContext.Provider>
-);
-
-export const OnlyStateProvider = ({reducer, initialState, children}) => (
-    <OnlyStateContext.Provider value={reducer}>
-        {children}
-    </OnlyStateContext.Provider>
-);
+export const StateProvider = ({reducer, initialState, children}) => {
+    const [state, dispatch] = useReducer(reducer, initialState);
+    return (
+        <StateContext.Provider value={{state, dispatch}}>
+            {children}
+        </StateContext.Provider>
+    );
+};
 
 export const useStateValue = () => useContext(StateContext);

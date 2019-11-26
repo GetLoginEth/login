@@ -5,11 +5,9 @@ import {getDispatch, setDispatch} from '../reducers/actions';
 
 class Container extends Component {
     render() {
-        const [{}, dispatch] = this.context;
-
         if (!getDispatch()) {
             console.log('set dispatch');
-            setDispatch(dispatch);
+            setDispatch(this.context.dispatch);
         }
 
         return this.props.children;

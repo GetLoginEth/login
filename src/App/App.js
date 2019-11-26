@@ -1,11 +1,12 @@
-import React, {Component} from 'react';
+import React, {Component, Suspense, lazy} from 'react';
 import {BrowserRouter as Router, Link, Redirect, Route, Switch, useHistory, useLocation} from "react-router-dom";
 import './App.css';
-import Main from "../Main";
-import Dashboard from "../Dashboard";
 import {StateProvider} from '../reducers/state';
 import {initialState, reducer} from '../reducers/mainReducer';
 import Container from "../Container";
+
+const Main = lazy(() => import('../Main'));
+const Dashboard = lazy(() => import('../Dashboard'));
 
 const fakeAuth = {
     isAuthenticated: false,
@@ -97,20 +98,22 @@ class App extends Component {
                             </li>
                         </ul>
 
-                        <Switch>
-                            <Route path="/public">
-                                <Main/>
-                            </Route>
-                            <Route path="/settings">
-                                <div>Settings hehehehehe</div>
-                            </Route>
-                            <Route path="/login">
-                                <LoginPage/>
-                            </Route>
-                            <PrivateRoute path="/protected">
-                                <Dashboard/>
-                            </PrivateRoute>
-                        </Switch>
+                        <Suspense fallback={<div>Loading...</div>}>
+                            <Switch>
+                                <Route path="/public">
+                                    <Main/>
+                                </Route>
+                                <Route path="/settings">
+                                    <div>Settings hehehehehe</div>
+                                </Route>
+                                <Route path="/login">
+                                    <LoginPage/>
+                                </Route>
+                                <PrivateRoute path="/protected">
+                                    <Dashboard/>
+                                </PrivateRoute>
+                            </Switch>
+                        </Suspense>
                     </Container>
                 </Router>
             </StateProvider>);
