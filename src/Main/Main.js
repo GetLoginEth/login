@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import './Main.css';
 import {StateContext} from '../reducers/state';
-import {changeTheme} from "../reducers/actions";
 
 class Main extends Component {
     render() {
@@ -10,11 +9,12 @@ class Main extends Component {
         return <div>
             <p>Main public page</p>
 
+            {state.user &&
             <button onClick={_ => {
-                changeTheme('lololo');
+                //changeTheme('lololo');
             }}>
-                Boom -- {state.theme.primary}
-            </button>
+                Boom -- {state.user.login}, {state.user.password}
+            </button>}
         </div>;
     }
 }

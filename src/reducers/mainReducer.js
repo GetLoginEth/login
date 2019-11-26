@@ -1,10 +1,10 @@
 export const reducer = (state, action) => {
     console.log('dispatch', action);
     switch (action.type) {
-        case ACTION_CHANGE_THEME:
+        case ACTION_CHECK_CREDENTIALS_COMPLETE:
             return {
                 ...state,
-                theme: action.newTheme
+                user: action.data
             };
 
         default:
@@ -19,3 +19,5 @@ export const initialState = {
 };
 
 export const ACTION_CHANGE_THEME = 'change_theme';
+export const ACTION_CHECK_CREDENTIALS_START = 'check_credentials_start';
+export const ACTION_CHECK_CREDENTIALS_COMPLETE = 'check_credentials_complete';

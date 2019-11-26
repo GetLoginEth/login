@@ -1,6 +1,23 @@
-import {ACTION_CHANGE_THEME} from "./mainReducer";
+import {ACTION_CHECK_CREDENTIALS_COMPLETE, ACTION_CHECK_CREDENTIALS_START} from "./mainReducer";
 
 let dispatch = null;
+
+export const doDispatch = (type, data = {}) => {
+    dispatch({type, data});
+};
+
+export const init = (dispatch) => {
+    setDispatch(dispatch);
+    checkLocalCredentials();
+};
+
+export const checkLocalCredentials = () => {
+    doDispatch(ACTION_CHECK_CREDENTIALS_START);
+    doDispatch(ACTION_CHECK_CREDENTIALS_COMPLETE, {
+        login: 'hello',
+        password: 'world',
+    });
+};
 
 export const setDispatch = (newDispatch) => {
     dispatch = newDispatch;
@@ -8,11 +25,4 @@ export const setDispatch = (newDispatch) => {
 
 export const getDispatch = () => {
     return dispatch;
-};
-
-export const changeTheme = (theme) => {
-    dispatch({
-        type: ACTION_CHANGE_THEME,
-        newTheme: {primary: theme}
-    });
 };

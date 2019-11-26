@@ -1,9 +1,8 @@
-import React, {Component, Suspense, lazy} from 'react';
+import React, {Component, lazy, Suspense} from 'react';
 import {BrowserRouter as Router, Link, Redirect, Route, Switch, useHistory, useLocation} from "react-router-dom";
 import './App.css';
 import {StateProvider} from '../reducers/state';
 import {initialState, reducer} from '../reducers/mainReducer';
-import Container from "../Container";
 
 const Main = lazy(() => import('../Main'));
 const Dashboard = lazy(() => import('../Dashboard'));
@@ -83,7 +82,6 @@ class App extends Component {
         return (
             <StateProvider initialState={initialState} reducer={reducer}>
                 <Router>
-                    <Container>
                         <AuthButton/>
 
                         <ul>
@@ -114,7 +112,6 @@ class App extends Component {
                                 </PrivateRoute>
                             </Switch>
                         </Suspense>
-                    </Container>
                 </Router>
             </StateProvider>);
     }
