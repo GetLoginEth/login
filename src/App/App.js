@@ -30,6 +30,16 @@ const LoginRoute = ({state}) => {
     </Route>;
 };
 
+function NoMatch() {
+    return (
+        <div>
+            <h3>
+               Page not found
+            </h3>
+        </div>
+    );
+}
+
 class App extends Component {
     render() {
         return (
@@ -47,7 +57,7 @@ class App extends Component {
                                         </div>
                                     </div>}>
                                         <Switch>
-                                            <Route path="/public">
+                                            <Route exact path="/">
                                                 <Main/>
                                             </Route>
 
@@ -64,6 +74,10 @@ class App extends Component {
                                             <PrivateRoute path="/logout" state={state}>
                                                 <Logout/>
                                             </PrivateRoute>
+
+                                            <Route path="*">
+                                                <NoMatch/>
+                                            </Route>
                                         </Switch>
                                     </Suspense>
                                 </div>
