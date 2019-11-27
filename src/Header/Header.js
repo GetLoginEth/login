@@ -4,7 +4,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import {Link} from "react-router-dom";
 
-function Header() {
+function Header({isLoggedIn}) {
     return (
         <header>
             <Navbar bg="light" expand="lg">
@@ -16,6 +16,8 @@ function Header() {
                         <Link className="nav-link" to="/public">Public Page</Link>
                         <Link className="nav-link" to="/protected">Protected</Link>
                         <Link className="nav-link" to="/settings">Settings</Link>
+                        {!isLoggedIn && <Link className="nav-link" to="/login">Login</Link>}
+                        {isLoggedIn && <Link className="nav-link" to="/logout">Logout</Link>}
 
                         {/*<NavDropdown title="Dropdown" id="basic-nav-dropdown">
                             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>

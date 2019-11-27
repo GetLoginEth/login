@@ -1,6 +1,6 @@
 import {
     ACTION_CHECK_CREDENTIALS_COMPLETE,
-    ACTION_CHECK_CREDENTIALS_START,
+    ACTION_CHECK_CREDENTIALS_START, ACTION_LOGOUT_LOCAL_COMPLETE, ACTION_LOGOUT_LOCAL_START,
     ACTION_SIGNIN_COMPLETE,
     ACTION_SIGNIN_START
 } from "./mainReducer";
@@ -35,4 +35,9 @@ export const getDispatch = () => {
 export const signInUsernamePassword = (username, password) => {
     doDispatch(ACTION_SIGNIN_START);
     doDispatch(ACTION_SIGNIN_COMPLETE);
+};
+
+export const logoutLocal = () => {
+    doDispatch(ACTION_LOGOUT_LOCAL_START);
+    doDispatch(ACTION_LOGOUT_LOCAL_COMPLETE);
 };

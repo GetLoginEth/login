@@ -5,6 +5,7 @@ import {StateContext, StateProvider} from '../reducers/state';
 import {initialState, reducer} from '../reducers/mainReducer';
 import Header from "../Header";
 import Footer from "../Footer";
+import Logout from "../Logout";
 
 const Main = lazy(() => import('../Main'));
 const Dashboard = lazy(() => import('../Dashboard'));
@@ -23,6 +24,12 @@ function PrivateRoute({children, state, ...rest}) {
     );
 }
 
+const LoginRoute = ({state}) => {
+    return state.user.isLoggedIn() ? <Redirect to={{pathname: "/"}}/> : <Route path="/login">
+        <LoginForm/>
+    </Route>;
+};
+
 class App extends Component {
     render() {
         return (
@@ -31,7 +38,7 @@ class App extends Component {
                     {({state}) => {
                         console.log(state);
                         return <Router>
-                            <Header/>
+                            <Header isLoggedIn={state.user.isLoggedIn()}/>
                             <main role="main">
                                 <div className="container">
                                     <Suspense fallback={<div className="App-loading text-center">
@@ -43,14 +50,19 @@ class App extends Component {
                                             <Route path="/public">
                                                 <Main/>
                                             </Route>
+
                                             <Route path="/settings">
                                                 <div>Settings hehehehehe</div>
                                             </Route>
-                                            <Route path="/login">
-                                                <LoginForm/>
-                                            </Route>
+
+                                            <LoginRoute path="/login" state={state}/>
+
                                             <PrivateRoute path="/protected" state={state}>
                                                 <Dashboard/>
+                                            </PrivateRoute>
+
+                                            <PrivateRoute path="/logout" state={state}>
+                                                <Logout/>
                                             </PrivateRoute>
                                         </Switch>
                                     </Suspense>

@@ -11,6 +11,8 @@ export const reducer = (state, action) => {
             return merge('user', action.data);
         case ACTION_SIGNIN_COMPLETE:
             return merge('user', {status: USER_STATUS_LOGGED});
+        case ACTION_LOGOUT_LOCAL_COMPLETE:
+            return merge('user', {status: USER_STATUS_NOT_LOGGED});
         default:
             return state;
     }
@@ -33,3 +35,7 @@ export const ACTION_CHECK_CREDENTIALS_COMPLETE = 'check_credentials_complete';
 export const ACTION_SIGNIN_START = 'signin_start';
 export const ACTION_SIGNIN_COMPLETE = 'signin_complete';
 export const ACTION_SIGNIN_FAIL = 'signin_fail';
+
+export const ACTION_LOGOUT_LOCAL_START = 'logout_local_start';
+export const ACTION_LOGOUT_LOCAL_COMPLETE = 'logout_local_complete';
+export const ACTION_LOGOUT_LOCAL_FAIL = 'logout_local_fail';
