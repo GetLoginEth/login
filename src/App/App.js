@@ -11,6 +11,8 @@ const Dashboard = lazy(() => import('../Dashboard'));
 const LoginForm = lazy(() => import('../LoginForm'));
 const Signup = lazy(() => import('../Signup'));
 const Logout = lazy(() => import('../Logout'));
+const Privacy = lazy(() => import('../Page/Privacy'));
+const Terms = lazy(() => import('../Page/Terms'));
 
 function PrivateRoute({children, state, ...rest}) {
     console.log(state);
@@ -64,6 +66,14 @@ class App extends Component {
 
                                             <Route path="/settings">
                                                 <div>Settings hehehehehe</div>
+                                            </Route>
+
+                                            <Route path="/privacy">
+                                                <Privacy/>
+                                            </Route>
+
+                                            <Route path="/terms">
+                                                <Terms/>
                                             </Route>
 
                                             <LoginRoute path="/login" state={state}>
