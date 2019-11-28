@@ -41,3 +41,7 @@ export const ACTION_SIGNIN_FAIL = 'signin_fail';
 export const ACTION_LOGOUT_LOCAL_START = 'logout_local_start';
 export const ACTION_LOGOUT_LOCAL_SUCCESS = 'logout_local_success';
 export const ACTION_LOGOUT_LOCAL_FAIL = 'logout_local_fail';
+
+export const ACTION_SIGNUP_START = 'signup_start';
+export const ACTION_SIGNUP_SUCCESS = 'signup_success';
+export const ACTION_SIGNUP_FAIL = 'signup_fail';

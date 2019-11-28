@@ -40,7 +40,6 @@ import {SIGN_IN_LOGIN_PASSWORD} from "../Lib/GetLogin";
 function LoginForm() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
     const isDisabled = () => {
         return username.length < 3 || password.length < 3
     };
@@ -57,6 +56,8 @@ function LoginForm() {
     return (
         <div className="row justify-content-center align-items-center">
             <Form className="LoginForm col-md-4">
+                <h1>Sign in</h1>
+
                 <Form.Group controlId="formBasicEmail">
                     <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}
                                   value={username}/>

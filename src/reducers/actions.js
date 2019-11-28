@@ -2,7 +2,7 @@ import {
     ACTION_CHECK_CREDENTIALS_SUCCESS,
     ACTION_CHECK_CREDENTIALS_START, ACTION_LOGOUT_LOCAL_SUCCESS, ACTION_LOGOUT_LOCAL_START,
     ACTION_SIGNIN_SUCCESS, ACTION_SIGNIN_FAIL,
-    ACTION_SIGNIN_START
+    ACTION_SIGNIN_START, ACTION_SIGNUP_START, ACTION_SIGNUP_SUCCESS, ACTION_SIGNUP_FAIL
 } from "./mainReducer";
 import GetLogin, {SIGN_IN_RESULT_SUCCESS} from "../Lib/GetLogin";
 
@@ -16,6 +16,10 @@ export const doDispatch = (type, data = {}) => {
 export const init = (dispatch) => {
     setDispatch(dispatch);
     getLogin = new GetLogin();
+    getLogin.setLogger((type, data) => {
+        // todo add to reducer
+        console.log(type, data);
+    })
     /*checkLocalCredentials();*/
 };
 
@@ -50,4 +54,10 @@ export const signIn = async (method, data = {}) => {
 export const logoutLocal = () => {
     doDispatch(ACTION_LOGOUT_LOCAL_START);
     doDispatch(ACTION_LOGOUT_LOCAL_SUCCESS);
+};
+
+export const signUp = (method, username, password = '', invite = '') => {
+    doDispatch(ACTION_SIGNUP_START);
+    doDispatch(ACTION_SIGNUP_SUCCESS);
+    doDispatch(ACTION_SIGNUP_FAIL);
 };

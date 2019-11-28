@@ -2,20 +2,17 @@ import React, {Component, Fragment} from 'react';
 import './Main.css';
 import {StateContext} from '../reducers/state';
 import Button from "react-bootstrap/Button";
+import {Link} from "react-router-dom";
 
 class Main extends Component {
     render() {
         const {state} = this.context;
 
-        return <Fragment>
-            <p>Main public page</p>
+        return <div className="text-center">
+            <h1>Web3 Auth plugin</h1>
 
-            {state.user && <Button onClick={_ => {
-                //changeTheme('lololo');
-            }}>Pickckckc {state.user.login}, {state.user.password}</Button>
-            }
-
-        </Fragment>;
+            <Link className="btn btn-success btn-lg" to="/signup">Sign up</Link>
+        </div>;
     }
 }
 

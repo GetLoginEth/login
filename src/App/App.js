@@ -5,11 +5,12 @@ import {StateContext, StateProvider} from '../reducers/state';
 import {initialState, reducer} from '../reducers/mainReducer';
 import Header from "../Header";
 import Footer from "../Footer";
-import Logout from "../Logout";
 
 const Main = lazy(() => import('../Main'));
 const Dashboard = lazy(() => import('../Dashboard'));
 const LoginForm = lazy(() => import('../LoginForm'));
+const Signup = lazy(() => import('../Signup'));
+const Logout = lazy(() => import('../Logout'));
 
 function PrivateRoute({children, state, ...rest}) {
     console.log(state);
@@ -24,9 +25,9 @@ function PrivateRoute({children, state, ...rest}) {
     );
 }
 
-const LoginRoute = ({state}) => {
-    return state.user.isLoggedIn() ? <Redirect to={{pathname: "/"}}/> : <Route path="/login">
-        <LoginForm/>
+const LoginRoute = ({state, path, children}) => {
+    return state.user.isLoggedIn() ? <Redirect to={{pathname: "/"}}/> : <Route path={path}>
+        {children}
     </Route>;
 };
 
@@ -34,7 +35,7 @@ function NoMatch() {
     return (
         <div>
             <h3>
-               Page not found
+                Page not found
             </h3>
         </div>
     );
@@ -65,7 +66,13 @@ class App extends Component {
                                                 <div>Settings hehehehehe</div>
                                             </Route>
 
-                                            <LoginRoute path="/login" state={state}/>
+                                            <LoginRoute path="/login" state={state}>
+                                                <LoginForm/>
+                                            </LoginRoute>
+
+                                            <LoginRoute path="/signup" state={state}>
+                                                <Signup/>
+                                            </LoginRoute>
 
                                             <PrivateRoute path="/protected" state={state}>
                                                 <Dashboard/>

@@ -2,7 +2,7 @@
 
 }
 
-.App-loading{
+.App-loading {
     margin-top: 20px;
 }
 
@@ -13,4 +13,8 @@ html {
 
 body {
     margin-bottom: 60px; /* Margin bottom by footer height */
+}
+
+.container {
+    padding-top: 30px;
 }
