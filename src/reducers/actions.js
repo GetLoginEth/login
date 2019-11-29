@@ -4,7 +4,7 @@ import {
     ACTION_SIGNIN_SUCCESS, ACTION_SIGNIN_FAIL,
     ACTION_SIGNIN_START, ACTION_SIGNUP_START, ACTION_SIGNUP_SUCCESS, ACTION_SIGNUP_FAIL
 } from "./mainReducer";
-import GetLogin, {SIGN_IN_RESULT_SUCCESS} from "../Lib/GetLogin";
+import GetLogin, {SIGN_IN_RESULT_SUCCESS, SIGN_UP_RESULT_SUCCESS} from "../Lib/GetLogin";
 
 let dispatch = null;
 let getLogin = null;
@@ -16,9 +16,11 @@ export const doDispatch = (type, data = {}) => {
 export const init = (dispatch) => {
     setDispatch(dispatch);
     getLogin = new GetLogin();
-    getLogin.setLogger((type, data) => {
-        // todo add to reducer
-        console.log(type, data);
+    getLogin.setLogger({
+        log: (type, data) => {
+            // todo add to reducer
+            console.log(type, data);
+        }
     })
     /*checkLocalCredentials();*/
 };
@@ -56,8 +58,12 @@ export const logoutLocal = () => {
     doDispatch(ACTION_LOGOUT_LOCAL_SUCCESS);
 };
 
-export const signUp = (method, username, password = '', invite = '') => {
+export const signUp = async (method, username, password = '', invite = '') => {
     doDispatch(ACTION_SIGNUP_START);
-    doDispatch(ACTION_SIGNUP_SUCCESS);
-    doDispatch(ACTION_SIGNUP_FAIL);
+    const result = await getLogin.signUp(method, username, password, invite);
+    if (result.result === SIGN_UP_RESULT_SUCCESS) {
+        doDispatch(ACTION_SIGNIN_SUCCESS);
+    } else {
+        doDispatch(ACTION_SIGNIN_FAIL);
+    }
 };

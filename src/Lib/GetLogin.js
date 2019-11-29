@@ -11,7 +11,7 @@ export const SIGN_IN_TREZOR = 'sign_in_trezor';
 
 export const SIGN_IN_RESULT_SUCCESS = 'success';
 export const SIGN_IN_RESULT_ERROR = 'error';
-export const SIGN_IN_ERROR_METHOD_NOT_SUPPORTED = 'Method ot supported';
+export const SIGN_IN_ERROR_METHOD_NOT_SUPPORTED = 'Method not supported';
 
 export const SIGN_UP_INVITE = 'sign_up_invite';
 export const SIGN_UP_WEB3 = 'sign_up_web3';
@@ -19,7 +19,7 @@ export const SIGN_UP_TREZOR = 'sign_up_trezor';
 
 export const SIGN_UP_RESULT_SUCCESS = 'success';
 export const SIGN_UP_RESULT_ERROR = 'error';
-export const SIGN_UP_ERROR_METHOD_NOT_SUPPORTED = 'Method ot supported';
+export const SIGN_UP_ERROR_METHOD_NOT_SUPPORTED = 'Method not supported';
 
 export default class GetLogin {
     constructor() {
@@ -67,10 +67,10 @@ export default class GetLogin {
                 setResult(SIGN_IN_RESULT_SUCCESS);
 
                 break;
-            /*case SIGN_IN_METAMASK:
-                break;
             case SIGN_IN_TREZOR:
-                break;*/
+                setResult(SIGN_IN_RESULT_SUCCESS);
+
+                break;
             default:
                 break;
         }
@@ -90,6 +90,10 @@ export default class GetLogin {
         setResult(SIGN_UP_RESULT_ERROR, SIGN_UP_ERROR_METHOD_NOT_SUPPORTED);
         switch (method) {
             case SIGN_UP_INVITE:
+                setResult(SIGN_UP_RESULT_SUCCESS);
+
+                break;
+            case SIGN_UP_WEB3:
                 setResult(SIGN_UP_RESULT_SUCCESS);
 
                 break;
