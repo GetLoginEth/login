@@ -1,7 +1,6 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import './Main.css';
 import {StateContext} from '../reducers/state';
-import Button from "react-bootstrap/Button";
 import {Link} from "react-router-dom";
 
 class Main extends Component {

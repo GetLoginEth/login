@@ -72,7 +72,7 @@ function Signup() {
                             onClick={() => signUp(method, username, password, invite)}>Sign up
                         with {getDropDownTitle(method)}</Button>
 
-                    <Dropdown.Toggle className="col-md-2" split variant="primary" id="dropdown-split-basic"/>
+                    <Dropdown.Toggle className="" split variant="primary" id="dropdown-split-basic"/>
 
                     <Dropdown.Menu>
                         {dropDown.map(item => <Dropdown.Item
