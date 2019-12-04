@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import './LoginForm.css';
-import {useHistory, useLocation} from "react-router-dom";
+//import {useHistory, useLocation} from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {signIn} from "../reducers/actions";
-import {SIGN_IN_LOGIN_PASSWORD} from "../Lib/get-login/signup";
+import {SIGN_IN_LOGIN_PASSWORD} from "../Lib/get-login/signin";
 
 /*const fakeAuth = {
     isAuthenticated: false,
