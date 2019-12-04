@@ -1,17 +1,16 @@
 import Result, {
     CODE_EMPTY_RESULT,
     CODE_NOT_IMPLEMENTED,
-    CODE_UNKNOWN_METHOD, CODE_USERNAME_ALREADY_REGISTERED,
-    LoginError,
-    RESULT_ERROR,
-    throwLoginError
+    CODE_UNKNOWN_METHOD,
+    CODE_USERNAME_ALREADY_REGISTERED,
+    LoginError
 } from "./Result";
 
 export const LOG_PREFIX = 'get_login_';
-export const LOG_SIGN_IN_START = 'sign_in_start';
+/*export const LOG_SIGN_IN_START = 'sign_in_start';
 export const LOG_SIGN_IN_COMPLETE = 'sign_in_complete';
 export const LOG_SIGN_UP_START = 'sign_up_start';
-export const LOG_SIGN_UP_COMPLETE = 'sign_up_complete';
+export const LOG_SIGN_UP_COMPLETE = 'sign_up_complete';*/
 
 export const SIGN_IN_LOGIN_PASSWORD = 'login_password';
 export const SIGN_IN_BROWSER_DATA = 'sign_in_browser_data';
@@ -66,7 +65,7 @@ export default class GetLogin {
      * @returns {Promise<void>}
      */
     async signIn(method, data = {}) {
-        this.log(LOG_SIGN_IN_START, {method});
+        //this.log(LOG_SIGN_IN_START, {method});
         let returnResult = {};
         const setResult = (result, text = '') => {
             returnResult = {result, text};
@@ -90,7 +89,7 @@ export default class GetLogin {
                 break;
         }
 
-        this.log(LOG_SIGN_IN_COMPLETE, returnResult);
+        //this.log(LOG_SIGN_IN_COMPLETE, returnResult);
 
         return returnResult;
     }
@@ -131,7 +130,7 @@ export default class GetLogin {
     }
 
     async signUp(method, username, password = '', invite = '') {
-        this.log(LOG_SIGN_UP_START, {method});
+        //this.log(LOG_SIGN_UP_START, {method});
         let result = null;
         switch (method) {
             case SIGN_UP_INVITE:
@@ -155,7 +154,7 @@ export default class GetLogin {
             throw new LoginError(CODE_EMPTY_RESULT);
         }
 
-        this.log(LOG_SIGN_UP_COMPLETE, result);
+        //this.log(LOG_SIGN_UP_COMPLETE, result);
 
         return result;
     }

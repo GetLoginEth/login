@@ -27,6 +27,7 @@ export const CODE_USERNAME_ALREADY_REGISTERED = 1;
 export const CODE_UNKNOWN_METHOD = 2;
 export const CODE_EMPTY_RESULT = 3;
 export const CODE_NOT_IMPLEMENTED = 4;
+export const CODE_EMPTY_METHOD_PARAM = 5;
 
 export const CODE_MESSAGES = {
     [CODE_NOT_DEFINED]: 'Not defined',
@@ -38,21 +39,3 @@ export const CODE_MESSAGES = {
 
 export const RESULT_OK = 'ok';
 export const RESULT_ERROR = 'error';
-
-/*
-export default class Result {
-    constructor(status = RESULT_OK, text = '', data = {}) {
-        this.result = {status, text, data};
-    }
-
-    getResult() {
-        return this.result;
-    }
-
-    setResult(result) {
-        this.result = result;
-
-        return result;
-    }
-}
-*/

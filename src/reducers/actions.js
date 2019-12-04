@@ -1,11 +1,15 @@
 import {
-    ACTION_CHECK_CREDENTIALS_SUCCESS,
-    ACTION_CHECK_CREDENTIALS_START, ACTION_LOGOUT_LOCAL_SUCCESS, ACTION_LOGOUT_LOCAL_START,
-    ACTION_SIGNIN_SUCCESS, ACTION_SIGNIN_FAIL,
-    ACTION_SIGNIN_START, ACTION_SIGNUP_START, ACTION_SIGNUP_SUCCESS, ACTION_SIGNUP_FAIL, ACTION_SIGNUP
+    ACTION_LOGOUT,
+    ACTION_SIGNIN,
+    ACTION_SIGNUP,
+    getStatus,
+    STATUS_COMPLETE,
+    STATUS_FAIL,
+    STATUS_START,
+    STATUS_SUCCESS
 } from "./mainReducer";
-import GetLogin, {SIGN_IN_RESULT_SUCCESS, SIGN_UP_RESULT_SUCCESS} from "../Lib/GetLogin";
-import {CODE_UNKNOWN_METHOD, LoginError} from "../Lib/Result";
+import GetLogin from "../Lib/GetLogin";
+import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/Result";
 
 let dispatch = null;
 let getLogin = null;
@@ -45,43 +49,36 @@ export const getDispatch = () => {
 };
 
 export const signIn = async (method, data = {}) => {
-    doDispatch(ACTION_SIGNIN_START);
-    const result = await getLogin.signIn(method, data);
-    if (result.result === SIGN_IN_RESULT_SUCCESS) {
-        doDispatch(ACTION_SIGNIN_SUCCESS);
-    } else {
-        doDispatch(ACTION_SIGNIN_FAIL);
-    }
+    return callMethod(ACTION_SIGNIN, async () => {
+        return await getLogin.signIn(method, data);
+    });
 };
 
 export const logoutLocal = () => {
-    doDispatch(ACTION_LOGOUT_LOCAL_START);
-    doDispatch(ACTION_LOGOUT_LOCAL_SUCCESS);
+    return callMethod(ACTION_LOGOUT, async () => {
+        console.log('Logout here');
+        //return await getLogin.signUp(method, username, password, invite);
+    });
 };
 
 export const signUp = async (method, username, password = '', invite = '') => {
     return callMethod(ACTION_SIGNUP, async () => {
         return await getLogin.signUp(method, username, password, invite);
-    })
-    /*try {
-        doDispatch(ACTION_SIGNUP_START);
-        const result = await getLogin.signUp(method, username, password, invite);
-        doDispatch(ACTION_SIGNUP_SUCCESS, result);
-    } catch ({message}) {
-        doDispatch(ACTION_SIGNUP_FAIL, message);
-    }*/
+    });
 };
 
 export const callMethod = async (actionName, func) => {
     try {
-        doDispatch(`${actionName}_start`);
+        doDispatch(getStatus(actionName, STATUS_START));
         if (!func) {
-            throw new LoginError(CODE_UNKNOWN_METHOD);
+            throw new LoginError(CODE_EMPTY_METHOD_PARAM);
         }
 
         const result = await func();
-        doDispatch(`${actionName}_success`, result);
+        doDispatch(getStatus(actionName, STATUS_SUCCESS), result);
     } catch ({message}) {
-        doDispatch(`${actionName}_fail`, message);
+        doDispatch(getStatus(actionName, STATUS_FAIL), message);
     }
+
+    doDispatch(getStatus(actionName, STATUS_COMPLETE));
 };
