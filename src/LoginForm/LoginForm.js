@@ -4,7 +4,7 @@ import {useHistory, useLocation} from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {signIn} from "../reducers/actions";
-import {SIGN_IN_LOGIN_PASSWORD} from "../Lib/GetLogin";
+import {SIGN_IN_LOGIN_PASSWORD} from "../Lib/get-login/signup";
 
 /*const fakeAuth = {
     isAuthenticated: false,

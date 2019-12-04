@@ -28,6 +28,8 @@ export const CODE_UNKNOWN_METHOD = 2;
 export const CODE_EMPTY_RESULT = 3;
 export const CODE_NOT_IMPLEMENTED = 4;
 export const CODE_EMPTY_METHOD_PARAM = 5;
+export const CODE_INCORRECT_INVITE = 6;
+export const CODE_NOT_ENOUGH_FUNDS = 7;
 
 export const CODE_MESSAGES = {
     [CODE_NOT_DEFINED]: 'Not defined',

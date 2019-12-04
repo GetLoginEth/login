@@ -8,8 +8,8 @@ import {
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
-import GetLogin from "../Lib/GetLogin";
-import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/Result";
+import GetLogin from "../Lib/get-login/signup";
+import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 
 let dispatch = null;
 let getLogin = null;
