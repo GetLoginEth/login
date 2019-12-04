@@ -8,11 +8,11 @@ import {
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
-import GetLogin from "../Lib/get-login/signup";
+import Signup from "../Lib/get-login/signup";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 
 let dispatch = null;
-let getLogin = null;
+let signup = null;
 
 export const doDispatch = (type, data = {}) => {
     dispatch({type, data});
@@ -20,8 +20,8 @@ export const doDispatch = (type, data = {}) => {
 
 export const init = (dispatch) => {
     setDispatch(dispatch);
-    getLogin = new GetLogin();
-    getLogin.setLogger({
+    signup = new Signup();
+    signup.setLogger({
         log: (type, data) => {
             // todo add to reducer
             console.log(type, data);
@@ -50,7 +50,7 @@ export const getDispatch = () => {
 
 export const signIn = async (method, data = {}) => {
     return callMethod(ACTION_SIGNIN, async () => {
-        return await getLogin.signIn(method, data);
+        return await signup.signIn(method, data);
     });
 };
 
@@ -63,7 +63,7 @@ export const logoutLocal = () => {
 
 export const signUp = async (method, username, password = '', invite = '') => {
     return callMethod(ACTION_SIGNUP, async () => {
-        return await getLogin.signUp(method, username, password, invite);
+        return await signup.signUp(method, username, password, invite);
     });
 };
 

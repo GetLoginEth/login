@@ -8,20 +8,17 @@ import {
 import {INVITE_LENGTH} from "./utils";
 import Logger from "./logger";
 
-/*export const LOG_SIGN_IN_START = 'sign_in_start';
-export const LOG_SIGN_IN_COMPLETE = 'sign_in_complete';
-export const LOG_SIGN_UP_START = 'sign_up_start';
-export const LOG_SIGN_UP_COMPLETE = 'sign_up_complete';*/
+export const LOG_SIGN_UP_CHECK_FUNDS = 'sign_up_check_funds';
+export const LOG_SIGN_UP_CHECK_USERNAME = 'sign_up_check_username';
+export const LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE = 'sign_up_create_wallet_from_invite';
+export const LOG_SIGN_UP_CREATE_NEW_WALLET = 'sign_up_create_new_wallet';
+export const LOG_SIGN_UP_USER_REGISTRATION = 'sign_up_user_registration';
 
 export const SIGN_UP_INVITE = 'sign_up_invite';
 export const SIGN_UP_WEB3 = 'sign_up_web3';
 export const SIGN_UP_TREZOR = 'sign_up_trezor';
 
-//export const SIGN_UP_RESULT_SUCCESS = 'success';
-//export const SIGN_UP_RESULT_ERROR = 'error';
-//export const SIGN_UP_ERROR_METHOD_NOT_SUPPORTED = 'Method not supported';
-
-export default class Signup extends Logger{
+export default class Signup extends Logger {
     constructor() {
         super();
 
@@ -37,6 +34,10 @@ export default class Signup extends Logger{
 
     }
 
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     async getUsernameHash(username) {
         // todo implement
         return 'hash_of_' + username;
@@ -44,7 +45,7 @@ export default class Signup extends Logger{
 
     async isUsernameRegistered(username) {
         // todo implement
-        const usernameHash = await this.getUsernameHash(username);
+        //const usernameHash = await this.getUsernameHash(username);
         return username === 'admin';
     }
 
@@ -86,12 +87,23 @@ export default class Signup extends Logger{
             throw new LoginError(CODE_INCORRECT_INVITE);
         }
 
+        this.log(LOG_SIGN_UP_CHECK_FUNDS);
+        await this.sleep(1000);
+
         if (!await this.isEnoughFundsRegistration(invite)) {
             throw new LoginError(CODE_NOT_ENOUGH_FUNDS);
         }
 
+        this.log(LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE);
+        await this.sleep(1000);
         const fundedWallet = await this._createWalletFromInvite(invite);
+
+        this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
+        await this.sleep(1000);
         const newWallet = await this._createWallet(password);
+
+        this.log(LOG_SIGN_UP_USER_REGISTRATION);
+        await this.sleep(1000);
         const accountTransaction = this._createAccountFromWallet(username, fundedWallet, newWallet);
 
         return {
@@ -101,9 +113,10 @@ export default class Signup extends Logger{
     }
 
     async signUp(method, username, password = '', invite = '') {
-        //this.log(LOG_SIGN_UP_START, {method});
         let result = null;
 
+        this.log(LOG_SIGN_UP_CHECK_USERNAME);
+        await this.sleep(1000);
         if (await this.isUsernameRegistered(username)) {
             throw new LoginError(CODE_USERNAME_ALREADY_REGISTERED);
         }
@@ -113,15 +126,9 @@ export default class Signup extends Logger{
                 result = await this._signUpInvite(username, password, invite);
                 break;
             case SIGN_UP_WEB3:
-                //setResult(SIGN_UP_RESULT_SUCCESS);
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
-
-            //break;
             case SIGN_UP_TREZOR:
-                //setResult(SIGN_UP_RESULT_SUCCESS);
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
-
-            //break;
             default:
                 throw new LoginError(CODE_UNKNOWN_METHOD);
         }
@@ -129,8 +136,6 @@ export default class Signup extends Logger{
         if (!result) {
             throw new LoginError(CODE_EMPTY_RESULT);
         }
-
-        //this.log(LOG_SIGN_UP_COMPLETE, result);
 
         return result;
     }

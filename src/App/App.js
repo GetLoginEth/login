@@ -49,7 +49,7 @@ class App extends Component {
             <StateProvider initialState={initialState} reducer={reducer}>
                 <StateContext.Consumer>
                     {({state}) => {
-                        console.log(state);
+                        //console.log(state);
                         return <Router>
                             <Header isLoggedIn={state.user.isLoggedIn()}/>
                             <main role="main">
