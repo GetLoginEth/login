@@ -6,8 +6,10 @@ import Form from "react-bootstrap/Form";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import {SIGN_UP_INVITE, SIGN_UP_TREZOR, SIGN_UP_WEB3} from "../Lib/get-login/signup";
+import {useStateValue} from "../reducers/state";
 
 function Signup() {
+    const {state: {signup}} = useStateValue();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [invite, setInvite] = useState('');
@@ -30,7 +32,7 @@ function Signup() {
         return invite.length === 32;
     };
     const isDisabled = () => {
-        return username.length < 3 || password.length < 3 || (invite.length > 0 && !isCorrectInvite(invite));
+        return username.length < 3 || password.length < 3 || (invite.length > 0 && !isCorrectInvite(invite)) || signup.inProcess;
     };
     const onDropDownChange = (item) => {
         setMethod(item.key);
@@ -47,41 +49,49 @@ function Signup() {
     return (
         <div className="row justify-content-center align-items-center">
             <Form className="LoginForm col-md-4">
-                <h1>Sign up</h1>
+                <fieldset disabled={signup.inProcess}>
+                    <h1>Sign up</h1>
 
-                <Form.Group controlId="formBasicEmail">
-                    <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}
-                                  value={username}/>
-                </Form.Group>
+                    <Form.Group controlId="formBasicEmail">
+                        <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}
+                                      value={username}/>
+                    </Form.Group>
 
-                <Form.Group controlId="formBasicPassword">
-                    <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}
-                                  value={password}/>
-                </Form.Group>
+                    <Form.Group controlId="formBasicPassword">
+                        <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}
+                                      value={password}/>
+                    </Form.Group>
 
-                <Form.Group controlId="formInvite" className={(method === SIGN_UP_INVITE) ? "" : "d-none"}>
-                    <Form.Control type="text" placeholder="Invite" onChange={e => setInvite(e.target.value)}
-                                  value={invite}/>
-                </Form.Group>
-
-
-                <Dropdown as={ButtonGroup} className="btn-block">
-                    <Button variant="primary"
-                            className="col-md-10"
-                            disabled={isDisabled()}
-                            onClick={() => signUp(method, username, password, invite)}>Sign up
-                        with {getDropDownTitle(method)}</Button>
-
-                    <Dropdown.Toggle className="" split variant="primary" id="dropdown-split-basic"/>
-
-                    <Dropdown.Menu>
-                        {dropDown.map(item => <Dropdown.Item
-                            key={item.key}
-                            onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
-                    </Dropdown.Menu>
-                </Dropdown>
+                    <Form.Group controlId="formInvite" className={(method === SIGN_UP_INVITE) ? "" : "d-none"}>
+                        <Form.Control type="text" placeholder="Invite" onChange={e => setInvite(e.target.value)}
+                                      value={invite}/>
+                    </Form.Group>
 
 
+                    <Dropdown as={ButtonGroup} className="btn-block">
+                        <Button variant="primary"
+                                className="col-md-10"
+                                disabled={isDisabled()}
+                                onClick={() => signUp(method, username, password, invite)}>
+                            {signup.inProcess &&
+                            <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"/>}
+                            Sign up with {getDropDownTitle(method)}</Button>
+
+                        <Dropdown.Toggle className="" split variant="primary"
+                                         id="dropdown-split-basic"/>
+
+                        <Dropdown.Menu>
+                            {dropDown.map(item => <Dropdown.Item
+                                key={item.key}
+                                onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
+                        </Dropdown.Menu>
+                    </Dropdown>
+
+                    {signup.inProcess && <details className="mt-2">
+                        <summary>{signup.status}</summary>
+                        {signup.log.map((item,index) => <p key={index}>{item}</p>)}
+                    </details>}
+                </fieldset>
             </Form>
         </div>
     );

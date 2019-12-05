@@ -1,4 +1,4 @@
-export const LOG_PREFIX = 'get_login_';
+/*export const LOG_PREFIX = 'get_login_';*/
 
 export default class Logger {
     constructor() {
@@ -15,7 +15,7 @@ export default class Logger {
 
     log(type, data = {}) {
         if (this.logger) {
-            this.logger.log(LOG_PREFIX + type, data);
+            this.logger.log(/*LOG_PREFIX +*/ type, data);
         }
     }
 }

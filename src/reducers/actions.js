@@ -4,12 +4,14 @@ import {
     ACTION_SIGNUP,
     getStatus,
     STATUS_COMPLETE,
-    STATUS_FAIL,
+    STATUS_FAIL, STATUS_LOG,
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
 import Signup from "../Lib/get-login/signup";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
+import {translate} from "../Lib/get-login/log-translation";
+/*import {LOG_PREFIX} from "../Lib/get-login/logger";*/
 
 let dispatch = null;
 let signup = null;
@@ -23,8 +25,10 @@ export const init = (dispatch) => {
     signup = new Signup();
     signup.setLogger({
         log: (type, data) => {
-            // todo add to reducer
             console.log(type, data);
+            const message = translate(type);
+            console.log(message);
+            doDispatch(getStatus(ACTION_SIGNUP, STATUS_LOG), message);
         }
     })
     /*checkLocalCredentials();*/
