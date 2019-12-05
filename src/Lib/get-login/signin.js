@@ -1,14 +1,12 @@
 import Logger from "./logger";
 import {CODE_EMPTY_RESULT, CODE_NOT_IMPLEMENTED, CODE_UNKNOWN_METHOD, LoginError} from "./login-error";
-import {validatePassword, validateUsername, sleep} from "./utils";
+import {validatePassword, validateUsername, sleep, LOGIN_TREZOR} from "./utils";
 
 export const LOG_LOG_IN_CHECK_USERNAME = 'log_in_check_username';
 export const LOG_LOG_IN_RECEIVE_WALLET = 'log_in_receive_wallet';
 
-export const SIGN_IN_USERNAME_PASSWORD = 'username_password';
-export const SIGN_IN_BROWSER_DATA = 'sign_in_browser_data';
-export const SIGN_IN_WEB3 = 'sign_in_web3';
-export const SIGN_IN_TREZOR = 'sign_in_trezor';
+export const LOGIN_USERNAME_PASSWORD = 'login_username_password';
+export const LOGIN_BROWSER_DATA = 'login_browser_data';
 
 export default class Signin extends Logger {
     async _signInUsernamePassword(username, password) {
@@ -33,12 +31,12 @@ export default class Signin extends Logger {
         let result = null;
 
         switch (method) {
-            case SIGN_IN_USERNAME_PASSWORD:
+            case LOGIN_USERNAME_PASSWORD:
                 result = await this._signInUsernamePassword(...data);
                 break;
-            case SIGN_IN_BROWSER_DATA:
+            case LOGIN_BROWSER_DATA:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
-            case SIGN_IN_TREZOR:
+            case LOGIN_TREZOR:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
             default:
                 throw new LoginError(CODE_UNKNOWN_METHOD);

@@ -6,6 +6,9 @@ export const USERNAME_MAX_LENGTH = 30;
 export const PASSWORD_MIN_LENGTH = 3;
 export const PASSWORD_MAX_LENGTH = 300;
 
+export const LOGIN_WEB3 = 'login_web3';
+export const LOGIN_TREZOR = 'login_trezor';
+
 export const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
@@ -17,7 +20,7 @@ export const getUsernameHash = async (username) => {
 
 export const isUsernameRegistered = async (username) => {
     // todo implement
-    const usernameHash = await this.getUsernameHash(username);
+    const usernameHash = await getUsernameHash(username);
     return usernameHash ? username === 'admin' : false;
 };
 

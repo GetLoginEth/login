@@ -5,7 +5,7 @@ import {
     CODE_USERNAME_ALREADY_REGISTERED,
     LoginError
 } from "./login-error";
-import {INVITE_LENGTH, sleep} from "./utils";
+import {INVITE_LENGTH, isUsernameRegistered, LOGIN_TREZOR, LOGIN_WEB3, sleep} from "./utils";
 import Logger from "./logger";
 
 export const LOG_SIGN_UP_CHECK_FUNDS = 'sign_up_check_funds';
@@ -15,8 +15,6 @@ export const LOG_SIGN_UP_CREATE_NEW_WALLET = 'sign_up_create_new_wallet';
 export const LOG_SIGN_UP_USER_REGISTRATION = 'sign_up_user_registration';
 
 export const SIGN_UP_INVITE = 'sign_up_invite';
-export const SIGN_UP_WEB3 = 'sign_up_web3';
-export const SIGN_UP_TREZOR = 'sign_up_trezor';
 
 export default class Signup extends Logger {
     constructor() {
@@ -102,7 +100,7 @@ export default class Signup extends Logger {
 
         this.log(LOG_SIGN_UP_CHECK_USERNAME);
         await sleep(1000);
-        if (await this.isUsernameRegistered(username)) {
+        if (await isUsernameRegistered(username)) {
             throw new LoginError(CODE_USERNAME_ALREADY_REGISTERED);
         }
 
@@ -110,9 +108,9 @@ export default class Signup extends Logger {
             case SIGN_UP_INVITE:
                 result = await this._signUpInvite(username, password, invite);
                 break;
-            case SIGN_UP_WEB3:
+            case LOGIN_WEB3:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
-            case SIGN_UP_TREZOR:
+            case LOGIN_TREZOR:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
             default:
                 throw new LoginError(CODE_UNKNOWN_METHOD);

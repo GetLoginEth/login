@@ -4,7 +4,7 @@ import './Signin.css';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {signIn} from "../reducers/actions";
-import {SIGN_IN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
+import {LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
 import {validatePassword, validateUsername} from "../Lib/get-login/utils";
@@ -53,7 +53,7 @@ function Signin() {
 
                     <Button className="btn-block"
                             disabled={isDisabled()}
-                            onClick={() => signIn(SIGN_IN_USERNAME_PASSWORD, username, password)}>
+                            onClick={() => signIn(LOGIN_USERNAME_PASSWORD, username, password)}>
                         {signin.inProcess &&
                         <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"/>}
                         Sign In

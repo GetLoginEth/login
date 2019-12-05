@@ -5,10 +5,10 @@ import {signUp} from "../reducers/actions";
 import Form from "react-bootstrap/Form";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import {SIGN_UP_INVITE, SIGN_UP_TREZOR, SIGN_UP_WEB3} from "../Lib/get-login/signup";
+import {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
-import {INVITE_LENGTH} from "../Lib/get-login/utils";
+import {INVITE_LENGTH, LOGIN_TREZOR, LOGIN_WEB3} from "../Lib/get-login/utils";
 
 function Signup() {
     const {state: {signup}} = useStateValue();
@@ -18,8 +18,8 @@ function Signup() {
     const [method, setMethod] = useState('');
     const dropDown = [
         {key: SIGN_UP_INVITE, title: 'Invite'},
-        {key: SIGN_UP_WEB3, title: 'Web3'},
-        {key: SIGN_UP_TREZOR, title: 'Trezor'}
+        {key: LOGIN_WEB3, title: 'Web3'},
+        {key: LOGIN_TREZOR, title: 'Trezor'}
     ];
     useEffect(() => {
         const invite = window.location.hash.replace('#', '');
@@ -27,7 +27,7 @@ function Signup() {
             setInvite(invite);
             setMethod(SIGN_UP_INVITE);
         } else {
-            setMethod(SIGN_UP_WEB3);
+            setMethod(LOGIN_WEB3);
         }
     }, []);
     const isCorrectInvite = (invite) => {
