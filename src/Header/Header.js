@@ -25,7 +25,7 @@ function Header({isLoggedIn}) {
                     </Nav>
 
                     <Nav className="ml-auto ">
-                        {!isLoggedIn && <Link className="nav-link float-right" to="/login">Login</Link>}
+                        {!isLoggedIn && <Link className="nav-link float-right" to="/login">Sign In</Link>}
                         {isLoggedIn && <Link className="nav-link float-right" to="/logout">Logout</Link>}
 
 

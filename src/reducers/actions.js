@@ -59,9 +59,9 @@ export const getDispatch = () => {
     return dispatch;
 };
 
-export const signIn = async (method, data = {}) => {
+export const signIn = async (method, ...data) => {
     return callMethod(ACTION_SIGNIN, async () => {
-        return await signin.signIn(method, data);
+        return await signin.signIn(method, ...data);
     });
 };
 

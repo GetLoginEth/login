@@ -7,6 +7,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import {SIGN_UP_INVITE, SIGN_UP_TREZOR, SIGN_UP_WEB3} from "../Lib/get-login/signup";
 import {useStateValue} from "../reducers/state";
+import {Link} from "react-router-dom";
 
 function Signup() {
     const {state: {signup}} = useStateValue();
@@ -48,9 +49,9 @@ function Signup() {
 
     return (
         <div className="row justify-content-center align-items-center">
-            <Form className="LoginForm col-md-4">
+            <Form className="Signup col-md-4">
                 <fieldset disabled={signup.inProcess}>
-                    <h1>Sign up</h1>
+                    <h1>Sign up / <Link to="/login">Sign In</Link></h1>
 
                     <Form.Group controlId="formBasicEmail">
                         <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}

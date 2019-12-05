@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import './LoginForm.css';
+import './Signin.css';
 //import {useHistory, useLocation} from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {signIn} from "../reducers/actions";
 import {SIGN_IN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {useStateValue} from "../reducers/state";
+import {Link} from "react-router-dom";
 
 /*const fakeAuth = {
     isAuthenticated: false,
@@ -38,7 +39,7 @@ import {useStateValue} from "../reducers/state";
     );
 }*/
 
-function LoginForm() {
+function Signin() {
     const {state: {signin}} = useStateValue();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -57,9 +58,9 @@ function LoginForm() {
 
     return (
         <div className="row justify-content-center align-items-center">
-            <Form className="LoginForm col-md-4">
+            <Form className="Signin col-md-4">
                 <fieldset disabled={signin.inProcess}>
-                    <h1>Sign in</h1>
+                    <h1>Sign In / <Link to="/signup">Sign up</Link></h1>
 
                     <Form.Group controlId="formBasicEmail">
                         <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}
@@ -74,7 +75,9 @@ function LoginForm() {
                     <Button className="btn-block"
                             disabled={isDisabled()}
                             onClick={() => signIn(SIGN_IN_USERNAME_PASSWORD, username, password)}>
-                        Sign in
+                        {signin.inProcess &&
+                        <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"/>}
+                        Sign In
                     </Button>
                     {signin.log.length > 0 && <details className="mt-2">
                         <summary>{signin.status}</summary>
@@ -86,4 +89,4 @@ function LoginForm() {
     );
 }
 
-export default LoginForm;
+export default Signin;

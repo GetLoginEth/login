@@ -8,7 +8,7 @@ import Footer from "../Footer";
 
 const Main = lazy(() => import('../Main'));
 const Dashboard = lazy(() => import('../Dashboard'));
-const LoginForm = lazy(() => import('../LoginForm'));
+const Signin = lazy(() => import('../Signin'));
 const Signup = lazy(() => import('../Signup'));
 const Logout = lazy(() => import('../Logout'));
 const Privacy = lazy(() => import('../Page/Privacy'));
@@ -77,7 +77,7 @@ class App extends Component {
                                             </Route>
 
                                             <LoginRoute path="/login" state={state}>
-                                                <LoginForm/>
+                                                <Signin/>
                                             </LoginRoute>
 
                                             <LoginRoute path="/signup" state={state}>

@@ -29,12 +29,12 @@ export default class Signin extends Logger {
      * @param data
      * @returns {Promise<void>}
      */
-    async signIn(method, data = {}) {
+    async signIn(method, ...data) {
         let result = null;
 
         switch (method) {
             case SIGN_IN_USERNAME_PASSWORD:
-                result = await this._signInUsernamePassword(data.username, data.password);
+                result = await this._signInUsernamePassword(...data);
                 break;
             case SIGN_IN_BROWSER_DATA:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
