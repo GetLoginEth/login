@@ -87,9 +87,9 @@ function Signup() {
                         </Dropdown.Menu>
                     </Dropdown>
 
-                    {signup.inProcess && <details className="mt-2">
+                    {signup.log.length > 0 && <details className="mt-2">
                         <summary>{signup.status}</summary>
-                        {signup.log.map((item,index) => <p key={index}>{item}</p>)}
+                        {signup.log.map((item, index) => <p key={index}>{item}</p>)}
                     </details>}
                 </fieldset>
             </Form>

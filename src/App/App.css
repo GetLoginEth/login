@@ -18,3 +18,7 @@ body {
 .container {
     padding-top: 30px;
 }
+
+details p {
+    margin-bottom: 0.1rem;
+}

@@ -1,15 +1,28 @@
 import Logger from "./logger";
+import {CODE_EMPTY_RESULT, CODE_NOT_IMPLEMENTED, CODE_UNKNOWN_METHOD, LoginError} from "./login-error";
+import {validatePassword, validateUsername, sleep} from "./utils";
 
-export const SIGN_IN_LOGIN_PASSWORD = 'login_password';
+export const LOG_LOG_IN_CHECK_USERNAME = 'log_in_check_username';
+export const LOG_LOG_IN_RECEIVE_WALLET = 'log_in_receive_wallet';
+
+export const SIGN_IN_USERNAME_PASSWORD = 'username_password';
 export const SIGN_IN_BROWSER_DATA = 'sign_in_browser_data';
 export const SIGN_IN_WEB3 = 'sign_in_web3';
 export const SIGN_IN_TREZOR = 'sign_in_trezor';
 
-export const SIGN_IN_RESULT_SUCCESS = 'success';
-export const SIGN_IN_RESULT_ERROR = 'error';
-export const SIGN_IN_ERROR_METHOD_NOT_SUPPORTED = 'Method not supported';
-
 export default class Signin extends Logger {
+    async _signInUsernamePassword(username, password) {
+        this.log(LOG_LOG_IN_CHECK_USERNAME);
+        await sleep(1000);
+        await validateUsername(username);
+        await validatePassword(password);
+
+        this.log(LOG_LOG_IN_RECEIVE_WALLET);
+        await sleep(1000);
+
+        return true;
+    }
+
     /**
      * Sign in user
      * @param method
@@ -17,32 +30,24 @@ export default class Signin extends Logger {
      * @returns {Promise<void>}
      */
     async signIn(method, data = {}) {
-        //this.log(LOG_SIGN_IN_START, {method});
-        let returnResult = {};
-        const setResult = (result, text = '') => {
-            returnResult = {result, text};
-        };
+        let result = null;
 
-        setResult(SIGN_IN_RESULT_ERROR, SIGN_IN_ERROR_METHOD_NOT_SUPPORTED);
         switch (method) {
-            case SIGN_IN_LOGIN_PASSWORD:
-                setResult(SIGN_IN_RESULT_SUCCESS);
-
+            case SIGN_IN_USERNAME_PASSWORD:
+                result = await this._signInUsernamePassword(data.username, data.password);
                 break;
             case SIGN_IN_BROWSER_DATA:
-                setResult(SIGN_IN_RESULT_SUCCESS);
-
-                break;
+                throw new LoginError(CODE_NOT_IMPLEMENTED);
             case SIGN_IN_TREZOR:
-                setResult(SIGN_IN_RESULT_SUCCESS);
-
-                break;
+                throw new LoginError(CODE_NOT_IMPLEMENTED);
             default:
-                break;
+                throw new LoginError(CODE_UNKNOWN_METHOD);
         }
 
-        //this.log(LOG_SIGN_IN_COMPLETE, returnResult);
+        if (!result) {
+            throw new LoginError(CODE_EMPTY_RESULT);
+        }
 
-        return returnResult;
+        return result;
     }
 }

@@ -4,33 +4,40 @@ import {
     ACTION_SIGNUP,
     getStatus,
     STATUS_COMPLETE,
-    STATUS_FAIL, STATUS_LOG,
+    STATUS_FAIL,
+    STATUS_LOG,
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
 import Signup from "../Lib/get-login/signup";
+import Signin from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
-/*import {LOG_PREFIX} from "../Lib/get-login/logger";*/
 
 let dispatch = null;
 let signup = null;
+let signin = null;
 
 export const doDispatch = (type, data = {}) => {
     dispatch({type, data});
 };
 
 export const init = (dispatch) => {
+    const getLogger = (action) => {
+        return {
+            log: (type, data) => {
+                console.log(type, data);
+                const message = translate(type);
+                console.log(message);
+                doDispatch(getStatus(action, STATUS_LOG), message);
+            }
+        };
+    };
     setDispatch(dispatch);
     signup = new Signup();
-    signup.setLogger({
-        log: (type, data) => {
-            console.log(type, data);
-            const message = translate(type);
-            console.log(message);
-            doDispatch(getStatus(ACTION_SIGNUP, STATUS_LOG), message);
-        }
-    })
+    signin = new Signin();
+    signup.setLogger(getLogger(ACTION_SIGNUP));
+    signin.setLogger(getLogger(ACTION_SIGNIN));
     /*checkLocalCredentials();*/
 };
 
@@ -54,7 +61,7 @@ export const getDispatch = () => {
 
 export const signIn = async (method, data = {}) => {
     return callMethod(ACTION_SIGNIN, async () => {
-        return await signup.signIn(method, data);
+        return await signin.signIn(method, data);
     });
 };
 

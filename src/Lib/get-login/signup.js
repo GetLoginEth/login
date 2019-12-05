@@ -5,7 +5,7 @@ import {
     CODE_USERNAME_ALREADY_REGISTERED,
     LoginError
 } from "./login-error";
-import {INVITE_LENGTH} from "./utils";
+import {INVITE_LENGTH, sleep} from "./utils";
 import Logger from "./logger";
 
 export const LOG_SIGN_UP_CHECK_FUNDS = 'sign_up_check_funds';
@@ -32,21 +32,6 @@ export default class Signup extends Logger {
 
     async createInvite() {
 
-    }
-
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async getUsernameHash(username) {
-        // todo implement
-        return 'hash_of_' + username;
-    }
-
-    async isUsernameRegistered(username) {
-        // todo implement
-        //const usernameHash = await this.getUsernameHash(username);
-        return username === 'admin';
     }
 
     async isCorrectInvite(invite) {
@@ -88,22 +73,22 @@ export default class Signup extends Logger {
         }
 
         this.log(LOG_SIGN_UP_CHECK_FUNDS);
-        await this.sleep(1000);
+        await sleep(1000);
 
         if (!await this.isEnoughFundsRegistration(invite)) {
             throw new LoginError(CODE_NOT_ENOUGH_FUNDS);
         }
 
         this.log(LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE);
-        await this.sleep(1000);
+        await sleep(1000);
         const fundedWallet = await this._createWalletFromInvite(invite);
 
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
-        await this.sleep(1000);
+        await sleep(1000);
         const newWallet = await this._createWallet(password);
 
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
-        await this.sleep(1000);
+        await sleep(1000);
         const accountTransaction = this._createAccountFromWallet(username, fundedWallet, newWallet);
 
         return {
@@ -116,7 +101,7 @@ export default class Signup extends Logger {
         let result = null;
 
         this.log(LOG_SIGN_UP_CHECK_USERNAME);
-        await this.sleep(1000);
+        await sleep(1000);
         if (await this.isUsernameRegistered(username)) {
             throw new LoginError(CODE_USERNAME_ALREADY_REGISTERED);
         }

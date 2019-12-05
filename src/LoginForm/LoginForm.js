@@ -4,7 +4,8 @@ import './LoginForm.css';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {signIn} from "../reducers/actions";
-import {SIGN_IN_LOGIN_PASSWORD} from "../Lib/get-login/signin";
+import {SIGN_IN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
+import {useStateValue} from "../reducers/state";
 
 /*const fakeAuth = {
     isAuthenticated: false,
@@ -38,6 +39,7 @@ import {SIGN_IN_LOGIN_PASSWORD} from "../Lib/get-login/signin";
 }*/
 
 function LoginForm() {
+    const {state: {signin}} = useStateValue();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const isDisabled = () => {
@@ -56,25 +58,29 @@ function LoginForm() {
     return (
         <div className="row justify-content-center align-items-center">
             <Form className="LoginForm col-md-4">
-                <h1>Sign in</h1>
+                <fieldset disabled={signin.inProcess}>
+                    <h1>Sign in</h1>
 
-                <Form.Group controlId="formBasicEmail">
-                    <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}
-                                  value={username}/>
-                </Form.Group>
+                    <Form.Group controlId="formBasicEmail">
+                        <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}
+                                      value={username}/>
+                    </Form.Group>
 
-                <Form.Group controlId="formBasicPassword">
-                    <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}
-                                  value={password}/>
-                </Form.Group>
-                {/*<Form.Group controlId="formBasicCheckbox">
-                    <Form.Check type="checkbox" label="Check me out" />
-                </Form.Group>*/}
-                <Button className="btn-block"
-                        disabled={isDisabled()}
-                        onClick={() => signIn(SIGN_IN_LOGIN_PASSWORD, username, password)}>
-                    Sign in
-                </Button>
+                    <Form.Group controlId="formBasicPassword">
+                        <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}
+                                      value={password}/>
+                    </Form.Group>
+
+                    <Button className="btn-block"
+                            disabled={isDisabled()}
+                            onClick={() => signIn(SIGN_IN_USERNAME_PASSWORD, username, password)}>
+                        Sign in
+                    </Button>
+                    {signin.log.length > 0 && <details className="mt-2">
+                        <summary>{signin.status}</summary>
+                        {signin.log.map((item, index) => <p key={index}>{item}</p>)}
+                    </details>}
+                </fieldset>
             </Form>
         </div>
     );

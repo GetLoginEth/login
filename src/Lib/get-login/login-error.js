@@ -18,9 +18,9 @@ export class LoginError extends Error {
     }
 }
 
-export const throwLoginError = (code) => {
+/*export const throwLoginError = (code) => {
     throw new LoginError(code);
-};
+};*/
 
 export const CODE_NOT_DEFINED = -1;
 export const CODE_USERNAME_ALREADY_REGISTERED = 1;
@@ -30,6 +30,7 @@ export const CODE_NOT_IMPLEMENTED = 4;
 export const CODE_EMPTY_METHOD_PARAM = 5;
 export const CODE_INCORRECT_INVITE = 6;
 export const CODE_NOT_ENOUGH_FUNDS = 7;
+export const CODE_INCORRECT_DATA = 9;
 
 export const CODE_MESSAGES = {
     [CODE_NOT_DEFINED]: 'Not defined',
@@ -37,6 +38,10 @@ export const CODE_MESSAGES = {
     [CODE_UNKNOWN_METHOD]: 'Unknown method',
     [CODE_EMPTY_RESULT]: 'Empty result',
     [CODE_NOT_IMPLEMENTED]: 'Not implemented',
+    [CODE_EMPTY_METHOD_PARAM]: 'Empty method params',
+    [CODE_INCORRECT_INVITE]: 'Incorrect invite',
+    [CODE_NOT_ENOUGH_FUNDS]: 'Not enough funds',
+    [CODE_INCORRECT_DATA]: 'Incorrect data',
 };
 
 export const RESULT_OK = 'ok';

@@ -10,18 +10,37 @@ export const reducer = (state, action) => {
     switch (action.type) {
         case getStatus(ACTION_CHECK_CREDENTIALS, STATUS_SUCCESS):
             return merge('user', action.data);
+
+        case getStatus(ACTION_SIGNIN, STATUS_START):
+            data = {log: [], status: '', inProcess: true};
+            return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_LOGGED});
+        case getStatus(ACTION_SIGNIN, STATUS_COMPLETE):
+            data = 'Sign in complete!';
+            data = {log: [...state.signin.log, data], status: data, inProcess: false};
+            return merge('signin', data);
+        case getStatus(ACTION_SIGNIN, STATUS_LOG):
+            data = {log: [...state.signin.log, action.data], status: action.data, inProcess: true};
+            return merge('signin', data);
 
         case getStatus(ACTION_SIGNUP, STATUS_START):
             data = {log: [], status: '', inProcess: true};
             return merge('signup', data);
+        /*case getStatus(ACTION_SIGNUP, STATUS_FAIL):
+            data = { inProcess: false};
+            return merge('signup', data);
+        case getStatus(ACTION_SIGNUP, STATUS_SUCCESS):
+            data = {inProcess: false};
+            return merge('signup', data);*/
         case getStatus(ACTION_SIGNUP, STATUS_COMPLETE):
-            data = {log: [], status: '', inProcess: false};
+            data = 'Signup complete!';
+            data = {log: [...state.signup.log, data], status: data, inProcess: false};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_LOG):
             data = {log: [...state.signup.log, action.data], status: action.data, inProcess: true};
             return merge('signup', data);
+
         case getStatus(ACTION_LOGOUT, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_NOT_LOGGED});
         default:
@@ -40,6 +59,11 @@ export const initialState = {
         status: USER_STATUS_NOT_LOGGED
     },
     signup: {
+        inProcess: false,
+        status: '',
+        log: []
+    },
+    signin: {
         inProcess: false,
         status: '',
         log: []
