@@ -21,7 +21,7 @@ export const isUsernameRegistered = async (username) => {
     return usernameHash ? username === 'admin' : false;
 };
 
-export const validateLength = async (data, type, minLength, maxLength) => {
+export const validateLength = (data, type, minLength, maxLength) => {
     if (typeof data !== type) {
         throw new LoginError(CODE_INCORRECT_DATA);
     }
@@ -35,12 +35,12 @@ export const validateLength = async (data, type, minLength, maxLength) => {
     return true;
 };
 
-export const validateUsername = async (data) => {
-    return await validateLength(data, 'string', USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH);
+export const validateUsername = (data) => {
+    return validateLength(data, 'string', USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH);
 };
 
-export const validatePassword = async (data) => {
-    return await validateLength(data, 'string', PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH);
+export const validatePassword = (data) => {
+    return validateLength(data, 'string', PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH);
 };
 
 export default class Utils {

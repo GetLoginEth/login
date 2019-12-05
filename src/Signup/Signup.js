@@ -8,6 +8,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import {SIGN_UP_INVITE, SIGN_UP_TREZOR, SIGN_UP_WEB3} from "../Lib/get-login/signup";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
+import {INVITE_LENGTH} from "../Lib/get-login/utils";
 
 function Signup() {
     const {state: {signup}} = useStateValue();
@@ -30,9 +31,11 @@ function Signup() {
         }
     }, []);
     const isCorrectInvite = (invite) => {
-        return invite.length === 32;
+        // todo move check to utils
+        return invite.length === INVITE_LENGTH;
     };
     const isDisabled = () => {
+        // todo copy username password validation from sign in
         return username.length < 3 || password.length < 3 || (invite.length > 0 && !isCorrectInvite(invite)) || signup.inProcess;
     };
     const onDropDownChange = (item) => {

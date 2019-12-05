@@ -7,44 +7,23 @@ import {signIn} from "../reducers/actions";
 import {SIGN_IN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
-
-/*const fakeAuth = {
-    isAuthenticated: false,
-    authenticate(cb) {
-        fakeAuth.isAuthenticated = true;
-        setTimeout(cb, 100); // fake async
-    },
-    signout(cb) {
-        fakeAuth.isAuthenticated = false;
-        setTimeout(cb, 100);
-    }
-};*/
-
-/*function AuthButton() {
-    let history = useHistory();
-
-    return fakeAuth.isAuthenticated ? (
-        <p>
-            Welcome!{" "}
-            <button
-                onClick={() => {
-                    fakeAuth.signout(() => history.push("/"));
-                }}
-            >
-                Sign out
-            </button>
-        </p>
-    ) : (
-        <p>You are not logged in.</p>
-    );
-}*/
+import {validatePassword, validateUsername} from "../Lib/get-login/utils";
 
 function Signin() {
     const {state: {signin}} = useStateValue();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const isDisabled = () => {
-        return username.length < 3 || password.length < 3
+        let result = true;
+        try {
+            validateUsername(username);
+            validatePassword(password);
+            result = false;
+        } catch (e) {
+
+        }
+
+        return result;
     };
     /*let history = useHistory();
     let location = useLocation();
