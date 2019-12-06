@@ -47,6 +47,10 @@ function Signin() {
                 <fieldset disabled={signin.inProcess}>
                     <h1>Sign In / <Link to="/signup">Sign up</Link></h1>
 
+                    {signin.errorMessage && <div className="alert alert-danger" role="alert">
+                        {signin.errorMessage}
+                    </div>}
+
                     <Form.Group controlId="formBasicEmail">
                         <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}
                                       value={username}/>

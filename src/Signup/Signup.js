@@ -9,7 +9,8 @@ import {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
 import {INVITE_LENGTH, LOGIN_TREZOR, LOGIN_WEB3} from "../Lib/get-login/utils";
-import {ACTION_SIGNIN, ACTION_SIGNUP} from "../reducers/mainReducer";
+import {ACTION_SIGNUP} from "../reducers/mainReducer";
+import useForm from "react-hook-form";
 
 function Signup() {
     const {state: {signup}} = useStateValue();
@@ -23,6 +24,8 @@ function Signup() {
         {key: LOGIN_TREZOR, title: 'Trezor'}
     ];
 
+    //console.log(errors);
+
     useEffect(() => {
         initPage(ACTION_SIGNUP);
 
@@ -34,6 +37,12 @@ function Signup() {
             setMethod(LOGIN_WEB3);
         }
     }, []);
+
+    const onSubmit = async data => {
+        data.preventDefault();
+
+        await signUp(method, username, password, invite);
+    };
 
     const isCorrectInvite = (invite) => {
         // todo move check to utils
@@ -57,31 +66,48 @@ function Signup() {
 
     return (
         <div className="row justify-content-center align-items-center">
-            <Form className="Signup col-md-4">
+            <Form className="Signup col-md-4" onSubmit={onSubmit}>
                 <fieldset disabled={signup.inProcess}>
                     <h1>Sign up / <Link to="/login">Sign In</Link></h1>
 
+                    {signup.errorMessage && <div className="alert alert-danger" role="alert">
+                        {signup.errorMessage}
+                    </div>}
+
                     <Form.Group controlId="formBasicEmail">
-                        <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}
-                                      value={username}/>
+                        <Form.Control type="text"
+                                      name="username"
+                                      placeholder="Username"
+                                      onChange={e => setUsername(e.target.value)}
+                                      value={username}
+                            /*ref={register}*//>
                     </Form.Group>
 
                     <Form.Group controlId="formBasicPassword">
-                        <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}
-                                      value={password}/>
+                        <Form.Control type="password"
+                                      name="password"
+                                      placeholder="Password"
+                                      onChange={e => setPassword(e.target.value)}
+                                      value={password}
+                            /*ref={register}*//>
                     </Form.Group>
 
                     <Form.Group controlId="formInvite" className={(method === SIGN_UP_INVITE) ? "" : "d-none"}>
-                        <Form.Control type="text" placeholder="Invite" onChange={e => setInvite(e.target.value)}
-                                      value={invite}/>
+                        <Form.Control type="text"
+                                      name="invite"
+                                      placeholder="Invite"
+                                      onChange={e => setInvite(e.target.value)}
+                                      value={invite}
+                            /*ref={register}*//>
                     </Form.Group>
 
 
                     <Dropdown as={ButtonGroup} className="btn-block">
                         <Button variant="primary"
+                                type="submit"
                                 className="col-md-10"
                                 disabled={isDisabled()}
-                                onClick={() => signUp(method, username, password, invite)}>
+                        >
                             {signup.inProcess &&
                             <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"/>}
                             Sign up with {getDropDownTitle(method)}</Button>

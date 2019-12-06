@@ -16,6 +16,7 @@ export const translation = {
     [LOG_LOG_IN_CHECK_USERNAME]: 'Check username',
     [LOG_LOG_IN_RECEIVE_WALLET]: 'Receive wallet',
 };
+
 export const translate = (message) => {
     console.log(message, translation[message]);
     return translation[message] ? translation[message] : message;

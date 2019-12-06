@@ -1,6 +1,12 @@
 import Logger from "./logger";
-import {CODE_EMPTY_RESULT, CODE_NOT_IMPLEMENTED, CODE_UNKNOWN_METHOD, LoginError} from "./login-error";
-import {validatePassword, validateUsername, sleep, LOGIN_TREZOR} from "./utils";
+import {
+    CODE_EMPTY_RESULT,
+    CODE_NOT_IMPLEMENTED,
+    CODE_UNKNOWN_METHOD,
+    CODE_USERNAME_ALREADY_REGISTERED, CODE_USERNAME_NOT_FOUND,
+    LoginError
+} from "./login-error";
+import {validatePassword, validateUsername, sleep, LOGIN_TREZOR, isUsernameRegistered} from "./utils";
 
 export const LOG_LOG_IN_CHECK_USERNAME = 'log_in_check_username';
 export const LOG_LOG_IN_RECEIVE_WALLET = 'log_in_receive_wallet';
@@ -14,6 +20,10 @@ export default class Signin extends Logger {
         await sleep(1000);
         await validateUsername(username);
         await validatePassword(password);
+
+        if (!await isUsernameRegistered(username)) {
+            throw new LoginError(CODE_USERNAME_NOT_FOUND);
+        }
 
         this.log(LOG_LOG_IN_RECEIVE_WALLET);
         await sleep(1000);

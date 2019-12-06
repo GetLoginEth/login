@@ -12,36 +12,39 @@ export const reducer = (state, action) => {
             return merge('user', action.data);
 
         case getStatus(ACTION_SIGNIN, STATUS_INIT):
-            data = {log: [], status: '', inProcess: false};
+            data = {log: [], status: '', inProcess: false, errorMessage: ''};
             return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_START):
-            data = {log: [], status: '', inProcess: true};
+            data = {log: [], status: '', inProcess: true, errorMessage: ''};
+            return merge('signin', data);
+        case getStatus(ACTION_SIGNIN, STATUS_FAIL):
+            data = {inProcess: false, errorMessage: action.data};
             return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_LOGGED});
         case getStatus(ACTION_SIGNIN, STATUS_COMPLETE):
-            data = 'Sign in complete!';
-            data = {log: [...state.signin.log, data], status: data, inProcess: false};
+            /*data = 'Sign in complete!';*/
+            data = {/*log: [...state.signin.log, data], status: data,*/ inProcess: false};
             return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_LOG):
             data = {log: [...state.signin.log, action.data], status: action.data, inProcess: true};
             return merge('signin', data);
 
         case getStatus(ACTION_SIGNUP, STATUS_INIT):
-            data = {log: [], status: '', inProcess: false};
+            data = {log: [], status: '', inProcess: false, errorMessage: ''};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_START):
-            data = {log: [], status: '', inProcess: true};
+            data = {log: [], status: '', inProcess: true, errorMessage: ''};
             return merge('signup', data);
-        /*case getStatus(ACTION_SIGNUP, STATUS_FAIL):
-            data = { inProcess: false};
+        case getStatus(ACTION_SIGNUP, STATUS_FAIL):
+            data = {inProcess: false, errorMessage: action.data};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_SUCCESS):
             data = {inProcess: false};
-            return merge('signup', data);*/
+            return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_COMPLETE):
-            data = 'Signup complete!';
-            data = {log: [...state.signup.log, data], status: data, inProcess: false};
+            /*data = 'Signup complete!';*/
+            data = {/*log: [...state.signup.log, data], status: data, */inProcess: false};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_LOG):
             data = {log: [...state.signup.log, action.data], status: action.data, inProcess: true};
@@ -67,12 +70,14 @@ export const initialState = {
     signup: {
         inProcess: false,
         status: '',
-        log: []
+        log: [],
+        errorMessage: ''
     },
     signin: {
         inProcess: false,
         status: '',
-        log: []
+        log: [],
+        errorMessage: ''
     }
 };
 
