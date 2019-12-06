@@ -4,7 +4,7 @@ import {
     ACTION_SIGNUP,
     getStatus,
     STATUS_COMPLETE,
-    STATUS_FAIL,
+    STATUS_FAIL, STATUS_INIT,
     STATUS_LOG,
     STATUS_START,
     STATUS_SUCCESS
@@ -89,6 +89,10 @@ export const logoutLocal = () => {
         console.log('Logout here');
         //return await getLogin.signUp(method, username, password, invite);
     });
+};
+
+export const initPage = (pageAction) => {
+    doDispatch(getStatus(pageAction, STATUS_INIT));
 };
 
 export const callMethod = async (actionName, func) => {

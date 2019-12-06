@@ -1,18 +1,24 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './Signin.css';
 //import {useHistory, useLocation} from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import {signIn} from "../reducers/actions";
+import {initPage, signIn} from "../reducers/actions";
 import {LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
 import {validatePassword, validateUsername} from "../Lib/get-login/utils";
+import {ACTION_SIGNIN} from "../reducers/mainReducer";
 
 function Signin() {
     const {state: {signin}} = useStateValue();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        initPage(ACTION_SIGNIN);
+    }, []);
+
     const isDisabled = () => {
         let result = true;
         try {

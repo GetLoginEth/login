@@ -11,6 +11,9 @@ export const reducer = (state, action) => {
         case getStatus(ACTION_CHECK_CREDENTIALS, STATUS_SUCCESS):
             return merge('user', action.data);
 
+        case getStatus(ACTION_SIGNIN, STATUS_INIT):
+            data = {log: [], status: '', inProcess: false};
+            return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_START):
             data = {log: [], status: '', inProcess: true};
             return merge('signin', data);
@@ -24,6 +27,9 @@ export const reducer = (state, action) => {
             data = {log: [...state.signin.log, action.data], status: action.data, inProcess: true};
             return merge('signin', data);
 
+        case getStatus(ACTION_SIGNUP, STATUS_INIT):
+            data = {log: [], status: '', inProcess: false};
+            return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_START):
             data = {log: [], status: '', inProcess: true};
             return merge('signup', data);
@@ -70,6 +76,7 @@ export const initialState = {
     }
 };
 
+export const STATUS_INIT = 'init';
 export const STATUS_START = 'start';
 export const STATUS_SUCCESS = 'success';
 export const STATUS_FAIL = 'fail';

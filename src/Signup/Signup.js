@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './Signup.css';
 import Button from "react-bootstrap/Button";
-import {signUp} from "../reducers/actions";
+import {initPage, signUp} from "../reducers/actions";
 import Form from "react-bootstrap/Form";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -9,6 +9,7 @@ import {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
 import {INVITE_LENGTH, LOGIN_TREZOR, LOGIN_WEB3} from "../Lib/get-login/utils";
+import {ACTION_SIGNIN, ACTION_SIGNUP} from "../reducers/mainReducer";
 
 function Signup() {
     const {state: {signup}} = useStateValue();
@@ -21,7 +22,10 @@ function Signup() {
         {key: LOGIN_WEB3, title: 'Web3'},
         {key: LOGIN_TREZOR, title: 'Trezor'}
     ];
+
     useEffect(() => {
+        initPage(ACTION_SIGNUP);
+
         const invite = window.location.hash.replace('#', '');
         if (isCorrectInvite(invite)) {
             setInvite(invite);
@@ -30,6 +34,7 @@ function Signup() {
             setMethod(LOGIN_WEB3);
         }
     }, []);
+
     const isCorrectInvite = (invite) => {
         // todo move check to utils
         return invite.length === INVITE_LENGTH;
