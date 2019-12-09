@@ -77,6 +77,7 @@ export const signUp = async (method, username, password = '', invite = '') => {
             method = LOGIN_DATA;
         }
 
+        setUserData(username, result.newWallet.address, result.newWallet);
         await signIn(method, username, password, result.newWallet);
     }
 
@@ -87,7 +88,24 @@ export const logoutLocal = () => {
     return callMethod(ACTION_LOGOUT, async () => {
         console.log('Logout here');
         //return await getLogin.signUp(method, username, password, invite);
+        return setUserData(null, null, null);
     });
+};
+
+export const setUserData = (username, address, wallet) => {
+    localStorage.setItem('username', username);
+    localStorage.setItem('address', address);
+    localStorage.setItem('wallet', wallet);
+
+    return true;
+};
+
+export const getUserData = () => {
+    const username = localStorage.getItem('username');
+    const address = localStorage.getItem('address');
+    const wallet = localStorage.getItem('wallet');
+
+    return {username, address, wallet};
 };
 
 export const initPage = (pageAction) => {

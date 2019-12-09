@@ -47,7 +47,8 @@ export default class Signup extends Logger {
         // todo implement
         return {
             some: 'wallet',
-            data: 'fwef23'
+            data: 'fwef23',
+            address: '0xaaaaa8a77aa67a',
         }
     }
 
