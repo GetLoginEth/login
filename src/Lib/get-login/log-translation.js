@@ -5,7 +5,13 @@ import {
     LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE,
     LOG_SIGN_UP_USER_REGISTRATION
 } from "./signup";
-import {LOG_LOG_IN_CHECK_USERNAME, LOG_LOG_IN_RECEIVE_WALLET} from "./signin";
+import {
+    LOG_LOG_IN_CHECK_PASSWORD,
+    LOG_LOG_IN_CHECK_USERNAME,
+    LOG_LOG_IN_CHECK_WALLET,
+    LOG_LOG_IN_DECODE_WALLET,
+    LOG_LOG_IN_RECEIVE_WALLET
+} from "./signin";
 
 export const translation = {
     [LOG_SIGN_UP_CHECK_FUNDS]: 'Check funds',
@@ -15,6 +21,9 @@ export const translation = {
     [LOG_SIGN_UP_USER_REGISTRATION]: 'User registration',
     [LOG_LOG_IN_CHECK_USERNAME]: 'Check username',
     [LOG_LOG_IN_RECEIVE_WALLET]: 'Receive wallet',
+    [LOG_LOG_IN_CHECK_WALLET]: 'Check wallet',
+    [LOG_LOG_IN_DECODE_WALLET]: 'Decode wallet',
+    [LOG_LOG_IN_CHECK_PASSWORD]: 'Check password',
 };
 
 export const translate = (message) => {

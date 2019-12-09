@@ -7,6 +7,7 @@ import {
 } from "./login-error";
 import {INVITE_LENGTH, isUsernameRegistered, LOGIN_TREZOR, LOGIN_WEB3, sleep} from "./utils";
 import Logger from "./logger";
+import {IInviteRegistration} from "./interfaces";
 
 export const LOG_SIGN_UP_CHECK_FUNDS = 'sign_up_check_funds';
 export const LOG_SIGN_UP_CHECK_USERNAME = 'sign_up_check_username';
@@ -65,6 +66,14 @@ export default class Signup extends Logger {
         };
     }
 
+    /**
+     *
+     * @param username
+     * @param password
+     * @param invite
+     * @returns {Promise<IInviteRegistration>}
+     * @private
+     */
     async _signUpInvite(username, password, invite) {
         if (!await this.isCorrectInvite(invite)) {
             throw new LoginError(CODE_INCORRECT_INVITE);
@@ -73,13 +82,13 @@ export default class Signup extends Logger {
         this.log(LOG_SIGN_UP_CHECK_FUNDS);
         await sleep(1000);
 
-        if (!await this.isEnoughFundsRegistration(invite)) {
-            throw new LoginError(CODE_NOT_ENOUGH_FUNDS);
-        }
-
         this.log(LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE);
         await sleep(1000);
         const fundedWallet = await this._createWalletFromInvite(invite);
+
+        if (!await this.isEnoughFundsRegistration(fundedWallet.address)) {
+            throw new LoginError(CODE_NOT_ENOUGH_FUNDS);
+        }
 
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
         await sleep(1000);
@@ -87,14 +96,19 @@ export default class Signup extends Logger {
 
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
         await sleep(1000);
-        const accountTransaction = this._createAccountFromWallet(username, fundedWallet, newWallet);
+        const registrationTransaction = this._createAccountFromWallet(username, fundedWallet, newWallet);
 
-        return {
-            walletData: newWallet,
-            accountTransaction
-        };
+        return new IInviteRegistration(newWallet, registrationTransaction);
     }
 
+    /**
+     *
+     * @param method
+     * @param username
+     * @param password
+     * @param invite
+     * @returns {Promise<IInviteRegistration>}
+     */
     async signUp(method, username, password = '', invite = '') {
         let result = null;
 

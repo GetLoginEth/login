@@ -10,7 +10,7 @@ import {
     STATUS_SUCCESS
 } from "./mainReducer";
 import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
-import Signin, {LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
+import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
 
@@ -67,18 +67,16 @@ export const signIn = async (method, ...data) => {
 };
 
 export const signUp = async (method, username, password = '', invite = '') => {
+    /** @type {IInviteRegistration} */
     const result = await callMethod(ACTION_SIGNUP, async () => {
         return await signup.signUp(method, username, password, invite);
     });
     if (result && [SIGN_UP_INVITE/*, LOGIN_WEB3, LOGIN_TREZOR*/].includes(method)) {
         if (method === SIGN_UP_INVITE) {
-            method = LOGIN_USERNAME_PASSWORD;
+            method = LOGIN_DATA;
         }
 
-        // todo use signin with local data for faster auth
-        // display auth log (if fast - not display)
-        // todo display errors
-        await signIn(method, username, password);
+        await signIn(method, username, password, result.newWallet);
     }
 
     return result;

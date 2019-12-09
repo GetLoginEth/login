@@ -6,19 +6,23 @@ import {
     CODE_USERNAME_ALREADY_REGISTERED, CODE_USERNAME_NOT_FOUND,
     LoginError
 } from "./login-error";
-import {validatePassword, validateUsername, sleep, LOGIN_TREZOR, isUsernameRegistered} from "./utils";
+import {validatePassword, validateUsername, sleep, LOGIN_TREZOR, isUsernameRegistered, validateWallet} from "./utils";
 
 export const LOG_LOG_IN_CHECK_USERNAME = 'log_in_check_username';
 export const LOG_LOG_IN_RECEIVE_WALLET = 'log_in_receive_wallet';
+export const LOG_LOG_IN_CHECK_PASSWORD = 'log_in_check_password';
+export const LOG_LOG_IN_CHECK_WALLET = 'log_in_check_wallet';
+export const LOG_LOG_IN_DECODE_WALLET = 'log_in_decode_wallet';
 
 export const LOGIN_USERNAME_PASSWORD = 'login_username_password';
-export const LOGIN_BROWSER_DATA = 'login_browser_data';
+export const LOGIN_DATA = 'login_data';
 
 export default class Signin extends Logger {
     async _signInUsernamePassword(username, password) {
         this.log(LOG_LOG_IN_CHECK_USERNAME);
         await sleep(1000);
         await validateUsername(username);
+        this.log(LOG_LOG_IN_CHECK_PASSWORD);
         await validatePassword(password);
 
         if (!await isUsernameRegistered(username)) {
@@ -27,6 +31,24 @@ export default class Signin extends Logger {
 
         this.log(LOG_LOG_IN_RECEIVE_WALLET);
         await sleep(1000);
+
+        return true;
+    }
+
+    async _signInWalletPassword(username, password, wallet) {
+        this.log(LOG_LOG_IN_CHECK_USERNAME);
+        await validateUsername(username);
+        this.log(LOG_LOG_IN_CHECK_PASSWORD);
+        await validatePassword(password);
+        this.log(LOG_LOG_IN_CHECK_WALLET);
+        await validateWallet(password);
+
+        // todo fast check is wallet associated with username?
+        // todo try to decode wallet with password
+
+        /*if (!await isUsernameRegistered(username)) {
+            throw new LoginError(CODE_USERNAME_NOT_FOUND);
+        }*/
 
         return true;
     }
@@ -44,8 +66,10 @@ export default class Signin extends Logger {
             case LOGIN_USERNAME_PASSWORD:
                 result = await this._signInUsernamePassword(...data);
                 break;
-            case LOGIN_BROWSER_DATA:
-                throw new LoginError(CODE_NOT_IMPLEMENTED);
+            case LOGIN_DATA:
+                console.log(data);
+                result = await this._signInWalletPassword(...data);
+                break;
             case LOGIN_TREZOR:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
             default:

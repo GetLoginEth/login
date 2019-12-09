@@ -46,6 +46,18 @@ export const validatePassword = (data) => {
     return validateLength(data, 'string', PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH);
 };
 
+export const validateWallet = (data) => {
+    if (typeof data !== 'object') {
+        throw new LoginError(CODE_INCORRECT_DATA);
+    }
+
+    /*if(data.hasAttribute('---')){
+
+    }*/
+
+    return true;
+};
+
 export default class Utils {
 
 }
