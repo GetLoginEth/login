@@ -4,13 +4,14 @@ import {
     ACTION_SIGNUP,
     getStatus,
     STATUS_COMPLETE,
-    STATUS_FAIL, STATUS_INIT,
+    STATUS_FAIL,
+    STATUS_INIT,
     STATUS_LOG,
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
 import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
-import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
+import Signin, {LOGIN_DATA} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
 

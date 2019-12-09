@@ -10,7 +10,6 @@ import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
 import {INVITE_LENGTH, LOGIN_TREZOR, LOGIN_WEB3} from "../Lib/get-login/utils";
 import {ACTION_SIGNUP} from "../reducers/mainReducer";
-import useForm from "react-hook-form";
 
 function Signup() {
     const {state: {signup}} = useStateValue();

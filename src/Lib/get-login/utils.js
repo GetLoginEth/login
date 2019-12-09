@@ -24,6 +24,14 @@ export const isUsernameRegistered = async (username) => {
     return usernameHash ? username === 'admin' : false;
 };
 
+export const decodeWallet = async (wallet, password) => {
+    // todo implement
+    await validateWallet(wallet);
+    await validatePassword(password);
+
+    return true;
+};
+
 export const validateLength = (data, type, minLength, maxLength) => {
     if (typeof data !== type) {
         throw new LoginError(CODE_INCORRECT_DATA);
@@ -57,7 +65,3 @@ export const validateWallet = (data) => {
 
     return true;
 };
-
-export default class Utils {
-
-}

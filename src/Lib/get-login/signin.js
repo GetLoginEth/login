@@ -3,10 +3,10 @@ import {
     CODE_EMPTY_RESULT,
     CODE_NOT_IMPLEMENTED,
     CODE_UNKNOWN_METHOD,
-    CODE_USERNAME_ALREADY_REGISTERED, CODE_USERNAME_NOT_FOUND,
+    CODE_USERNAME_NOT_FOUND,
     LoginError
 } from "./login-error";
-import {validatePassword, validateUsername, sleep, LOGIN_TREZOR, isUsernameRegistered, validateWallet} from "./utils";
+import {decodeWallet, isUsernameRegistered, LOGIN_TREZOR, sleep, validatePassword, validateUsername} from "./utils";
 
 export const LOG_LOG_IN_CHECK_USERNAME = 'log_in_check_username';
 export const LOG_LOG_IN_RECEIVE_WALLET = 'log_in_receive_wallet';
@@ -18,6 +18,13 @@ export const LOGIN_USERNAME_PASSWORD = 'login_username_password';
 export const LOGIN_DATA = 'login_data';
 
 export default class Signin extends Logger {
+    /**
+     *
+     * @param username
+     * @param password
+     * @returns {Promise<boolean>}
+     * @private
+     */
     async _signInUsernamePassword(username, password) {
         this.log(LOG_LOG_IN_CHECK_USERNAME);
         await sleep(1000);
@@ -35,13 +42,19 @@ export default class Signin extends Logger {
         return true;
     }
 
+    /**
+     *
+     * @param username
+     * @param password
+     * @param wallet
+     * @returns {Promise<boolean>}
+     * @private
+     */
     async _signInWalletPassword(username, password, wallet) {
         this.log(LOG_LOG_IN_CHECK_USERNAME);
         await validateUsername(username);
-        this.log(LOG_LOG_IN_CHECK_PASSWORD);
-        await validatePassword(password);
-        this.log(LOG_LOG_IN_CHECK_WALLET);
-        await validateWallet(password);
+        this.log(LOG_LOG_IN_DECODE_WALLET);
+        await decodeWallet(wallet, password);
 
         // todo fast check is wallet associated with username?
         // todo try to decode wallet with password
@@ -54,10 +67,10 @@ export default class Signin extends Logger {
     }
 
     /**
-     * Sign in user
+     *
      * @param method
      * @param data
-     * @returns {Promise<void>}
+     * @returns {Promise<boolean>}
      */
     async signIn(method, ...data) {
         let result = null;
