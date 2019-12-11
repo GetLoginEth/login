@@ -4,7 +4,7 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import {Link} from "react-router-dom";
 
-function Header({isLoggedIn, isCheckingAuth}) {
+function Header({isLoggedIn, isCheckingAuth, username}) {
     return (
         <header>
             <Navbar bg="light" expand="lg">
@@ -26,7 +26,7 @@ function Header({isLoggedIn, isCheckingAuth}) {
 
                     {!isCheckingAuth && <Nav className="ml-auto">
                         {!isLoggedIn && <Link className="nav-link float-right" to="/login">Sign In</Link>}
-                        {isLoggedIn && <Link className="nav-link float-right" to="/logout">Logout</Link>}
+                        {isLoggedIn && <Link className="nav-link float-right" to="/logout">Logout ({username})</Link>}
                     </Nav>}
                     {/*<Form inline>
                         <FormControl type="text" placeholder="Search" className="mr-sm-2"/>

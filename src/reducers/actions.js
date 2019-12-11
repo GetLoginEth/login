@@ -50,7 +50,7 @@ export const checkLocalCredentials = async () => {
         const data = getUserData();
         await validateUserData(data);
 
-        return true;
+        return {username: data.username};
     });
 };
 
@@ -69,6 +69,8 @@ export const signIn = async (method, username, ...data) => {
         setUserData(username, {
             some_wallet: 'info'
         });
+
+        return {username};
     });
 };
 

@@ -62,7 +62,8 @@ class App extends Component {
                     {({state}) => {
                         //console.log(state);
                         return <Router>
-                            <Header isLoggedIn={state.user.isLoggedIn()} isCheckingAuth={state.user.isCheckingAuth()}/>
+                            <Header isLoggedIn={state.user.isLoggedIn()} isCheckingAuth={state.user.isCheckingAuth()}
+                                    username={state.user.username}/>
                             <main role="main">
                                 <div className="container">
                                     <Suspense fallback={<Spinner/>}>

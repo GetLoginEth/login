@@ -11,7 +11,7 @@ export const reducer = (state, action) => {
         case getStatus(ACTION_LOCAL_AUTH, STATUS_START):
             return merge('user', {status: USER_STATUS_CHECKING});
         case getStatus(ACTION_LOCAL_AUTH, STATUS_SUCCESS):
-            return merge('user', {status: USER_STATUS_LOGGED});
+            return merge('user', {status: USER_STATUS_LOGGED, ...action.data});
         case getStatus(ACTION_LOCAL_AUTH, STATUS_FAIL):
             return merge('user', {status: USER_STATUS_NOT_LOGGED});
 
@@ -73,7 +73,8 @@ export const initialState = {
         isCheckingAuth: function () {
             return this.status === USER_STATUS_CHECKING;
         },
-        status: USER_STATUS_NOT_LOGGED
+        status: USER_STATUS_NOT_LOGGED,
+        username: ''
     },
     signup: {
         inProcess: false,
