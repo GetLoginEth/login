@@ -62,10 +62,13 @@ export const getDispatch = () => {
     return dispatch;
 };
 
-export const signIn = async (method, ...data) => {
+export const signIn = async (method, username, ...data) => {
     // todo display errors
     return callMethod(ACTION_SIGNIN, async () => {
-        return await signin.signIn(method, ...data);
+        await signin.signIn(method, username, ...data);
+        setUserData(username, {
+            some_wallet: 'info'
+        });
     });
 };
 
@@ -74,6 +77,7 @@ export const signUp = async (method, username, password = '', invite = '') => {
     const result = await callMethod(ACTION_SIGNUP, async () => {
         return await signup.signUp(method, username, password, invite);
     });
+    // todo move inside callMethod?
     if (result && [SIGN_UP_INVITE/*, LOGIN_WEB3, LOGIN_TREZOR*/].includes(method)) {
         if (method === SIGN_UP_INVITE) {
             method = LOGIN_DATA;
@@ -88,15 +92,26 @@ export const signUp = async (method, username, password = '', invite = '') => {
 
 export const logoutLocal = () => {
     return callMethod(ACTION_LOGOUT, async () => {
-        console.log('Logout here');
-        //return await getLogin.signUp(method, username, password, invite);
         return setUserData(null, null, null);
     });
 };
 
 export const setUserData = (username, wallet) => {
-    localStorage.setItem('username', username);
-    localStorage.setItem('wallet', JSON.stringify(wallet));
+    if (username) {
+        localStorage.setItem('username', username);
+    } else {
+        localStorage.removeItem('username');
+    }
+
+    if (wallet) {
+        if (typeof wallet === 'object') {
+            wallet = JSON.stringify(wallet);
+        }
+
+        localStorage.setItem('wallet', wallet);
+    } else {
+        localStorage.removeItem('wallet');
+    }
 
     return true;
 };

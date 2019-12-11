@@ -31,6 +31,11 @@ function Signin() {
 
         return result;
     };
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        signIn(LOGIN_USERNAME_PASSWORD, username, password).then();
+    };
     /*let history = useHistory();
     let location = useLocation();
 
@@ -43,7 +48,7 @@ function Signin() {
 
     return (
         <div className="row justify-content-center align-items-center">
-            <Form className="Signin col-md-4">
+            <Form className="Signin col-md-4" onSubmit={onSubmit}>
                 <fieldset disabled={signin.inProcess}>
                     <h1>Sign In / <Link to="/signup">Sign up</Link></h1>
 
@@ -62,8 +67,8 @@ function Signin() {
                     </Form.Group>
 
                     <Button className="btn-block"
-                            disabled={isDisabled()}
-                            onClick={() => signIn(LOGIN_USERNAME_PASSWORD, username, password)}>
+                            type="submit"
+                            disabled={isDisabled()}>
                         {signin.inProcess &&
                         <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"/>}
                         Sign In
