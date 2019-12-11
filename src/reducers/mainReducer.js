@@ -8,8 +8,10 @@ export const reducer = (state, action) => {
     };
     let data = {};
     switch (action.type) {
-        case getStatus(ACTION_CHECK_CREDENTIALS, STATUS_SUCCESS):
-            return merge('user', action.data);
+        /*case getStatus(ACTION_LOCAL_AUTH, STATUS_START):
+            return merge('user', action.data);*/
+        case getStatus(ACTION_LOCAL_AUTH, STATUS_SUCCESS):
+            return merge('user', {status: USER_STATUS_LOGGED});
 
         case getStatus(ACTION_SIGNIN, STATUS_INIT):
             data = {log: [], status: '', inProcess: false, errorMessage: ''};
@@ -92,7 +94,7 @@ export const getStatus = (action, status) => {
     return `${action}_${status}`;
 };
 
-export const ACTION_CHECK_CREDENTIALS = 'check_credentials';
+export const ACTION_LOCAL_AUTH = 'local_auth';
 export const ACTION_SIGNIN = 'signin';
 export const ACTION_LOGOUT = 'logout';
 export const ACTION_SIGNUP = 'signup';

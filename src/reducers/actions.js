@@ -1,4 +1,5 @@
 import {
+    ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
     ACTION_SIGNIN,
     ACTION_SIGNUP,
@@ -14,6 +15,7 @@ import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
+import {validateUserData} from "../Lib/get-login/utils";
 
 let dispatch = null;
 let signup = null;
@@ -39,18 +41,22 @@ export const init = (dispatch) => {
     signin = new Signin();
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
-    /*checkLocalCredentials();*/
+    checkLocalCredentials().then();
 };
 
-/*export const checkLocalCredentials = async () => {
-    doDispatch(ACTION_CHECK_CREDENTIALS_START);
-    const username = localStorage.getItem('username');
-    if(username){
 
-    }
+export const checkLocalCredentials = async () => {
+    return callMethod(ACTION_LOCAL_AUTH, async () => {
+        const data = getUserData();
+        try {
+            await validateUserData(data);
+        } catch (e) {
+            return false;
+        }
 
-    doDispatch(ACTION_CHECK_CREDENTIALS_SUCCESS);
-};*/
+        return true;
+    });
+};
 
 export const setDispatch = (newDispatch) => {
     dispatch = newDispatch;
@@ -77,7 +83,7 @@ export const signUp = async (method, username, password = '', invite = '') => {
             method = LOGIN_DATA;
         }
 
-        setUserData(username, result.newWallet.address, result.newWallet);
+        setUserData(username, result.newWallet);
         await signIn(method, username, password, result.newWallet);
     }
 
@@ -92,20 +98,18 @@ export const logoutLocal = () => {
     });
 };
 
-export const setUserData = (username, address, wallet) => {
+export const setUserData = (username, wallet) => {
     localStorage.setItem('username', username);
-    localStorage.setItem('address', address);
-    localStorage.setItem('wallet', wallet);
+    localStorage.setItem('wallet', JSON.stringify(wallet));
 
     return true;
 };
 
 export const getUserData = () => {
     const username = localStorage.getItem('username');
-    const address = localStorage.getItem('address');
-    const wallet = localStorage.getItem('wallet');
+    const wallet = JSON.parse(localStorage.getItem('wallet'));
 
-    return {username, address, wallet};
+    return {username, wallet};
 };
 
 export const initPage = (pageAction) => {

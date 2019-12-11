@@ -32,6 +32,13 @@ export const decodeWallet = async (wallet, password) => {
     return true;
 };
 
+export const validateUserData = async (data) => {
+    await validateWallet(data.wallet);
+    await validateUsername(data.username);
+
+    return true;
+};
+
 export const validateLength = (data, type, minLength, maxLength) => {
     if (typeof data !== type) {
         throw new LoginError(CODE_INCORRECT_DATA);
