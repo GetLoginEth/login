@@ -8,10 +8,12 @@ export const reducer = (state, action) => {
     };
     let data = {};
     switch (action.type) {
-        /*case getStatus(ACTION_LOCAL_AUTH, STATUS_START):
-            return merge('user', action.data);*/
+        case getStatus(ACTION_LOCAL_AUTH, STATUS_START):
+            return merge('user', {status: USER_STATUS_CHECKING});
         case getStatus(ACTION_LOCAL_AUTH, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_LOGGED});
+        case getStatus(ACTION_LOCAL_AUTH, STATUS_FAIL):
+            return merge('user', {status: USER_STATUS_NOT_LOGGED});
 
         case getStatus(ACTION_SIGNIN, STATUS_INIT):
             data = {log: [], status: '', inProcess: false, errorMessage: ''};
@@ -61,11 +63,15 @@ export const reducer = (state, action) => {
 
 export const USER_STATUS_NOT_LOGGED = 'not_logged';
 export const USER_STATUS_LOGGED = 'logged';
+export const USER_STATUS_CHECKING = 'checking_auth';
 
 export const initialState = {
     user: {
         isLoggedIn: function () {
             return this.status === USER_STATUS_LOGGED;
+        },
+        isCheckingAuth: function () {
+            return this.status === USER_STATUS_CHECKING;
         },
         status: USER_STATUS_NOT_LOGGED
     },

@@ -14,15 +14,26 @@ const Logout = lazy(() => import('../Logout'));
 const Privacy = lazy(() => import('../Page/Privacy'));
 const Terms = lazy(() => import('../Page/Terms'));
 
+const Spinner = () => <div className="App-loading text-center">
+    <div className="spinner-border text-success" role="status">
+        <span className="sr-only">Loading...</span>
+    </div>
+</div>;
+
+
 function PrivateRoute({children, state, ...rest}) {
     console.log(state);
     return (
         <Route
             {...rest}
-            render={({location}) =>
-                state.user.isLoggedIn() ? (children) : (
-                    <Redirect to={{pathname: "/login", state: {from: location}}}/>)
-            }
+            render={({location}) => {
+                if (state.user.isCheckingAuth()) {
+                    return <Spinner/>;
+                } else {
+                    return state.user.isLoggedIn() ? (children) : (
+                        <Redirect to={{pathname: "/login", state: {from: location}}}/>);
+                }
+            }}
         />
     );
 }
@@ -51,14 +62,10 @@ class App extends Component {
                     {({state}) => {
                         //console.log(state);
                         return <Router>
-                            <Header isLoggedIn={state.user.isLoggedIn()}/>
+                            <Header isLoggedIn={state.user.isLoggedIn()} isCheckingAuth={state.user.isCheckingAuth()}/>
                             <main role="main">
                                 <div className="container">
-                                    <Suspense fallback={<div className="App-loading text-center">
-                                        <div className="spinner-border text-light" role="status">
-                                            <span className="sr-only">Loading...</span>
-                                        </div>
-                                    </div>}>
+                                    <Suspense fallback={<Spinner/>}>
                                         <Switch>
                                             <Route exact path="/">
                                                 <Main/>
@@ -84,7 +91,7 @@ class App extends Component {
                                                 <Signup/>
                                             </LoginRoute>
 
-                                            <PrivateRoute path="/protected" state={state}>
+                                            <PrivateRoute path="/dashboard" state={state}>
                                                 <Dashboard/>
                                             </PrivateRoute>
 

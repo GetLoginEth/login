@@ -48,11 +48,7 @@ export const init = (dispatch) => {
 export const checkLocalCredentials = async () => {
     return callMethod(ACTION_LOCAL_AUTH, async () => {
         const data = getUserData();
-        try {
-            await validateUserData(data);
-        } catch (e) {
-            return false;
-        }
+        await validateUserData(data);
 
         return true;
     });
