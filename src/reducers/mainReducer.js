@@ -25,7 +25,7 @@ export const reducer = (state, action) => {
             data = {inProcess: false, errorMessage: action.data};
             return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_SUCCESS):
-            return merge('user', {status: USER_STATUS_LOGGED});
+            return merge('user', {status: USER_STATUS_LOGGED, username: action.data.username});
         case getStatus(ACTION_SIGNIN, STATUS_COMPLETE):
             /*data = 'Sign in complete!';*/
             data = {/*log: [...state.signin.log, data], status: data,*/ inProcess: false};
@@ -55,7 +55,7 @@ export const reducer = (state, action) => {
             return merge('signup', data);
 
         case getStatus(ACTION_LOGOUT, STATUS_SUCCESS):
-            return merge('user', {status: USER_STATUS_NOT_LOGGED});
+            return merge('user', {status: USER_STATUS_NOT_LOGGED, username: ''});
         default:
             return state;
     }

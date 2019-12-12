@@ -12,7 +12,7 @@ import {
     STATUS_SUCCESS
 } from "./mainReducer";
 import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
-import Signin, {LOGIN_DATA} from "../Lib/get-login/signin";
+import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
 import {validateUserData} from "../Lib/get-login/utils";
@@ -50,7 +50,7 @@ export const checkLocalCredentials = async () => {
         const data = getUserData();
         await validateUserData(data);
 
-        return {username: data.username};
+        return {username: data.username, wallet: data.wallet};
     });
 };
 
@@ -62,13 +62,16 @@ export const getDispatch = () => {
     return dispatch;
 };
 
-export const signIn = async (method, username, ...data) => {
-    // todo display errors
+export const signIn = async (method, username, password, wallet) => {
     return callMethod(ACTION_SIGNIN, async () => {
-        await signin.signIn(method, username, ...data);
-        setUserData(username, {
-            some_wallet: 'info'
-        });
+        await signin.signIn(method, username, password, wallet);
+        if (method === LOGIN_DATA) {
+            setUserData(username, wallet);
+        } else if (method === LOGIN_USERNAME_PASSWORD) {
+            setUserData(username);
+        } else {
+            throw new Error('Not supported method for local storing');
+        }
 
         return {username};
     });
@@ -79,14 +82,15 @@ export const signUp = async (method, username, password = '', invite = '') => {
     const result = await callMethod(ACTION_SIGNUP, async () => {
         return await signup.signUp(method, username, password, invite);
     });
-    // todo move inside callMethod?
+
     if (result && [SIGN_UP_INVITE/*, LOGIN_WEB3, LOGIN_TREZOR*/].includes(method)) {
         if (method === SIGN_UP_INVITE) {
             method = LOGIN_DATA;
         }
 
         setUserData(username, result.newWallet);
-        await signIn(method, username, password, result.newWallet);
+        await checkLocalCredentials();
+        //await signIn(method, username, password, result.newWallet);
     }
 
     return result;
@@ -94,11 +98,11 @@ export const signUp = async (method, username, password = '', invite = '') => {
 
 export const logoutLocal = () => {
     return callMethod(ACTION_LOGOUT, async () => {
-        return setUserData(null, null, null);
+        return setUserData(null, null);
     });
 };
 
-export const setUserData = (username, wallet) => {
+export const setUserData = (username, wallet = null) => {
     if (username) {
         localStorage.setItem('username', username);
     } else {

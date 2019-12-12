@@ -69,19 +69,20 @@ export default class Signin extends Logger {
     /**
      *
      * @param method
-     * @param data
+     * @param username
+     * @param password
+     * @param wallet
      * @returns {Promise<boolean>}
      */
-    async signIn(method, ...data) {
+    async signIn(method, username, password, wallet) {
         let result = null;
 
         switch (method) {
             case LOGIN_USERNAME_PASSWORD:
-                result = await this._signInUsernamePassword(...data);
+                result = await this._signInUsernamePassword(username, password);
                 break;
             case LOGIN_DATA:
-                console.log(data);
-                result = await this._signInWalletPassword(...data);
+                result = await this._signInWalletPassword(username, password, wallet);
                 break;
             case LOGIN_TREZOR:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
@@ -93,6 +94,6 @@ export default class Signin extends Logger {
             throw new LoginError(CODE_EMPTY_RESULT);
         }
 
-        return result;
+        return true;
     }
 }
