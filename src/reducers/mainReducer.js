@@ -22,7 +22,7 @@ export const reducer = (state, action) => {
             data = {log: [], status: '', inProcess: true, errorMessage: ''};
             return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_FAIL):
-            data = {inProcess: false, errorMessage: action.data};
+            data = {inProcess: false, errorMessage: action.data.message};
             return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_LOGGED, username: action.data.username});
@@ -41,7 +41,7 @@ export const reducer = (state, action) => {
             data = {log: [], status: '', inProcess: true, errorMessage: ''};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_FAIL):
-            data = {inProcess: false, errorMessage: action.data};
+            data = {inProcess: false, errorMessage: action.data.message};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_SUCCESS):
             data = {inProcess: false};

@@ -1,11 +1,11 @@
 import {
-    CODE_EMPTY_RESULT, CODE_INCORRECT_INVITE, CODE_NOT_ENOUGH_FUNDS,
+    CODE_EMPTY_RESULT,
     CODE_NOT_IMPLEMENTED,
     CODE_UNKNOWN_METHOD,
     CODE_USERNAME_ALREADY_REGISTERED,
     LoginError
 } from "./login-error";
-import {INVITE_LENGTH, isUsernameRegistered, LOGIN_TREZOR, LOGIN_WEB3, sleep} from "./utils";
+import {isUsernameRegistered, LOGIN_TREZOR, LOGIN_WEB3, sleep, validateInvite, validateMoreThanZero} from "./utils";
 import Logger from "./logger";
 import {IInviteRegistration} from "./interfaces";
 
@@ -18,7 +18,7 @@ export const LOG_SIGN_UP_USER_REGISTRATION = 'sign_up_user_registration';
 export const SIGN_UP_INVITE = 'sign_up_invite';
 
 export default class Signup extends Logger {
-    constructor() {
+    constructor(crypto, contract) {
         super();
 
         this.errors = [
@@ -27,37 +27,44 @@ export default class Signup extends Logger {
                 text: ''
             }
         ];
+
+        /**
+         *
+         * @type {crypto}
+         */
+        this.crypto = crypto;
+
+        /**
+         *
+         * @type {contract}
+         */
+        this.contract = contract;
     }
 
-    async createInvite() {
+    /*async createInvite() {
 
-    }
-
-    async isCorrectInvite(invite) {
-        // todo implement
-        return typeof invite === 'string' && invite.length === INVITE_LENGTH;
-    }
+    }*/
 
     async isEnoughFundsRegistration(invite) {
         // todo implement
         return true;
     }
 
-    async _createWallet(password) {
+    /*async _createWallet(password) {
         // todo implement
         return {
             some: 'wallet',
             data: 'fwef23',
             address: '0xaaaaa8a77aa67a',
         }
-    }
+    }*/
 
     async _createAccountFromWallet(username, fundedWallet, newWallet) {
         // todo implement
         return '0x23rgbwekfnwiugh3487weg3uhru';
     }
 
-    async _createWalletFromInvite(invite) {
+    /*async _createWalletFromInvite(invite) {
         // todo implement
         // create transaction data
         // send transaction
@@ -65,7 +72,7 @@ export default class Signup extends Logger {
         return {
             test: 'test'
         };
-    }
+    }*/
 
     /**
      *
@@ -76,28 +83,27 @@ export default class Signup extends Logger {
      * @private
      */
     async _signUpInvite(username, password, invite) {
-        if (!await this.isCorrectInvite(invite)) {
-            throw new LoginError(CODE_INCORRECT_INVITE);
-        }
-
-        this.log(LOG_SIGN_UP_CHECK_FUNDS);
-        await sleep(1000);
+        const {web3} = this.crypto;
+        //console.log(web3);
+        validateInvite(invite);
 
         this.log(LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE);
-        await sleep(1000);
-        const fundedWallet = await this._createWalletFromInvite(invite);
+        const inviteWallet = await this.crypto.getWalletFromInvite(invite);
+        //console.log(inviteWallet);
 
-        if (!await this.isEnoughFundsRegistration(fundedWallet.address)) {
-            throw new LoginError(CODE_NOT_ENOUGH_FUNDS);
-        }
+        this.log(LOG_SIGN_UP_CHECK_FUNDS);
+        const balanceEth = web3.utils.fromWei(await web3.eth.getBalance(inviteWallet.address));
+        validateMoreThanZero(balanceEth);
+        console.log(balanceEth);
 
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
-        await sleep(1000);
-        const newWallet = await this._createWallet(password);
+        const newWallet = await web3.eth.accounts.create();
+        console.log(newWallet);
 
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
-        await sleep(1000);
-        const registrationTransaction = this._createAccountFromWallet(username, fundedWallet, newWallet);
+        //const registrationTransaction = this._createAccountFromWallet(username, inviteWallet, newWallet);
+        const registrationTransaction = '123';
+        await this.contract.saveWalletToTransaction(username, newWallet);
 
         return new IInviteRegistration(newWallet, registrationTransaction);
     }

@@ -18,10 +18,6 @@ export class LoginError extends Error {
     }
 }
 
-/*export const throwLoginError = (code) => {
-    throw new LoginError(code);
-};*/
-
 export const CODE_NOT_DEFINED = -1;
 export const CODE_USERNAME_ALREADY_REGISTERED = 1;
 export const CODE_UNKNOWN_METHOD = 2;
@@ -32,7 +28,7 @@ export const CODE_INCORRECT_INVITE = 6;
 export const CODE_NOT_ENOUGH_FUNDS = 7;
 export const CODE_INCORRECT_DATA = 9;
 export const CODE_USERNAME_NOT_FOUND = 10;
-
+export const CODE_BALANCE_ZERO_OR_LESS = 11;
 
 export const CODE_MESSAGES = {
     [CODE_NOT_DEFINED]: 'Not defined',
@@ -45,6 +41,7 @@ export const CODE_MESSAGES = {
     [CODE_NOT_ENOUGH_FUNDS]: 'Not enough funds',
     [CODE_INCORRECT_DATA]: 'Incorrect data',
     [CODE_USERNAME_NOT_FOUND]: 'Username not found',
+    [CODE_BALANCE_ZERO_OR_LESS]: 'Balance zero or less',
 };
 
 export const RESULT_OK = 'ok';

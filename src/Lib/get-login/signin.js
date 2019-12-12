@@ -18,6 +18,22 @@ export const LOGIN_USERNAME_PASSWORD = 'login_username_password';
 export const LOGIN_DATA = 'login_data';
 
 export default class Signin extends Logger {
+    constructor(crypto, contract) {
+        super();
+
+        /**
+         *
+         * @type {crypto}
+         */
+        this.crypto = crypto;
+
+        /**
+         *
+         * @type {contract}
+         */
+        this.contract = contract;
+    }
+
     /**
      *
      * @param username

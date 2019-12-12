@@ -1,6 +1,6 @@
-import {CODE_INCORRECT_DATA, LoginError} from "./login-error";
+import {CODE_INCORRECT_DATA, CODE_BALANCE_ZERO_OR_LESS, LoginError} from "./login-error";
 
-export const INVITE_LENGTH = 32;
+export const INVITE_LENGTH = 64;
 export const USERNAME_MIN_LENGTH = 3;
 export const USERNAME_MAX_LENGTH = 30;
 export const PASSWORD_MIN_LENGTH = 3;
@@ -33,7 +33,7 @@ export const decodeWallet = async (wallet, password) => {
 };
 
 export const validateUserData = async (data) => {
-    await validateWallet(data.wallet);
+    //await validateWallet(data.wallet);
     await validateUsername(data.username);
 
     return true;
@@ -61,14 +61,26 @@ export const validatePassword = (data) => {
     return validateLength(data, 'string', PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH);
 };
 
+export const validateInvite = (data) => {
+    return validateLength(data, 'string', INVITE_LENGTH, INVITE_LENGTH);
+};
+
 export const validateWallet = (data) => {
-    if (typeof data !== 'object') {
+    if (!data || typeof data !== 'object') {
         throw new LoginError(CODE_INCORRECT_DATA);
     }
 
     /*if(data.hasAttribute('---')){
 
     }*/
+
+    return true;
+};
+
+export const validateMoreThanZero = (data) => {
+    if (data <= 0) {
+        throw new LoginError(CODE_BALANCE_ZERO_OR_LESS);
+    }
 
     return true;
 };

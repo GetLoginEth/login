@@ -8,7 +8,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
-import {INVITE_LENGTH, LOGIN_TREZOR, LOGIN_WEB3} from "../Lib/get-login/utils";
+import {LOGIN_TREZOR, LOGIN_WEB3, validateInvite} from "../Lib/get-login/utils";
 import {ACTION_SIGNUP} from "../reducers/mainReducer";
 
 function Signup() {
@@ -44,8 +44,14 @@ function Signup() {
     };
 
     const isCorrectInvite = (invite) => {
-        // todo move check to utils
-        return invite.length === INVITE_LENGTH;
+        let result = true;
+        try {
+            validateInvite(invite);
+        } catch {
+            result = false;
+        }
+
+        return result;
     };
     const isDisabled = () => {
         // todo copy username password validation from sign in

@@ -16,7 +16,11 @@ import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/sign
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
 import {validateUserData} from "../Lib/get-login/utils";
+import crypto from "../Lib/get-login/crypto";
+import contract from "../Lib/get-login/contract";
 
+let cryptoInstance = crypto.getInstance();
+let contract = new contract(cryptoInstance.web3);
 let dispatch = null;
 let signup = null;
 let signin = null;
@@ -37,8 +41,8 @@ export const init = (dispatch) => {
         };
     };
     setDispatch(dispatch);
-    signup = new Signup();
-    signin = new Signin();
+    signup = new Signup(cryptoInstance, contract);
+    signin = new Signin(cryptoInstance, contract);
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
     checkLocalCredentials().then();
@@ -143,8 +147,10 @@ export const callMethod = async (actionName, func) => {
 
         result = await func();
         doDispatch(getStatus(actionName, STATUS_SUCCESS), result);
-    } catch ({message}) {
-        doDispatch(getStatus(actionName, STATUS_FAIL), message);
+    } catch (error) {
+        // todo not log error, but pass correct filenames to dispatch
+        console.log(error);
+        doDispatch(getStatus(actionName, STATUS_FAIL), error);
     }
 
     doDispatch(getStatus(actionName, STATUS_COMPLETE));
