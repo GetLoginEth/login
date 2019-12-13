@@ -31,7 +31,7 @@ function PrivateRoute({children, state, ...rest}) {
                     return <Spinner/>;
                 } else {
                     return state.user.isLoggedIn() ? (children) : (
-                        <Redirect to={{pathname: "/login", state: {from: location}}}/>);
+                        <Redirect to={{pathname: "./login", state: {from: location}}}/>);
                 }
             }}
         />
@@ -39,7 +39,7 @@ function PrivateRoute({children, state, ...rest}) {
 }
 
 const LoginRoute = ({state, path, children}) => {
-    return state.user.isLoggedIn() ? <Redirect to={{pathname: "/"}}/> : <Route path={path}>
+    return state.user.isLoggedIn() ? <Redirect to={{pathname: "./"}}/> : <Route path={path}>
         {children}
     </Route>;
 };
@@ -68,35 +68,35 @@ class App extends Component {
                                 <div className="container">
                                     <Suspense fallback={<Spinner/>}>
                                         <Switch>
-                                            <Route exact path="/">
+                                            <Route exact path="/:swarm_protocol?/:swarm_hash?/">
                                                 <Main/>
                                             </Route>
 
-                                            <Route path="/settings">
+                                            <Route path="/:swarm_protocol?/:swarm_hash?/settings">
                                                 <div>Settings hehehehehe</div>
                                             </Route>
 
-                                            <Route path="/privacy">
+                                            <Route path="/:swarm_protocol?/:swarm_hash?/privacy">
                                                 <Privacy/>
                                             </Route>
 
-                                            <Route path="/terms">
+                                            <Route path="/:swarm_protocol?/:swarm_hash?/terms">
                                                 <Terms/>
                                             </Route>
 
-                                            <LoginRoute path="/login" state={state}>
+                                            <LoginRoute path="/:swarm_protocol?/:swarm_hash?/login" state={state}>
                                                 <Signin/>
                                             </LoginRoute>
 
-                                            <LoginRoute path="/signup" state={state}>
+                                            <LoginRoute path="/:swarm_protocol?/:swarm_hash?/signup" state={state}>
                                                 <Signup/>
                                             </LoginRoute>
 
-                                            <PrivateRoute path="/dashboard" state={state}>
+                                            <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/dashboard" state={state}>
                                                 <Dashboard/>
                                             </PrivateRoute>
 
-                                            <PrivateRoute path="/logout" state={state}>
+                                            <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/logout" state={state}>
                                                 <Logout/>
                                             </PrivateRoute>
 
