@@ -10,8 +10,8 @@ class Main extends Component {
         return <div className="text-center">
             <h1>Web3 Auth plugin</h1>
 
-            {state.user.isLoggedIn() ? <Link className="btn btn-success btn-lg" to="/settings">Open Settings</Link> :
-                <Link className="btn btn-success btn-lg" to="/signup">Sign up</Link>}
+            {state.user.isLoggedIn() ? <Link className="btn btn-success btn-lg" to="./settings">Open Settings</Link> :
+                <Link className="btn btn-success btn-lg" to="./signup">Sign up</Link>}
         </div>;
     }
 }

@@ -20,7 +20,7 @@ import crypto from "../Lib/get-login/crypto";
 import contract from "../Lib/get-login/contract";
 
 let cryptoInstance = crypto.getInstance();
-let contract = new contract(cryptoInstance.web3);
+let contractInstance = new contract(cryptoInstance.web3);
 let dispatch = null;
 let signup = null;
 let signin = null;
@@ -41,8 +41,8 @@ export const init = (dispatch) => {
         };
     };
     setDispatch(dispatch);
-    signup = new Signup(cryptoInstance, contract);
-    signin = new Signin(cryptoInstance, contract);
+    signup = new Signup(cryptoInstance, contractInstance);
+    signin = new Signin(cryptoInstance, contractInstance);
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
     checkLocalCredentials().then();

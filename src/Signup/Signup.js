@@ -73,7 +73,7 @@ function Signup() {
         <div className="row justify-content-center align-items-center">
             <Form className="Signup col-md-4" onSubmit={onSubmit}>
                 <fieldset disabled={signup.inProcess}>
-                    <h1>Sign up / <Link to="/login">Sign In</Link></h1>
+                    <h1>Sign up / <Link to="./login">Sign In</Link></h1>
 
                     {signup.errorMessage && <div className="alert alert-danger" role="alert">
                         {signup.errorMessage}

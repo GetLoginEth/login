@@ -50,7 +50,7 @@ function Signin() {
         <div className="row justify-content-center align-items-center">
             <Form className="Signin col-md-4" onSubmit={onSubmit}>
                 <fieldset disabled={signin.inProcess}>
-                    <h1>Sign In / <Link to="/signup">Sign up</Link></h1>
+                    <h1>Sign In / <Link to="./signup">Sign up</Link></h1>
 
                     {signin.errorMessage && <div className="alert alert-danger" role="alert">
                         {signin.errorMessage}
