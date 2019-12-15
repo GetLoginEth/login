@@ -13,15 +13,27 @@ export const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-export const getUsernameHash = async (username) => {
-    // todo implement
-    return 'hash_of_' + username;
+export const filterUsername = (username) => {
+    return username.trim().toLowerCase();
 };
 
-export const isUsernameRegistered = async (username) => {
+export const getUsernameHash = async (web3, username) => {
+    username = filterUsername(username);
+
+    return web3.utils.sha3(username);
+};
+
+export const isUsernameRegistered = async (web3, username) => {
     // todo implement
-    const usernameHash = await getUsernameHash(username);
+    const usernameHash = await getUsernameHash(web3, username);
     return usernameHash ? username === 'admin' : false;
+};
+
+export const createEncodedWallet = async (web3, password) => {
+    await validatePassword(password);
+
+    // todo check encrypt mode with user password
+    return web3.eth.accounts.create().encrypt(password);
 };
 
 export const decodeWallet = async (wallet, password) => {

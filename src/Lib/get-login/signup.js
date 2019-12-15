@@ -5,7 +5,15 @@ import {
     CODE_USERNAME_ALREADY_REGISTERED,
     LoginError
 } from "./login-error";
-import {isUsernameRegistered, LOGIN_TREZOR, LOGIN_WEB3, sleep, validateInvite, validateMoreThanZero} from "./utils";
+import {
+    createEncodedWallet, filterUsername,
+    isUsernameRegistered,
+    LOGIN_TREZOR,
+    LOGIN_WEB3,
+    sleep,
+    validateInvite,
+    validateMoreThanZero, validateUsername
+} from "./utils";
 import Logger from "./logger";
 import {IInviteRegistration} from "./interfaces";
 
@@ -84,8 +92,10 @@ export default class Signup extends Logger {
      */
     async _signUpInvite(username, password, invite) {
         const {web3} = this.crypto;
-        //console.log(web3);
+
+        username = filterUsername(username);
         validateInvite(invite);
+        validateUsername(username);
 
         this.log(LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE);
         const inviteWallet = await this.crypto.getWalletFromInvite(invite);
@@ -97,7 +107,7 @@ export default class Signup extends Logger {
         console.log(balanceEth);
 
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
-        const newWallet = await web3.eth.accounts.create();
+        const newWallet = await createEncodedWallet(web3, password);
         console.log(newWallet);
 
         this.log(LOG_SIGN_UP_USER_REGISTRATION);

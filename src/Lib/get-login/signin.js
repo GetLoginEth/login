@@ -42,13 +42,15 @@ export default class Signin extends Logger {
      * @private
      */
     async _signInUsernamePassword(username, password) {
+        const {web3} = this.crypto;
+
         this.log(LOG_LOG_IN_CHECK_USERNAME);
         await sleep(1000);
         await validateUsername(username);
         this.log(LOG_LOG_IN_CHECK_PASSWORD);
         await validatePassword(password);
 
-        if (!await isUsernameRegistered(username)) {
+        if (!await isUsernameRegistered(web3, username)) {
             throw new LoginError(CODE_USERNAME_NOT_FOUND);
         }
 
