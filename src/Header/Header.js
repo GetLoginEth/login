@@ -13,7 +13,7 @@ function Header({isLoggedIn, isCheckingAuth, username}) {
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
-                        {isLoggedIn && <Link className="nav-link" to="./settings">Settings</Link>}
+                        {isLoggedIn && <Link className="nav-link" to="./xsettings">Settings</Link>}
 
                         {/*<NavDropdown title="Dropdown" id="basic-nav-dropdown">
                             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
@@ -25,7 +25,7 @@ function Header({isLoggedIn, isCheckingAuth, username}) {
                     </Nav>
 
                     {!isCheckingAuth && <Nav className="ml-auto">
-                        {!isLoggedIn && <Link className="nav-link float-right" to="./login">Sign In</Link>}
+                        {!isLoggedIn && <Link className="nav-link float-right" to="./login">Sign in</Link>}
                         {isLoggedIn && <Link className="nav-link float-right" to="./logout">Logout ({username})</Link>}
                     </Nav>}
                     {/*<Form inline>

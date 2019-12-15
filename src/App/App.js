@@ -72,7 +72,7 @@ class App extends Component {
                                                 <Main/>
                                             </Route>
 
-                                            <Route path="/:swarm_protocol?/:swarm_hash?/settings">
+                                            <Route path="/:swarm_protocol?/:swarm_hash?/xsettings">
                                                 <div>Settings hehehehehe</div>
                                             </Route>
 
