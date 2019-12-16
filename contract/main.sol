@@ -32,6 +32,9 @@ contract mortal is owned {
 }
 
 contract GetLogin {
+
+    event EventStoreWallet(bytes32 username, address walletAddress, string ciphertext, string iv, string salt, string mac);
+
     struct UserInfo
     {
         bytes32 username;
@@ -86,6 +89,13 @@ contract GetLogin {
         // todo check is usernameHash not exists
        Users[usernameHash] = UserInfo({username: usernameHash, isActive: true});
        addWallet(usernameHash, msg.sender);
+    }
+
+    function createUserFromInvite(bytes32 usernameHash, address walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
+       // todo check is sender can register
+       // todo disable sender for reg
+       createUser(usernameHash);
+       emit EventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
     function addWallet(bytes32 usernameHash, address wallet) public payable {
