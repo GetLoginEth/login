@@ -6,13 +6,17 @@ import {
     LoginError
 } from "./login-error";
 import {
-    createEncodedWallet, filterUsername,
+    createWallet,
+    encodeWallet,
+    filterUsername,
+    getUsernameHash,
     isUsernameRegistered,
     LOGIN_TREZOR,
     LOGIN_WEB3,
     sleep,
     validateInvite,
-    validateMoreThanZero, validateUsername
+    validateMoreThanZero,
+    validateUsername
 } from "./utils";
 import Logger from "./logger";
 import {IInviteRegistration} from "./interfaces";
@@ -94,12 +98,16 @@ export default class Signup extends Logger {
         const {web3} = this.crypto;
 
         username = filterUsername(username);
+        console.log(username);
+
+        const usernameHash = getUsernameHash(web3, username);
         validateInvite(invite);
         validateUsername(username);
 
         this.log(LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE);
         const inviteWallet = await this.crypto.getWalletFromInvite(invite);
         //console.log(inviteWallet);
+        this.contract.setPrivateKey(inviteWallet.privateKey);
 
         this.log(LOG_SIGN_UP_CHECK_FUNDS);
         const balanceEth = web3.utils.fromWei(await web3.eth.getBalance(inviteWallet.address));
@@ -107,13 +115,15 @@ export default class Signup extends Logger {
         console.log(balanceEth);
 
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
-        const newWallet = await createEncodedWallet(web3, password);
-        console.log(newWallet);
+        const wallet = createWallet(web3);
+        const newWallet = encodeWallet(wallet, password);
 
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
         //const registrationTransaction = this._createAccountFromWallet(username, inviteWallet, newWallet);
         const registrationTransaction = '123';
-        await this.contract.saveWalletToTransaction(username, newWallet);
+        //await this.contract.saveWalletToTransaction(username, newWallet);
+        const result = await this.contract.createUser(usernameHash);
+        console.log(result);
 
         return new IInviteRegistration(newWallet, registrationTransaction);
     }

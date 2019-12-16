@@ -1,5 +1,5 @@
 export const defaultAddresses = {
-    "rinkeby": "0x47BDA210deAC5446118BB35cd7c29365Ed38bB3B",
+    "rinkeby": "0x0bb5590D2CC9E97B1dcE9A1879e27D22519689eB",
     "mainnet": ""
 };
 
@@ -28,14 +28,39 @@ export const defaultAbi = [
         "constant": false,
         "inputs": [
             {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "creatorUsername",
+                "type": "bytes32"
+            }
+        ],
+        "name": "createApplication",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
                 "internalType": "address payable",
                 "name": "inviteAddress",
                 "type": "address"
             },
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "creatorUsername",
-                "type": "string"
+                "type": "bytes32"
             }
         ],
         "name": "createInvite",
@@ -60,10 +85,144 @@ export const defaultAbi = [
         "type": "function"
     },
     {
+        "constant": false,
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "usernameHash",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address",
+                "name": "walletAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "ciphertext",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "iv",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "salt",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "mac",
+                "type": "string"
+            }
+        ],
+        "name": "createUserFromInvite",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "walletAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "ciphertext",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "iv",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "salt",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "mac",
+                "type": "string"
+            }
+        ],
+        "name": "EventStoreWallet",
+        "type": "event"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "applicationId",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "Applications",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
     },
     {
         "constant": true,
@@ -115,9 +274,9 @@ export const defaultAbi = [
                 "type": "address"
             },
             {
-                "internalType": "string",
+                "internalType": "bytes32",
                 "name": "creatorUsername",
-                "type": "string"
+                "type": "bytes32"
             },
             {
                 "internalType": "bool",
@@ -212,13 +371,17 @@ export default class contract {
         this.contract = null;
     }
 
+    initContract() {
+        this.contract = new this.web3.eth.Contract(this.abi, this.contractAddress, {from: (this.account ? this.account.address : null)});
+    }
+
     getContract() {
         if (!this.abi || !this.contractAddress) {
             throw new Error('Some params not filled');
         }
 
         if (!this.contract || (!this.contract.options.from && this.account && this.account.address)) {
-            this.contract = new this.web3.eth.Contract(this.abi, this.contractAddress, {from: (this.account ? this.account.address : null)});
+            this.initContract();
         }
 
         return this.contract;
@@ -233,11 +396,16 @@ export default class contract {
 
     /**
      *
-     * @param privateKey Without 0x
+     * @param privateKey
      */
     setPrivateKey(privateKey) {
+        if (privateKey.indexOf('0x') === -1) {
+            privateKey = '0x' + privateKey;
+        }
+
         this.privateKey = privateKey;
-        this.account = this.web3.eth.accounts.privateKeyToAccount('0x' + privateKey);
+        this.account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
+        this.initContract();
     }
 
     saveWalletToTransaction(username, wallet) {
@@ -249,7 +417,62 @@ export default class contract {
         return this.getContract().methods[methodName](...params).call();
     }
 
+    signAndSerializeTx(result) {
+        const Tx = require('ethereumjs-tx').Transaction;
+        const privateKey = Buffer.from(this.account.privateKey.replace('0x', ''), 'hex');
+        const tx = new Tx(result, {'chain': this.network});
+        tx.sign(privateKey);
+
+        return '0x' + tx.serialize().toString('hex');
+    }
+
+    async sendTx(methodName, balanceEther, ...params) {
+        if (typeof balanceEther !== 'string') {
+            throw new Error('Wait string here');
+        }
+
+        const data = this.getContract().methods[methodName](...params).encodeABI();
+        //console.log(data);
+        let result = {
+            from: this.account.address,
+            to: this.contractAddress,
+            value: this.web3.utils.toWei(balanceEther, 'ether'),
+            data
+        };
+
+        const gasPrice = this.web3.utils.toBN(await this.web3.eth.getGasPrice());
+        let estimateGas = await this.web3.eth.estimateGas(result);
+        // additional gas +20%
+        estimateGas = Math.round(estimateGas + estimateGas * 0.2);
+        const estimateGasBN = this.web3.utils.toBN(estimateGas);
+        const totalGasBN = gasPrice.mul(estimateGasBN);
+        /**
+         * @type {BN}
+         */
+        let resultValue = Number(balanceEther) === 0 ? 0 : result.value.sub(totalGasBN);
+        if (resultValue && resultValue.isNeg()) {
+            throw new Error('Too low balance');
+        }
+
+        result.value = resultValue;
+        result.gasLimit = estimateGasBN;
+        result.gasPrice = gasPrice;
+        result.nonce = await this.web3.eth.getTransactionCount(this.account.address);
+        //console.log(result);
+
+        return this.web3.eth.sendSignedTransaction(this.signAndSerializeTx(result));
+    }
+
     async getUserInfo(usernameHash) {
         return this.callMethod('getUserInfo', usernameHash);
+    }
+
+    async createUser(usernameHash) {
+        return this.sendTx('createUser', '0', usernameHash);
+    }
+
+    async createUserFromInvite(usernameHash, walletAddress, ciphertext, iv, salt, mac) {
+
+        return this.callMethod('createUserFromInvite', usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 }

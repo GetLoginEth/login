@@ -1,4 +1,4 @@
-import {CODE_INCORRECT_DATA, CODE_BALANCE_ZERO_OR_LESS, LoginError} from "./login-error";
+import {CODE_BALANCE_ZERO_OR_LESS, CODE_INCORRECT_DATA, LoginError} from "./login-error";
 
 export const INVITE_LENGTH = 64;
 export const USERNAME_MIN_LENGTH = 3;
@@ -17,7 +17,7 @@ export const filterUsername = (username) => {
     return username.trim().toLowerCase();
 };
 
-export const getUsernameHash = async (web3, username) => {
+export const getUsernameHash = (web3, username) => {
     username = filterUsername(username);
 
     return web3.utils.sha3(username);
@@ -30,17 +30,25 @@ export const isUsernameRegistered = async (contract, username) => {
     return result ? result.isActive : false;
 };
 
-export const createEncodedWallet = async (web3, password) => {
-    await validatePassword(password);
+/**
+ *
+ * @param web3
+ * @returns {Account}
+ */
+export const createWallet = (web3) => {
+    return web3.eth.accounts.create();
+};
 
-    // todo check encrypt mode with user password
-    return web3.eth.accounts.create().encrypt(password);
+export const encodeWallet = (wallet, password) => {
+    validatePassword(password);
+
+    return wallet.encrypt(password);
 };
 
 export const decodeWallet = async (wallet, password) => {
     // todo implement
     await validateWallet(wallet);
-    await validatePassword(password);
+    validatePassword(password);
 
     return true;
 };
