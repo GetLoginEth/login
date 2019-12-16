@@ -41,7 +41,7 @@ contract GetLogin {
     struct InviteInfo
     {
         address inviteAddress;
-        string creatorUsername;
+        bytes32 creatorUsername;
         bool isActive;
     }
 
@@ -51,17 +51,35 @@ contract GetLogin {
         address wallet;
     }
 
+    struct Application
+    {
+        uint256 id;
+        string title;
+        string description;
+        bytes32 username;
+    }
+
+    uint256 public applicationId = 1;
     mapping(bytes32 => UserInfo) public Users;
     mapping(address => InviteInfo) public Invites;
     mapping(bytes32 => UserWallet[]) public UserWallets;
+    mapping(uint256 => Application) public Applications;
 
     constructor() public {
-       createUser(keccak256('admin'));
+        bytes32 username = keccak256('admin');
+        createUser(username);
+        createApplication('GetLogin', 'GetLogin - auth app', username);
     }
 
-    function createInvite(address payable inviteAddress, string memory creatorUsername) public payable {
+    function createInvite(address payable inviteAddress, bytes32 creatorUsername) public payable {
         // todo check is invite creator registered
         Invites[inviteAddress] = InviteInfo({inviteAddress: inviteAddress, creatorUsername: creatorUsername, isActive: true});
+    }
+
+    function createApplication(string memory title, string memory description, bytes32 creatorUsername) public payable {
+        // todo implement
+        Applications[applicationId] = Application({id: applicationId, title: title, description: description, username: creatorUsername});
+        applicationId++;
     }
 
     function createUser(bytes32 usernameHash) public payable {
