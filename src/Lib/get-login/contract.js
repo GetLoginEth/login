@@ -189,17 +189,39 @@ export const defaultAbi = [
 ];
 
 export default class contract {
-    constructor(web3, addresses = null, abi = null) {
+    constructor(web3, network = 'rinkeby', contractAddress, abi = defaultAbi) {
         /**
          *
          * @type {Web3}
          */
         this.web3 = web3;
-        this.addresses = addresses || defaultAddresses;
-        this.abi = abi || defaultAbi;
+        this.network = network;
+        this.contractAddress = contractAddress;
+        this.abi = abi;
         this.contract = null;
         this.privateKey = null;
+        /**
+         *
+         * @type {Account}
+         */
         this.account = null;
+        /**
+         *
+         * @type {Contract}
+         */
+        this.contract = null;
+    }
+
+    getContract() {
+        if (!this.abi || !this.contractAddress) {
+            throw new Error('Some params not filled');
+        }
+
+        if (!this.contract || (!this.contract.options.from && this.account && this.account.address)) {
+            this.contract = new this.web3.eth.Contract(this.abi, this.contractAddress, {from: (this.account ? this.account.address : null)});
+        }
+
+        return this.contract;
     }
 
     async sendTransaction(transaction) {
@@ -221,5 +243,13 @@ export default class contract {
     saveWalletToTransaction(username, wallet) {
         // todo check wallet structure && encoded or not
         // todo send transaction with encoded wallet and username to SC
+    }
+
+    async callMethod(methodName, ...params) {
+        return this.getContract().methods[methodName](...params).call();
+    }
+
+    async getUserInfo(usernameHash) {
+        return this.callMethod('getUserInfo', usernameHash);
     }
 }

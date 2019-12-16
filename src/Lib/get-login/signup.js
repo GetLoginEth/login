@@ -131,7 +131,7 @@ export default class Signup extends Logger {
 
         this.log(LOG_SIGN_UP_CHECK_USERNAME);
         await sleep(1000);
-        if (await isUsernameRegistered(username)) {
+        if (await isUsernameRegistered(this.contract, username)) {
             throw new LoginError(CODE_USERNAME_ALREADY_REGISTERED);
         }
 

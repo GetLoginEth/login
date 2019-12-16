@@ -23,10 +23,11 @@ export const getUsernameHash = async (web3, username) => {
     return web3.utils.sha3(username);
 };
 
-export const isUsernameRegistered = async (web3, username) => {
-    // todo implement
-    const usernameHash = await getUsernameHash(web3, username);
-    return usernameHash ? username === 'admin' : false;
+export const isUsernameRegistered = async (contract, username) => {
+    const usernameHash = await getUsernameHash(contract.web3, username);
+    const result = await contract.getUserInfo(usernameHash);
+    //console.log(result);
+    return result ? result.isActive : false;
 };
 
 export const createEncodedWallet = async (web3, password) => {

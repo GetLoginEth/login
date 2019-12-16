@@ -17,10 +17,10 @@ import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error"
 import {translate} from "../Lib/get-login/log-translation";
 import {validateUserData} from "../Lib/get-login/utils";
 import crypto from "../Lib/get-login/crypto";
-import contract from "../Lib/get-login/contract";
+import contract, {defaultAddresses} from "../Lib/get-login/contract";
 
 let cryptoInstance = crypto.getInstance();
-let contractInstance = new contract(cryptoInstance.web3);
+let contractInstance = new contract(cryptoInstance.web3, 'rinkeby', defaultAddresses['rinkeby']);
 let dispatch = null;
 let signup = null;
 let signin = null;
