@@ -417,15 +417,6 @@ export default class contract {
         return this.getContract().methods[methodName](...params).call();
     }
 
-    signAndSerializeTx(result) {
-        const Tx = require('ethereumjs-tx').Transaction;
-        const privateKey = Buffer.from(this.account.privateKey.replace('0x', ''), 'hex');
-        const tx = new Tx(result, {'chain': this.network});
-        tx.sign(privateKey);
-
-        return '0x' + tx.serialize().toString('hex');
-    }
-
     async sendTx(methodName, balanceEther, ...params) {
         if (typeof balanceEther !== 'string') {
             throw new Error('Wait string here');
@@ -440,12 +431,13 @@ export default class contract {
             data
         };
 
-        const gasPrice = this.web3.utils.toBN(await this.web3.eth.getGasPrice());
+        const gasPrice = await this.web3.eth.getGasPrice();
+        const gasPriceBN = this.web3.utils.toBN(gasPrice);
         let estimateGas = await this.web3.eth.estimateGas(result);
         // additional gas +20%
         estimateGas = Math.round(estimateGas + estimateGas * 0.2);
         const estimateGasBN = this.web3.utils.toBN(estimateGas);
-        const totalGasBN = gasPrice.mul(estimateGasBN);
+        const totalGasBN = gasPriceBN.mul(estimateGasBN);
         /**
          * @type {BN}
          */
@@ -455,12 +447,17 @@ export default class contract {
         }
 
         result.value = resultValue;
-        result.gasLimit = estimateGasBN;
+        result.gasLimit = estimateGas;
         result.gasPrice = gasPrice;
         result.nonce = await this.web3.eth.getTransactionCount(this.account.address);
-        //console.log(result);
 
-        return this.web3.eth.sendSignedTransaction(this.signAndSerializeTx(result));
+        /**
+         *
+         * @type {SignedTransaction}
+         */
+        const signed = await this.web3.eth.accounts.signTransaction(result, this.account.privateKey);
+
+        return this.web3.eth.sendSignedTransaction(signed.rawTransaction);
     }
 
     async getUserInfo(usernameHash) {
@@ -472,7 +469,6 @@ export default class contract {
     }
 
     async createUserFromInvite(usernameHash, walletAddress, ciphertext, iv, salt, mac) {
-
         return this.callMethod('createUserFromInvite', usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 }
