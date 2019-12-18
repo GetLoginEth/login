@@ -7,7 +7,7 @@ import {
     STATUS_COMPLETE,
     STATUS_FAIL,
     STATUS_INIT,
-    STATUS_LOG,
+    STATUS_LOG, STATUS_SIGNUP_MINED,
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
@@ -84,7 +84,9 @@ export const signIn = async (method, username, password, wallet) => {
 export const signUp = async (method, username, password = '', invite = '') => {
     /** @type {IInviteRegistration} */
     const result = await callMethod(ACTION_SIGNUP, async () => {
-        return await signup.signUp(method, username, password, invite);
+        return await signup.signUp(method, username, password, invite, info => {
+            doDispatch(getStatus(ACTION_SIGNUP, STATUS_SIGNUP_MINED), info);
+        });
     });
 
     if (result && [SIGN_UP_INVITE/*, LOGIN_WEB3, LOGIN_TREZOR*/].includes(method)) {
@@ -94,7 +96,6 @@ export const signUp = async (method, username, password = '', invite = '') => {
 
         setUserData(username, result.newWallet);
         await checkLocalCredentials();
-        //await signIn(method, username, password, result.newWallet);
     }
 
     return result;

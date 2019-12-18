@@ -27,15 +27,14 @@ export const reducer = (state, action) => {
         case getStatus(ACTION_SIGNIN, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_LOGGED, username: action.data.username});
         case getStatus(ACTION_SIGNIN, STATUS_COMPLETE):
-            /*data = 'Sign in complete!';*/
-            data = {/*log: [...state.signin.log, data], status: data,*/ inProcess: false};
+            data = {inProcess: false};
             return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_LOG):
             data = {log: [...state.signin.log, action.data], status: action.data, inProcess: true};
             return merge('signin', data);
 
         case getStatus(ACTION_SIGNUP, STATUS_INIT):
-            data = {log: [], status: '', inProcess: false, errorMessage: ''};
+            data = {log: [], status: '', inProcess: false, errorMessage: '', isMining: false};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_START):
             data = {log: [], status: '', inProcess: true, errorMessage: ''};
@@ -44,11 +43,13 @@ export const reducer = (state, action) => {
             data = {inProcess: false, errorMessage: action.data.message};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_SUCCESS):
-            data = {inProcess: false};
+            data = {inProcess: false, isMining: true, minedInfo: {}};
+            return merge('signup', data);
+        case getStatus(ACTION_SIGNUP, STATUS_SIGNUP_MINED):
+            data = {isMining: false, minedInfo: action.data};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_COMPLETE):
-            /*data = 'Signup complete!';*/
-            data = {/*log: [...state.signup.log, data], status: data, */inProcess: false};
+            data = {inProcess: false};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_LOG):
             data = {log: [...state.signup.log, action.data], status: action.data, inProcess: true};
@@ -78,6 +79,8 @@ export const initialState = {
     },
     signup: {
         inProcess: false,
+        isMining: false,
+        minedInfo: {},
         status: '',
         log: [],
         errorMessage: ''
@@ -96,6 +99,8 @@ export const STATUS_SUCCESS = 'success';
 export const STATUS_FAIL = 'fail';
 export const STATUS_COMPLETE = 'complete';
 export const STATUS_LOG = 'log';
+
+export const STATUS_SIGNUP_MINED = 'signup_mined';
 
 export const getStatus = (action, status) => {
     return `${action}_${status}`;

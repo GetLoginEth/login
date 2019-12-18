@@ -91,10 +91,11 @@ export default class Signup extends Logger {
      * @param username
      * @param password
      * @param invite
+     * @param onTransactionMined
      * @returns {Promise<IInviteRegistration>}
      * @private
      */
-    async _signUpInvite(username, password, invite) {
+    async _signUpInvite(username, password, invite, onTransactionMined) {
         const {web3} = this.crypto;
 
         username = filterUsername(username);
@@ -120,12 +121,31 @@ export default class Signup extends Logger {
 
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
         //const registrationTransaction = this._createAccountFromWallet(username, inviteWallet, newWallet);
-        const registrationTransaction = '123';
+        //const registrationTransaction = '123';
         //await this.contract.saveWalletToTransaction(username, newWallet);
-        const result = await this.contract.createUser(usernameHash);
-        console.log(result);
+        this.contract.createUser(usernameHash)
+            .then(info => {
+                /*
+                blockHash: "0xc866ea44b0e219117b3ffbb3d15cb7428d708390a31022388b40f5d7c96a2faf"
+blockNumber: 5634898
+contractAddress: null
+cumulativeGasUsed: 373294
+from: "0x4f7747816f2a655532f158b1fa66c6f1386d00be"
+gasUsed: 125099
+logs: []
+logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+status: true
+to: "0x0bb5590d2cc9e97b1dce9a1879e27d22519689eb"
+transactionHash: "0xf799e1f15c40cd9dc25421e95ee26c7954d29373e21d0619b61ecc033643a8a4"
+transactionIndex: 2
+                 */
+                if (onTransactionMined) {
+                    onTransactionMined(info);
+                }
+            });
 
-        return new IInviteRegistration(newWallet, registrationTransaction);
+
+        return new IInviteRegistration(newWallet/*, registrationTransaction*/);
     }
 
     /**
@@ -134,9 +154,10 @@ export default class Signup extends Logger {
      * @param username
      * @param password
      * @param invite
+     * @param onTransactionMined
      * @returns {Promise<IInviteRegistration>}
      */
-    async signUp(method, username, password = '', invite = '') {
+    async signUp(method, username, password = '', invite = '', onTransactionMined) {
         let result = null;
 
         this.log(LOG_SIGN_UP_CHECK_USERNAME);
@@ -147,7 +168,7 @@ export default class Signup extends Logger {
 
         switch (method) {
             case SIGN_UP_INVITE:
-                result = await this._signUpInvite(username, password, invite);
+                result = await this._signUpInvite(username, password, invite, onTransactionMined);
                 break;
             case LOGIN_WEB3:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);

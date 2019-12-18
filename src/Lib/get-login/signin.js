@@ -6,7 +6,7 @@ import {
     CODE_USERNAME_NOT_FOUND,
     LoginError
 } from "./login-error";
-import {decodeWallet, isUsernameRegistered, LOGIN_TREZOR, sleep, validatePassword, validateUsername} from "./utils";
+import {decodeWallet, isUsernameRegistered, LOGIN_TREZOR, validatePassword, validateUsername} from "./utils";
 
 export const LOG_LOG_IN_CHECK_USERNAME = 'log_in_check_username';
 export const LOG_LOG_IN_RECEIVE_WALLET = 'log_in_receive_wallet';
