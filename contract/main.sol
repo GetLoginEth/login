@@ -33,7 +33,7 @@ contract mortal is owned {
 
 contract GetLogin {
 
-    event EventStoreWallet(bytes32 username, address walletAddress, string ciphertext, string iv, string salt, string mac);
+    event EventStoreWallet(bytes32 indexed username, address indexed walletAddress, string ciphertext, string iv, string salt, string mac);
 
     struct UserInfo
     {

@@ -1,5 +1,5 @@
 export const defaultAddresses = {
-    "rinkeby": "0x0bb5590D2CC9E97B1dcE9A1879e27D22519689eB",
+    "rinkeby": "0x0ba434B99C095bCCb791D514Df2F4893b0b4a8C9",
     "mainnet": ""
 };
 
@@ -134,13 +134,13 @@ export const defaultAbi = [
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
+                "indexed": true,
                 "internalType": "bytes32",
                 "name": "username",
                 "type": "bytes32"
             },
             {
-                "indexed": false,
+                "indexed": true,
                 "internalType": "address",
                 "name": "walletAddress",
                 "type": "address"
@@ -469,6 +469,18 @@ export default class contract {
     }
 
     async createUserFromInvite(usernameHash, walletAddress, ciphertext, iv, salt, mac) {
-        return this.callMethod('createUserFromInvite', usernameHash, walletAddress, ciphertext, iv, salt, mac);
+        return this.sendTx('createUserFromInvite', '0', usernameHash, walletAddress, ciphertext, iv, salt, mac);
+    }
+
+    async findWalletInLogs(usernameHash) {
+        const results = this.getContract().getPastEvents("EventStoreWallet", {
+            filter: {
+                username: usernameHash,
+
+            },
+            fromBlock: 0
+        });
+
+        return results.length ? results[0] : null;
     }
 }

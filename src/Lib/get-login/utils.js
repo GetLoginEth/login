@@ -20,7 +20,7 @@ export const filterUsername = (username) => {
 export const getUsernameHash = (web3, username) => {
     username = filterUsername(username);
 
-    return web3.utils.sha3(username);
+    return web3.utils.keccak256(username);
 };
 
 export const isUsernameRegistered = async (contract, username) => {

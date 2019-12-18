@@ -118,27 +118,14 @@ export default class Signup extends Logger {
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
         const wallet = createWallet(web3);
         const newWallet = encodeWallet(wallet, password);
-
+        console.log(newWallet);
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
         //const registrationTransaction = this._createAccountFromWallet(username, inviteWallet, newWallet);
         //const registrationTransaction = '123';
         //await this.contract.saveWalletToTransaction(username, newWallet);
-        this.contract.createUser(usernameHash)
+        this.contract.createUserFromInvite(usernameHash, '0x' + newWallet.address, newWallet.crypto.ciphertext, newWallet.crypto.cipherparams.iv, newWallet.crypto.kdfparams.salt, newWallet.crypto.mac)
             .then(info => {
-                /*
-                blockHash: "0xc866ea44b0e219117b3ffbb3d15cb7428d708390a31022388b40f5d7c96a2faf"
-blockNumber: 5634898
-contractAddress: null
-cumulativeGasUsed: 373294
-from: "0x4f7747816f2a655532f158b1fa66c6f1386d00be"
-gasUsed: 125099
-logs: []
-logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-status: true
-to: "0x0bb5590d2cc9e97b1dce9a1879e27d22519689eb"
-transactionHash: "0xf799e1f15c40cd9dc25421e95ee26c7954d29373e21d0619b61ecc033643a8a4"
-transactionIndex: 2
-                 */
+                console.log(info);
                 if (onTransactionMined) {
                     onTransactionMined(info);
                 }

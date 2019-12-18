@@ -6,7 +6,14 @@ import {
     CODE_USERNAME_NOT_FOUND,
     LoginError
 } from "./login-error";
-import {decodeWallet, isUsernameRegistered, LOGIN_TREZOR, validatePassword, validateUsername} from "./utils";
+import {
+    decodeWallet, filterUsername,
+    getUsernameHash,
+    isUsernameRegistered,
+    LOGIN_TREZOR,
+    validatePassword,
+    validateUsername
+} from "./utils";
 
 export const LOG_LOG_IN_CHECK_USERNAME = 'log_in_check_username';
 export const LOG_LOG_IN_RECEIVE_WALLET = 'log_in_receive_wallet';
@@ -46,6 +53,7 @@ export default class Signin extends Logger {
 
         this.log(LOG_LOG_IN_CHECK_USERNAME);
         //await sleep(1000);
+        username = filterUsername(username);
         await validateUsername(username);
         this.log(LOG_LOG_IN_CHECK_PASSWORD);
         await validatePassword(password);
@@ -53,6 +61,11 @@ export default class Signin extends Logger {
         if (!await isUsernameRegistered(this.contract, username)) {
             throw new LoginError(CODE_USERNAME_NOT_FOUND);
         }
+
+        const usernameHash = getUsernameHash(username);
+        const txInfo = await this.contract.findWalletInLogs(usernameHash);
+        console.log(txInfo);
+        // todo convert txInfo to V3, try to decode
 
         this.log(LOG_LOG_IN_RECEIVE_WALLET);
         //await sleep(1000);
