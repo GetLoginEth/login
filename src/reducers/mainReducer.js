@@ -45,7 +45,7 @@ export const reducer = (state, action) => {
         case getStatus(ACTION_SIGNUP, STATUS_SUCCESS):
             data = {inProcess: false, isMining: true, minedInfo: {}};
             return merge('signup', data);
-        case getStatus(ACTION_SIGNUP, STATUS_SIGNUP_MINED):
+        case getStatus(ACTION_SIGNUP, STATUS_MINED):
             data = {isMining: false, minedInfo: action.data};
             return merge('signup', data);
         case getStatus(ACTION_SIGNUP, STATUS_COMPLETE):
@@ -100,7 +100,7 @@ export const STATUS_FAIL = 'fail';
 export const STATUS_COMPLETE = 'complete';
 export const STATUS_LOG = 'log';
 
-export const STATUS_SIGNUP_MINED = 'signup_mined';
+export const STATUS_MINED = 'mined';
 
 export const getStatus = (action, status) => {
     return `${action}_${status}`;

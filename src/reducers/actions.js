@@ -7,7 +7,7 @@ import {
     STATUS_COMPLETE,
     STATUS_FAIL,
     STATUS_INIT,
-    STATUS_LOG, STATUS_SIGNUP_MINED,
+    STATUS_LOG, STATUS_MINED,
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
@@ -85,7 +85,7 @@ export const signUp = async (method, username, password = '', invite = '') => {
     /** @type {IInviteRegistration} */
     const result = await callMethod(ACTION_SIGNUP, async () => {
         return await signup.signUp(method, username, password, invite, info => {
-            doDispatch(getStatus(ACTION_SIGNUP, STATUS_SIGNUP_MINED), info);
+            doDispatch(getStatus(ACTION_SIGNUP, STATUS_MINED), info);
         });
     });
 
