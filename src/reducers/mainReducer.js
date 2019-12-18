@@ -57,6 +57,9 @@ export const reducer = (state, action) => {
 
         case getStatus(ACTION_LOGOUT, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_NOT_LOGGED, username: ''});
+
+        case getStatus(ACTION_APP_INFO, STATUS_INIT):
+            return merge('app', action.data);
         default:
             return state;
     }
@@ -90,6 +93,11 @@ export const initialState = {
         status: '',
         log: [],
         errorMessage: ''
+    },
+    app: {
+        network: '',
+        provider: '',
+        smartContractAddress: ''
     }
 };
 
@@ -110,3 +118,4 @@ export const ACTION_LOCAL_AUTH = 'local_auth';
 export const ACTION_SIGNIN = 'signin';
 export const ACTION_LOGOUT = 'logout';
 export const ACTION_SIGNUP = 'signup';
+export const ACTION_APP_INFO = 'app_info';

@@ -4,10 +4,14 @@ import {useStateValue} from "../reducers/state";
 
 function Settings() {
     const {state: {user}} = useStateValue();
+    const {state: {app}} = useStateValue();
 
     return <Fragment>
         <h1>Settings</h1>
-        Username: {user.username}
+        <p>Username: {user.username}</p>
+        <p>Smart contract address: {app.smartContractAddress}</p>
+        <p>Network: {app.network}</p>
+        <p>Provider: {app.provider}</p>
     </Fragment>;
 }
 

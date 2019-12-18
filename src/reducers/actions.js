@@ -1,4 +1,5 @@
 import {
+    ACTION_APP_INFO,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
     ACTION_SIGNIN,
@@ -19,8 +20,10 @@ import {validateUserData} from "../Lib/get-login/utils";
 import crypto from "../Lib/get-login/crypto";
 import contract, {defaultAddresses} from "../Lib/get-login/contract";
 
+const currentNetwork = 'rinkeby';
+const smartContractAddress = defaultAddresses[currentNetwork];
 let cryptoInstance = crypto.getInstance();
-let contractInstance = new contract(cryptoInstance.web3, 'rinkeby', defaultAddresses['rinkeby']);
+let contractInstance = new contract(cryptoInstance.web3, currentNetwork, smartContractAddress);
 let dispatch = null;
 let signup = null;
 let signin = null;
@@ -46,6 +49,11 @@ export const init = (dispatch) => {
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
     checkLocalCredentials().then();
+    doDispatch(getStatus(ACTION_APP_INFO, STATUS_INIT), {
+        network: currentNetwork,
+        smartContractAddress,
+        provider: cryptoInstance.config.websocketProviderUrl
+    });
 };
 
 
