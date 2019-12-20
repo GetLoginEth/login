@@ -7,7 +7,7 @@ import {
 } from "./login-error";
 import {
     createWallet,
-    encodeWallet,
+    encryptWallet,
     filterUsername,
     getUsernameHash,
     isUsernameRegistered,
@@ -117,7 +117,7 @@ export default class Signup extends Logger {
 
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
         const wallet = createWallet(web3);
-        const newWallet = encodeWallet(wallet, password);
+        const newWallet = encryptWallet(wallet, password);
         console.log(newWallet);
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
         //const registrationTransaction = this._createAccountFromWallet(username, inviteWallet, newWallet);

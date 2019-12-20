@@ -473,7 +473,7 @@ export default class contract {
     }
 
     async findWalletInLogs(usernameHash) {
-        const results = this.getContract().getPastEvents("EventStoreWallet", {
+        const results = await this.getContract().getPastEvents("EventStoreWallet", {
             filter: {
                 username: usernameHash,
 

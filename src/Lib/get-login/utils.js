@@ -26,7 +26,7 @@ export const getUsernameHash = (web3, username) => {
 export const isUsernameRegistered = async (contract, username) => {
     const usernameHash = await getUsernameHash(contract.web3, username);
     const result = await contract.getUserInfo(usernameHash);
-    //console.log(result);
+
     return result ? result.isActive : false;
 };
 
@@ -39,18 +39,17 @@ export const createWallet = (web3) => {
     return web3.eth.accounts.create();
 };
 
-export const encodeWallet = (wallet, password) => {
+export const encryptWallet = (wallet, password) => {
     validatePassword(password);
 
     return wallet.encrypt(password);
 };
 
-export const decodeWallet = async (wallet, password) => {
-    // todo implement
-    await validateWallet(wallet);
+export const decryptWallet = async (web3, walletV3Json, password) => {
+    await validateWallet(walletV3Json);
     validatePassword(password);
 
-    return true;
+    return web3.eth.accounts.decrypt(walletV3Json, password);
 };
 
 export const validateUserData = async (data) => {
@@ -104,4 +103,34 @@ export const validateMoreThanZero = (data) => {
     }
 
     return true;
+};
+
+export const uuidv4 = () => {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+};
+
+export const dataToV3Wallet = data => {
+    return {
+        "version": 3,
+        "id": uuidv4(),
+        "address": data.returnValues.walletAddress,
+        "crypto": {
+            "kdf": "scrypt",
+            "kdfparams": {
+                "dklen": 32,
+                "salt": data.returnValues.salt,
+                "n": 8192,
+                "r": 8,
+                "p": 1
+            },
+            "cipher": "aes-128-ctr",
+            "ciphertext": data.returnValues.ciphertext,
+            "cipherparams": {
+                "iv": data.returnValues.iv
+            },
+            "mac": data.returnValues.mac
+        },
+    };
 };

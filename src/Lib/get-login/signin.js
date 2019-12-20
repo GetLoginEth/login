@@ -7,7 +7,8 @@ import {
     LoginError
 } from "./login-error";
 import {
-    decodeWallet, filterUsername,
+    dataToV3Wallet,
+    decryptWallet, filterUsername,
     getUsernameHash,
     isUsernameRegistered,
     LOGIN_TREZOR,
@@ -49,26 +50,27 @@ export default class Signin extends Logger {
      * @private
      */
     async _signInUsernamePassword(username, password) {
-        //const {web3} = this.crypto;
+        const {web3} = this.crypto;
 
-        this.log(LOG_LOG_IN_CHECK_USERNAME);
-        //await sleep(1000);
-        username = filterUsername(username);
-        await validateUsername(username);
         this.log(LOG_LOG_IN_CHECK_PASSWORD);
         await validatePassword(password);
 
+        this.log(LOG_LOG_IN_CHECK_USERNAME);
+        username = filterUsername(username);
+        await validateUsername(username);
         if (!await isUsernameRegistered(this.contract, username)) {
             throw new LoginError(CODE_USERNAME_NOT_FOUND);
         }
 
-        const usernameHash = getUsernameHash(username);
-        const txInfo = await this.contract.findWalletInLogs(usernameHash);
-        console.log(txInfo);
-        // todo convert txInfo to V3, try to decode
-
         this.log(LOG_LOG_IN_RECEIVE_WALLET);
-        //await sleep(1000);
+        const usernameHash = getUsernameHash(web3, username);
+        const txInfo = await this.contract.findWalletInLogs(usernameHash);
+        if (!txInfo) {
+            throw new Error('Wallet for this username not found');
+        }
+        
+        const encryptedWalletData = dataToV3Wallet(txInfo);
+        await decryptWallet(web3, encryptedWalletData, password);
 
         return true;
     }
@@ -82,10 +84,12 @@ export default class Signin extends Logger {
      * @private
      */
     async _signInWalletPassword(username, password, wallet) {
+        const {web3} = this.crypto;
+
         this.log(LOG_LOG_IN_CHECK_USERNAME);
         await validateUsername(username);
         this.log(LOG_LOG_IN_DECODE_WALLET);
-        await decodeWallet(wallet, password);
+        const decodedWallet = await decryptWallet(web3, wallet, password);
 
         // todo fast check is wallet associated with username?
         // todo try to decode wallet with password
