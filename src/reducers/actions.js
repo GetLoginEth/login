@@ -75,6 +75,7 @@ export const getDispatch = () => {
 };
 
 export const signIn = async (method, username, password, wallet) => {
+    // todo prepare username for reducer
     return callMethod(ACTION_SIGNIN, async () => {
         await signin.signIn(method, username, password, wallet);
         if (method === LOGIN_DATA) {

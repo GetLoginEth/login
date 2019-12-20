@@ -85,7 +85,7 @@ class App extends Component {
                                                 <Signin/>
                                             </LoginRoute>
 
-                                            <LoginRoute path="/:swarm_protocol?/:swarm_hash?/signup" state={state}>
+                                            <LoginRoute path="/:swarm_protocol?/:swarm_hash?/xsignup" state={state}>
                                                 <Signup/>
                                             </LoginRoute>
 

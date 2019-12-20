@@ -11,7 +11,7 @@ class Main extends Component {
             <h1>Web3 Auth plugin</h1>
 
             {state.user.isLoggedIn() ? <Link className="btn btn-success btn-lg" to="./xsettings">Open Settings</Link> :
-                <Link className="btn btn-success btn-lg" to="./signup">Sign up</Link>}
+                <Link className="btn btn-success btn-lg" to="./xsignup">Sign up</Link>}
         </div>;
     }
 }
