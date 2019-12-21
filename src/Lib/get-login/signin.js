@@ -68,7 +68,7 @@ export default class Signin extends Logger {
         if (!txInfo) {
             throw new Error('Wallet for this username not found');
         }
-        
+
         const encryptedWalletData = dataToV3Wallet(txInfo);
         await decryptWallet(web3, encryptedWalletData, password);
 
@@ -89,7 +89,7 @@ export default class Signin extends Logger {
         this.log(LOG_LOG_IN_CHECK_USERNAME);
         await validateUsername(username);
         this.log(LOG_LOG_IN_DECODE_WALLET);
-        const decodedWallet = await decryptWallet(web3, wallet, password);
+        await decryptWallet(web3, wallet, password);
 
         // todo fast check is wallet associated with username?
         // todo try to decode wallet with password

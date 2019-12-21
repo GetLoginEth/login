@@ -53,10 +53,6 @@ export default class Signup extends Logger {
         this.contract = contract;
     }
 
-    /*async createInvite() {
-
-    }*/
-
     async isEnoughFundsRegistration(invite) {
         // todo implement
         return true;

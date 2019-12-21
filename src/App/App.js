@@ -5,6 +5,7 @@ import {StateContext, StateProvider} from '../reducers/state';
 import {initialState, reducer} from '../reducers/mainReducer';
 import Header from "../Header";
 import Footer from "../Footer";
+import preval from 'preval.macro';
 
 const Main = lazy(() => import('../Main'));
 const Dashboard = lazy(() => import('../Dashboard'));
@@ -108,7 +109,7 @@ class App extends Component {
                                     </Suspense>
                                 </div>
                             </main>
-                            <Footer/>
+                            <Footer buildDate={preval`module.exports = new Date().toLocaleString();`}/>
                         </Router>;
                     }}
                 </StateContext.Consumer>
