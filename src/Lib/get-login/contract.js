@@ -483,4 +483,13 @@ export default class contract {
 
         return results.length ? results[0] : null;
     }
+
+    async getAppInfo(appId) {
+        const info = await this.callMethod('Applications', appId);
+        if (Number(appId) !== Number(info.id)) {
+            throw new Error('App not found');
+        }
+
+        return info;
+    }
 }

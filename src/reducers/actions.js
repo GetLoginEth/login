@@ -2,13 +2,15 @@ import {
     ACTION_APP_INFO,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
+    ACTION_SELF_APP_INFO,
     ACTION_SIGNIN,
     ACTION_SIGNUP,
     getStatus,
     STATUS_COMPLETE,
     STATUS_FAIL,
     STATUS_INIT,
-    STATUS_LOG, STATUS_MINED,
+    STATUS_LOG,
+    STATUS_MINED,
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
@@ -49,7 +51,7 @@ export const init = (dispatch) => {
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
     checkLocalCredentials().then();
-    doDispatch(getStatus(ACTION_APP_INFO, STATUS_INIT), {
+    doDispatch(getStatus(ACTION_SELF_APP_INFO, STATUS_INIT), {
         network: currentNetwork,
         smartContractAddress,
         provider: cryptoInstance.config.websocketProviderUrl
@@ -147,10 +149,14 @@ export const initPage = (pageAction) => {
     doDispatch(getStatus(pageAction, STATUS_INIT));
 };
 
-export const callMethod = async (actionName, func) => {
+export const getAppInfo = async (appId) => {
+    return callMethod(ACTION_APP_INFO, async () => await contractInstance.getAppInfo(appId), appId);
+};
+
+export const callMethod = async (actionName, func, startData = null) => {
     let result = null;
     try {
-        doDispatch(getStatus(actionName, STATUS_START));
+        doDispatch(getStatus(actionName, STATUS_START), startData);
         if (!func) {
             throw new LoginError(CODE_EMPTY_METHOD_PARAM);
         }

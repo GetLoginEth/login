@@ -23,9 +23,8 @@ const Spinner = () => <div className="App-loading text-center">
     </div>
 </div>;
 
-
 function PrivateRoute({children, state, ...rest}) {
-    //console.log(state);
+    //console.log(rest);
     return (
         <Route
             {...rest}

@@ -58,7 +58,22 @@ export const reducer = (state, action) => {
         case getStatus(ACTION_LOGOUT, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_NOT_LOGGED, username: ''});
 
-        case getStatus(ACTION_APP_INFO, STATUS_INIT):
+        case getStatus(ACTION_APP_INFO, STATUS_START):
+            data = {id: action.data, title: '', description: '', inProcess: true, errorMessage: ''};
+            return merge('authorizeApp', data);
+        case getStatus(ACTION_APP_INFO, STATUS_FAIL):
+            data = {inProcess: false, errorMessage: action.data.message};
+            return merge('authorizeApp', data);
+        case getStatus(ACTION_APP_INFO, STATUS_SUCCESS):
+            data = {
+                id: action.data.id,
+                title: action.data.title,
+                description: action.data.description,
+                inProcess: false
+            };
+            return merge('authorizeApp', data);
+
+        case getStatus(ACTION_SELF_APP_INFO, STATUS_INIT):
             return merge('app', action.data);
         default:
             return state;
@@ -98,6 +113,13 @@ export const initialState = {
         network: '',
         provider: '',
         smartContractAddress: ''
+    },
+    authorizeApp: {
+        id: null,
+        title: '',
+        description: '',
+        inProcess: false,
+        errorMessage: ''
     }
 };
 
@@ -118,4 +140,5 @@ export const ACTION_LOCAL_AUTH = 'local_auth';
 export const ACTION_SIGNIN = 'signin';
 export const ACTION_LOGOUT = 'logout';
 export const ACTION_SIGNUP = 'signup';
+export const ACTION_SELF_APP_INFO = 'self_app_info';
 export const ACTION_APP_INFO = 'app_info';
