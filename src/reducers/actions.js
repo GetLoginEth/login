@@ -1,4 +1,5 @@
 import {
+    ACTION_ALLOW_APP,
     ACTION_APP_INFO,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
@@ -151,6 +152,23 @@ export const initPage = (pageAction) => {
 
 export const getAppInfo = async (appId) => {
     return callMethod(ACTION_APP_INFO, async () => await contractInstance.getAppInfo(appId), appId);
+};
+
+export const allowApp = async (appId, token) => {
+    return callMethod(ACTION_ALLOW_APP, async () => {
+        const key = 'allowed_apps';
+        let allowedApps = localStorage.getItem(key);
+        if (typeof allowedApps !== 'string') {
+            allowedApps = '{}';
+        }
+
+        allowedApps = JSON.parse(allowedApps);
+        if (typeof allowedApps !== 'object') {
+            allowedApps = {};
+        }
+        allowedApps[appId] = token;
+        localStorage.setItem(key, JSON.stringify(allowedApps));
+    }, {appId, token});
 };
 
 export const callMethod = async (actionName, func, startData = null) => {
