@@ -15,6 +15,7 @@ const Logout = lazy(() => import('../Logout'));
 const Privacy = lazy(() => import('../Page/Privacy'));
 const Terms = lazy(() => import('../Page/Terms'));
 const Settings = lazy(() => import('../Settings'));
+const Authorize = lazy(() => import('../Authorize'));
 
 const Spinner = () => <div className="App-loading text-center">
     <div className="spinner-border text-success" role="status">
@@ -100,6 +101,10 @@ class App extends Component {
 
                                             <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/logout" state={state}>
                                                 <Logout/>
+                                            </PrivateRoute>
+
+                                            <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/authorize" state={state}>
+                                                <Authorize/>
                                             </PrivateRoute>
 
                                             <Route path="*">
