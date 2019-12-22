@@ -3,7 +3,7 @@ import Page from "./Page";
 
 function Privacy() {
     return <Page>
-        <h1>Privacy</h1>
+        <h1 className="text-center">Privacy</h1>
         <p>Hello privacy</p>
     </Page>;
 }
