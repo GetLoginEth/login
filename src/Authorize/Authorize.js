@@ -48,8 +48,7 @@ function Authorize() {
 
     useEffect(_ => {
         getAppInfo(clientId).then();
-    }, []);
-
+    }, [clientId]);
 
     const onDecline = () => {
         window.location.replace(redirectUrl.toString() + '#error=access_denied&error_reason=user_denied&error_description=User denied your request');

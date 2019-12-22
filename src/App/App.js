@@ -1,4 +1,4 @@
-import React, {Component, lazy, Suspense} from 'react';
+import React, {lazy, Suspense} from 'react';
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import './App.css';
 import {StateContext, StateProvider} from '../reducers/state';
@@ -17,6 +17,7 @@ const Terms = lazy(() => import('../Page/Terms'));
 const Settings = lazy(() => import('../Settings'));
 const Authorize = lazy(() => import('../Authorize'));
 const Developers = lazy(() => import('../Developers'));
+const Plugin = lazy(() => import('../Plugin'));
 
 const Spinner = () => <div className="App-loading text-center">
     <div className="spinner-border text-success" role="status">
@@ -57,73 +58,78 @@ function NoMatch() {
     );
 }
 
-class App extends Component {
-    render() {
-        return (
-            <StateProvider initialState={initialState} reducer={reducer}>
-                <StateContext.Consumer>
-                    {({state}) => {
-                        //console.log(state);
-                        return <Router>
-                            <Header isLoggedIn={state.user.isLoggedIn()} isCheckingAuth={state.user.isCheckingAuth()}
-                                    username={state.user.username}/>
-                            <main role="main">
-                                <div className="container">
-                                    <Suspense fallback={<Spinner/>}>
-                                        <Switch>
-                                            <Route exact path="/:swarm_protocol?/:swarm_hash?/">
-                                                <Main/>
-                                            </Route>
+function App() {
+    return (
+        <StateProvider initialState={initialState} reducer={reducer}>
+            <StateContext.Consumer>
+                {({state}) => {
+                    //console.log(state);
+                    return <Router>
 
-                                            <Route path="/:swarm_protocol?/:swarm_hash?/privacy">
-                                                <Privacy/>
-                                            </Route>
+                        <Header isLoggedIn={state.user.isLoggedIn()}
+                                isCheckingAuth={state.user.isCheckingAuth()}
+                                username={state.user.username}/>
+                        <main role="main">
+                            <div className="container">
+                                <Suspense fallback={<Spinner/>}>
+                                    <Switch>
+                                        <Route exact path="/:swarm_protocol?/:swarm_hash?/">
+                                            <Main/>
+                                        </Route>
 
-                                            <Route path="/:swarm_protocol?/:swarm_hash?/terms">
-                                                <Terms/>
-                                            </Route>
+                                        <Route path="/:swarm_protocol?/:swarm_hash?/privacy">
+                                            <Privacy/>
+                                        </Route>
 
-                                            <LoginRoute path="/:swarm_protocol?/:swarm_hash?/login" state={state}>
-                                                <Signin/>
-                                            </LoginRoute>
+                                        <Route path="/:swarm_protocol?/:swarm_hash?/terms">
+                                            <Terms/>
+                                        </Route>
 
-                                            <LoginRoute path="/:swarm_protocol?/:swarm_hash?/xsignup" state={state}>
-                                                <Signup/>
-                                            </LoginRoute>
+                                        <Route path="/:swarm_protocol?/:swarm_hash?/xplugin">
+                                            <Plugin/>
+                                        </Route>
 
-                                            <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/xsettings" state={state}>
-                                                <Settings/>
-                                            </PrivateRoute>
+                                        <LoginRoute path="/:swarm_protocol?/:swarm_hash?/login" state={state}>
+                                            <Signin/>
+                                        </LoginRoute>
 
-                                            <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/dashboard" state={state}>
-                                                <Dashboard/>
-                                            </PrivateRoute>
+                                        <LoginRoute path="/:swarm_protocol?/:swarm_hash?/xsignup" state={state}>
+                                            <Signup/>
+                                        </LoginRoute>
 
-                                            <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/logout" state={state}>
-                                                <Logout/>
-                                            </PrivateRoute>
+                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/xsettings" state={state}>
+                                            <Settings/>
+                                        </PrivateRoute>
 
-                                            <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/authorize" state={state}>
-                                                <Authorize/>
-                                            </PrivateRoute>
+                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/dashboard" state={state}>
+                                            <Dashboard/>
+                                        </PrivateRoute>
 
-                                            <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/developers" state={state}>
-                                                <Developers/>
-                                            </PrivateRoute>
+                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/logout" state={state}>
+                                            <Logout/>
+                                        </PrivateRoute>
 
-                                            <Route path="*">
-                                                <NoMatch/>
-                                            </Route>
-                                        </Switch>
-                                    </Suspense>
-                                </div>
-                            </main>
-                            <Footer buildDate={preval`module.exports = new Date().toLocaleString();`}/>
-                        </Router>;
-                    }}
-                </StateContext.Consumer>
-            </StateProvider>);
-    }
+                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/authorize" state={state}>
+                                            <Authorize/>
+                                        </PrivateRoute>
+
+                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/developers"
+                                                      state={state}>
+                                            <Developers/>
+                                        </PrivateRoute>
+
+                                        <Route path="*">
+                                            <NoMatch/>
+                                        </Route>
+                                    </Switch>
+                                </Suspense>
+                            </div>
+                        </main>
+                        <Footer buildDate={preval`module.exports = new Date().toLocaleString();`}/>
+                    </Router>;
+                }}
+            </StateContext.Consumer>
+        </StateProvider>);
 }
 
 export default App;
