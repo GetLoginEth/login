@@ -10,6 +10,10 @@ class GetLoginApi {
         this.sendMessageTimeout = 60;
     }
 
+    isReady() {
+        return !!this.iframe;
+    }
+
     /* _messageListener(data) {
          //console.log(data);
      }*/
@@ -36,11 +40,17 @@ class GetLoginApi {
 
                 clearTimeout(timeout);
                 window.removeEventListener('message', listener);
-                resolve(event);
+
+                if (event.data.result) {
+                    resolve(event.data.result);
+                } else {
+                    reject(event.data.error ? event.data.error : 'Unknown error');
+                }
             };
             window.addEventListener('message', listener);
             const message = {
                 id,
+                app: 'get_login',
                 method,
                 data
             };
@@ -111,11 +121,9 @@ class GetLoginApi {
         return true;
     }
 
-    async test() {
-        return this._sendMessage('test');
-    }
-
-    async testTwo() {
-        return this._sendMessage('test_two');
+    async getUserInfo() {
+        return this._sendMessage('getUserInfo');
     }
 }
+
+window.getLoginApi = new GetLoginApi();

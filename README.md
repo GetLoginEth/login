@@ -1,5 +1,16 @@
 ## Available Scripts
 
+### Inject GetLogin to your dApp
+
+Add `<script async src="https://localhost:3000/api/last.js"></script>` to `<head>`
+
+Init: `window.getLoginApi.init(pluginUrl)
+                           .then(data => {
+                               alert(data);
+                           });`
+                           
+Call methods: `window.getLoginApi.getUserInfo().then(data => alert(JSON.stringify(data))).catch(e => alert(e));`
+
 In the project directory, you can run:
 
 ### `yarn start`
