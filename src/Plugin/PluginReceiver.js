@@ -1,3 +1,5 @@
+import {getAllowedApp} from "../reducers/actions";
+
 export default class PluginReceiver {
     constructor() {
         this.allowedMethods = [
@@ -40,8 +42,25 @@ export default class PluginReceiver {
         };
     }
 
-    init() {
+    init(clientId = null) {
+        if (!clientId) {
+            const params = new URLSearchParams(window.location.search);
+            clientId = params.get('client_id');
+        }
+
+        if (!clientId) {
+            throw new Error('Incorrect client_id');
+        }
+
         window.addEventListener('message', this._listener);
-        window.parent.postMessage('get_login_init', '*');
+        getAllowedApp(clientId).then(data => {
+            const is_client_allowed = !!data;
+            window.parent.postMessage({
+                'type': 'get_login_init',
+                'client_id': clientId,
+                is_client_allowed
+            }, '*');
+        });
+
     }
 }

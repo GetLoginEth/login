@@ -143,3 +143,4 @@ export const ACTION_SIGNUP = 'signup';
 export const ACTION_SELF_APP_INFO = 'self_app_info';
 export const ACTION_APP_INFO = 'app_info';
 export const ACTION_ALLOW_APP = 'allow_app';
+export const ACTION_GET_ALLOWED_APP = 'allowed_app';

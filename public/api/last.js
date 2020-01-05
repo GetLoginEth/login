@@ -1,14 +1,19 @@
 class GetLoginApi {
-    constructor() {
-        this.url = null;
-        this.iframe = null;
-        this.isInitInProgress = false;
-        /**
-         * In seconds
-         * @type {number}
-         */
-        this.sendMessageTimeout = 60;
-    }
+    appId = null;
+    baseUrl = null;
+    pluginUrl = null;
+    authUrl = null;
+    redirectUrl = null;
+    iframe = null;
+    isInitInProgress = false;
+    /**
+     * In seconds
+     * @type {number}
+     */
+    sendMessageTimeout = 60;
+
+    /*constructor() {
+    }*/
 
     isReady() {
         return !!this.iframe;
@@ -55,7 +60,7 @@ class GetLoginApi {
                 data
             };
 
-            this.iframe.postMessage(message, this.url);
+            this.iframe.postMessage(message, this.pluginUrl);
         });
     }
 
@@ -70,8 +75,23 @@ class GetLoginApi {
         }));
     }
 
-    async init(url) {
-        this.url = url;
+    getAuthorizeUrl(appId = this.appId, redirectUrl = this.redirectUrl) {
+        [appId, this.authUrl, redirectUrl].forEach(item => {
+            if (!item) {
+                throw new Error('Incorrect params');
+            }
+        });
+
+        return `${this.authUrl}?client_id=${appId}&redirect_url=${redirectUrl}`;
+    }
+
+    async init(appId, baseApiUrl, redirectUrl) {
+        [appId, baseApiUrl, redirectUrl].forEach(item => {
+            if (!item) {
+                throw new Error('Incorrect params');
+            }
+        });
+
         if (this.isInitInProgress) {
             throw new Error('Init in progress');
         }
@@ -80,7 +100,13 @@ class GetLoginApi {
             throw new Error('Already init');
         }
 
+        this.appId = appId;
+        this.baseUrl = baseApiUrl;
+        this.pluginUrl = `${baseApiUrl}xplugin?client_id=${appId}`;
+        this.authUrl = `${baseApiUrl}authorize`;
+        this.redirectUrl = redirectUrl;
         let isFrameLoaded = false;
+        let answerData = {};
         const waitFrameLoaded = async () => {
             return new Promise((resolve, reject) => {
                 let interval = setInterval(() => {
@@ -94,13 +120,15 @@ class GetLoginApi {
 
         try {
             this.isInitInProgress = true;
-            if (!url) {
+            if (!this.pluginUrl) {
                 throw new Error('Incorrect url');
             }
 
             const window = await this._getWindow();
             const listener = (event) => {
-                if (event.data === 'get_login_init') {
+                const data = event.data;
+                if (typeof data === 'object' && data.type === 'get_login_init') {
+                    answerData = {...data, authorize_url: this.getAuthorizeUrl()};
                     isFrameLoaded = true;
                     this.iframe = iframe.contentWindow;
                     window.removeEventListener('message', listener);
@@ -109,7 +137,7 @@ class GetLoginApi {
             window.addEventListener('message', listener);
             const iframe = document.createElement('iframe');
             iframe.style.display = "none";
-            iframe.src = url;
+            iframe.src = this.pluginUrl;
             document.body.appendChild(iframe);
         } catch (e) {
             this.isInitInProgress = false;
@@ -118,7 +146,10 @@ class GetLoginApi {
 
         await waitFrameLoaded();
 
-        return true;
+        return {
+            result: true,
+            data: answerData
+        };
     }
 
     async getUserInfo() {

@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect} from 'react';
 import './Authorize.css';
-import {allowApp, getAppInfo} from "../reducers/actions";
+import {allowApp, getAllowedApp, getAppInfo} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
 
 function Authorize() {
@@ -46,8 +46,18 @@ function Authorize() {
      */
     const redirectUrl = setRedirectUrl(params.get('redirect_url'));
 
+    const successReturn = (accessToken, usernameHash) => {
+        window.location.replace(`${redirectUrl.toString()}#access_token=${accessToken}&user_id=${usernameHash}`);
+    };
+
     useEffect(_ => {
         getAppInfo(clientId).then();
+        getAllowedApp(clientId)
+            .then(accessToken => {
+                if(accessToken){
+                    successReturn(accessToken, 'some_username_hash');
+                }
+            });
     }, [clientId]);
 
     const onDecline = () => {
@@ -59,8 +69,9 @@ function Authorize() {
         const accessToken = 'accessToken_66666';
         // todo get real username hash
         const usernameHash = 'usernameHash_sge4g34g34g34';
-        allowApp(clientId, accessToken).then();
-        window.location.replace(`${redirectUrl.toString()}#access_token=${accessToken}&user_id=${usernameHash}`);
+        allowApp(clientId, accessToken).then(result => {
+            successReturn(accessToken, usernameHash);
+        });
     };
 
     const onBack = () => {
