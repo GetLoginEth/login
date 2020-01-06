@@ -103,7 +103,7 @@ class GetLoginApi {
         this.appId = appId;
         this.baseUrl = baseApiUrl;
         this.pluginUrl = `${baseApiUrl}xplugin?client_id=${appId}`;
-        this.authUrl = `${baseApiUrl}authorize`;
+        this.authUrl = `${baseApiUrl}xauthorize`;
         this.redirectUrl = redirectUrl;
         let isFrameLoaded = false;
         let answerData = {};

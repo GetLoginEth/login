@@ -109,7 +109,7 @@ function App() {
                                             <Logout/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/authorize" state={state}>
+                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/xauthorize" state={state}>
                                             <Authorize/>
                                         </PrivateRoute>
 
