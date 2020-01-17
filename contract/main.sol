@@ -99,7 +99,7 @@ contract GetLogin {
     }
 
     function addWallet(bytes32 usernameHash, address wallet) public payable {
-        // todo chech is username assigned with sender
+        // todo check is username assigned with sender
         // todo check is wallet already exists
         UserWallets[usernameHash].push(UserWallet({username: usernameHash, wallet: wallet}));
     }
