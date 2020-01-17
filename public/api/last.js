@@ -82,7 +82,7 @@ class GetLoginApi {
             }
         });
 
-        return `${this.authUrl}?client_id=${appId}&redirect_url=${redirectUrl}`;
+        return `${this.authUrl}?client_id=${appId}&response_type=id_token&redirect_uri=${redirectUrl}`;
     }
 
     async init(appId, baseApiUrl, redirectUrl) {
@@ -153,6 +153,7 @@ class GetLoginApi {
     }
 
     async getUserInfo() {
+        // todo send with access token to validate is authorized
         return this._sendMessage('getUserInfo');
     }
 }

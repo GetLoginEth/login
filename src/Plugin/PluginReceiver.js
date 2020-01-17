@@ -46,6 +46,7 @@ export default class PluginReceiver {
         if (!clientId) {
             const params = new URLSearchParams(window.location.search);
             clientId = params.get('client_id');
+            console.log('clientId', clientId);
         }
 
         if (!clientId) {
@@ -53,11 +54,13 @@ export default class PluginReceiver {
         }
 
         window.addEventListener('message', this._listener);
-        getAllowedApp(clientId).then(data => {
-            const is_client_allowed = !!data;
+        getAllowedApp(clientId).then(access_token => {
+            console.log(access_token);
+            const is_client_allowed = !!access_token;
             window.parent.postMessage({
                 'type': 'get_login_init',
                 'client_id': clientId,
+                access_token,
                 is_client_allowed
             }, '*');
         });

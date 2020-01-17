@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import './Authorize.css';
 import {allowApp, getAllowedApp, getAppInfo} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
@@ -6,7 +6,7 @@ import {useStateValue} from "../reducers/state";
 function Authorize() {
     const setRedirectUrl = (url) => {
         console.log(url);
-        if (isValidRedirectURL(url)) {
+        if (isValidRedirectURI(url)) {
             const result = new URL(url);
             result.hash = '';
 
@@ -16,7 +16,7 @@ function Authorize() {
         return null;
     };
 
-    const isValidRedirectURL = (redirectUrl) => {
+    const isValidRedirectURI = (redirectUrl) => {
         // todo check is not equal current page and other cases
         // todo compare with allowed urls in blockchain
 
@@ -37,48 +37,75 @@ function Authorize() {
         return true;
     };
 
+    const isValidResponseType = (responseType) => {
+        return responseType === 'id_token';
+    };
+
     const {state: {authorizeApp}} = useStateValue();
     const params = new URLSearchParams(window.location.search);
+    console.log(params);
     const clientId = params.get('client_id');
     /**
      *
      * @type {URL | null}
      */
-    const redirectUrl = setRedirectUrl(params.get('redirect_url'));
+    const redirectUri = setRedirectUrl(params.get('redirect_uri'));
+    const responseType = params.get('response_type');
 
     const successReturn = (accessToken, usernameHash) => {
-        window.location.replace(`${redirectUrl.toString()}#access_token=${accessToken}&user_id=${usernameHash}`);
+        window.location.replace(`${redirectUri.toString()}#access_token=${accessToken}&user_id=${usernameHash}`);
+    };
+
+    const randomText = count => {
+        let text = '';
+        let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+        for (let i = 0; i < count; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    };
+
+    const createRandomAccessToken = () => {
+        return randomText(64);
     };
 
     useEffect(_ => {
         getAppInfo(clientId).then();
         getAllowedApp(clientId)
             .then(accessToken => {
-                if(accessToken){
+                if (accessToken) {
                     successReturn(accessToken, 'some_username_hash');
                 }
             });
     }, [clientId]);
 
     const onDecline = () => {
-        window.location.replace(redirectUrl.toString() + '#error=access_denied&error_reason=user_denied&error_description=User denied your request');
+        window.location.replace(redirectUri.toString() + '#error=access_denied&error_reason=user_denied&error_description=User denied your request');
     };
 
-    const onAllow = () => {
-        // todo check is already exists token. return old token
-        const accessToken = 'accessToken_66666';
+    const onAllow = async () => {
         // todo get real username hash
         const usernameHash = 'usernameHash_sge4g34g34g34';
-        allowApp(clientId, accessToken).then(result => {
+        let accessToken = await getAllowedApp(clientId);
+
+        if (accessToken) {
             successReturn(accessToken, usernameHash);
-        });
+        } else {
+            // todo move token creation to allowApp method
+            accessToken = createRandomAccessToken();
+            await allowApp(clientId, accessToken);
+            successReturn(accessToken, usernameHash);
+        }
     };
 
     const onBack = () => {
         window.history.back();
     };
 
-    const isValidURL = isValidRedirectURL(redirectUrl);
+    const isRedirectUri = isValidRedirectURI(redirectUri);
+    const isResponseType = isValidResponseType(responseType);
+    const isValidParams = isRedirectUri && isResponseType;
     return <div className="Authorize">
         <h3 className="text-center">Authorization</h3>
 
@@ -94,17 +121,23 @@ function Authorize() {
                 <p>Description: {authorizeApp.description}</p>
                 <p>Redirect URL not checked</p>
 
-                {isValidURL && <Fragment>
-                    <button className="btn btn-success" onClick={onAllow} disabled={!isValidURL}>Allow
+                {isValidParams && <Fragment>
+                    <button className="btn btn-success" onClick={onAllow} disabled={!isValidParams}>Allow
                     </button>
                     <button className="btn btn-danger float-right" onClick={onDecline}
-                            disabled={!isValidURL}>Decline
+                            disabled={!isValidParams}>Decline
                     </button>
                 </Fragment>}
 
-                {!isValidURL && <Fragment>
-                    <p className="text-danger">Application passed incorrect redirect_url. You can go back to the
-                        application.</p>
+                {!isValidParams && <Fragment>
+                    {!isRedirectUri &&
+                    <p className="text-danger">Application passed incorrect redirect_uri.</p>}
+
+                    {!isResponseType &&
+                    <p className="text-danger">Application passed incorrect response_type. Accepted only id_token. </p>}
+
+                    <p>You can go back to the application.</p>
+
                     <button className="btn btn-primary" onClick={onBack}>Back</button>
                 </Fragment>}
             </Fragment>}
