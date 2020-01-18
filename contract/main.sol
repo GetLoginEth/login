@@ -105,7 +105,8 @@ contract GetLogin is mortal {
         require(isAddressRegistered(msg.sender) == false, "Wallet already used");
         Users[usernameHash] = UserInfo({username: usernameHash, isActive: true});
         UsersAddressUsername[msg.sender] = Username({username: usernameHash, isActive: true});
-        addMainSession(msg.sender);
+        //addMainSession(msg.sender);
+        _addSessionInit(usernameHash, msg.sender, sessionMain, 0);
     }
 
     function _createApplication(bytes32 usernameHash, string memory title, string memory description) private returns (uint64) {
@@ -126,6 +127,10 @@ contract GetLogin is mortal {
     function _deleteApplicationUrl(uint64 appId, uint index) private {
         // todo emit event?
         delete Applications[appId].allowedUrls[index];
+    }
+
+    function _addSessionInit(bytes32 usernameHash, address wallet, uint8 sessionType, uint64 appId) private {
+        UserSessions[usernameHash].push(UserSession({username: usernameHash, wallet: wallet, sessionType: sessionType, appId: appId}));
     }
 
     function _addSession(address wallet, uint8 sessionType, uint64 appId) private {
@@ -226,7 +231,12 @@ contract GetLogin is mortal {
     }
 
     function isAddressRegistered(address wallet) public view returns (bool) {
-        return getUserByAddress(wallet).isActive == true;
+        Username memory currentUser = UsersAddressUsername[wallet];
+        if(currentUser.isActive != true){
+            return false;
+        }
+
+        return Users[currentUser.username].isActive == true;
     }
 
     function isAppOwner(uint64 appIp, address checkAddress) public view returns (bool) {
@@ -236,7 +246,7 @@ contract GetLogin is mortal {
 
     function getUserByAddress(address wallet) public view returns (UserInfo memory) {
         Username memory currentUser = UsersAddressUsername[wallet];
-        require( currentUser.isActive == true, "User with this address not found");
+        require(currentUser.isActive == true, "User with this address not found");
         return Users[currentUser.username];
     }
 
