@@ -189,6 +189,7 @@ contract GetLogin is mortal {
 
     function createInvite(address payable inviteAddress) public payable userRegistered {
         bytes32 creatorUsername = getUsernameByAddress(msg.sender);
+        require(isActiveInvite(inviteAddress) == false, "This address already used for invite");
         Invites[inviteAddress] = InviteInfo({inviteAddress: inviteAddress, creatorUsername: creatorUsername, registeredUsername: '', isActive: true});
         emit EventInviteCreated(creatorUsername, inviteAddress);
     }

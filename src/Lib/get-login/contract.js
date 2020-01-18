@@ -1,32 +1,91 @@
 export const defaultAddresses = {
-    "rinkeby": "0x0ba434B99C095bCCb791D514Df2F4893b0b4a8C9",
+    "rinkeby": "0x15530599A94C991cb2734804A779e82635A5815e",
     "mainnet": ""
 };
 
 export const defaultAbi = [
     {
-        "constant": false,
         "inputs": [
             {
-                "internalType": "bytes32",
-                "name": "usernameHash",
-                "type": "bytes32"
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
             },
+            {
+                "internalType": "string",
+                "name": "url",
+                "type": "string"
+            }
+        ],
+        "name": "addApplicationUrl",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            },
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            }
+        ],
+        "name": "addAppSession",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
             {
                 "internalType": "address",
                 "name": "wallet",
                 "type": "address"
             }
         ],
-        "name": "addWallet",
+        "name": "addMainSession",
         "outputs": [],
-        "payable": true,
         "stateMutability": "payable",
         "type": "function"
     },
     {
-        "constant": false,
+        "inputs": [],
+        "name": "applicationId",
+        "outputs": [
+            {
+                "internalType": "uint64",
+                "name": "",
+                "type": "uint64"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "",
+                "type": "uint64"
+            }
+        ],
+        "name": "Applications",
+        "outputs": [
+            {
+                "internalType": "uint64",
+                "name": "id",
+                "type": "uint64"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "usernameHash",
+                "type": "bytes32"
+            },
             {
                 "internalType": "string",
                 "name": "title",
@@ -38,39 +97,53 @@ export const defaultAbi = [
                 "type": "string"
             },
             {
-                "internalType": "bytes32",
-                "name": "creatorUsername",
-                "type": "bytes32"
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "close",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
             }
         ],
         "name": "createApplication",
         "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
-        "constant": false,
         "inputs": [
             {
                 "internalType": "address payable",
                 "name": "inviteAddress",
                 "type": "address"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "creatorUsername",
-                "type": "bytes32"
             }
         ],
         "name": "createInvite",
         "outputs": [],
-        "payable": true,
         "stateMutability": "payable",
         "type": "function"
     },
     {
-        "constant": false,
         "inputs": [
             {
                 "internalType": "bytes32",
@@ -80,12 +153,10 @@ export const defaultAbi = [
         ],
         "name": "createUser",
         "outputs": [],
-        "payable": true,
         "stateMutability": "payable",
         "type": "function"
     },
     {
-        "constant": false,
         "inputs": [
             {
                 "internalType": "bytes32",
@@ -120,15 +191,107 @@ export const defaultAbi = [
         ],
         "name": "createUserFromInvite",
         "outputs": [],
-        "payable": true,
         "stateMutability": "payable",
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+            }
+        ],
+        "name": "deleteApplicationUrl",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "getUsernameByAddress",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "isAddressRegistered",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "usernameHash",
+                "type": "bytes32"
+            }
+        ],
+        "name": "isUsernameExists",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
-        "payable": false,
         "stateMutability": "nonpayable",
         "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "creatorUsername",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "inviteAddress",
+                "type": "address"
+            }
+        ],
+        "name": "EventInviteCreated",
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -174,58 +337,129 @@ export const defaultAbi = [
         "type": "event"
     },
     {
-        "constant": true,
-        "inputs": [],
-        "name": "applicationId",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
         "inputs": [
             {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
+                "internalType": "uint64",
+                "name": "id",
+                "type": "uint64"
             }
         ],
-        "name": "Applications",
+        "name": "getApplication",
         "outputs": [
             {
-                "internalType": "uint256",
-                "name": "id",
-                "type": "uint256"
-            },
-            {
-                "internalType": "string",
-                "name": "title",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
+                "components": [
+                    {
+                        "internalType": "uint64",
+                        "name": "id",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "usernameHash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "title",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string[]",
+                        "name": "allowedUrls",
+                        "type": "string[]"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct GetLogin.Application",
+                "name": "",
+                "type": "tuple"
             }
         ],
-        "payable": false,
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "constant": true,
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "getInvite",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "inviteAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "creatorUsername",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "registeredUsername",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct GetLogin.InviteInfo",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "getUserByAddress",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "username",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct GetLogin.UserInfo",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "bytes32",
@@ -253,12 +487,10 @@ export const defaultAbi = [
                 "type": "tuple"
             }
         ],
-        "payable": false,
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "constant": true,
         "inputs": [
             {
                 "internalType": "address",
@@ -279,17 +511,86 @@ export const defaultAbi = [
                 "type": "bytes32"
             },
             {
+                "internalType": "bytes32",
+                "name": "registeredUsername",
+                "type": "bytes32"
+            },
+            {
                 "internalType": "bool",
                 "name": "isActive",
                 "type": "bool"
             }
         ],
-        "payable": false,
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "constant": true,
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "isActiveInvite",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appIp",
+                "type": "uint64"
+            },
+            {
+                "internalType": "address",
+                "name": "checkAddress",
+                "type": "address"
+            }
+        ],
+        "name": "isAppOwner",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            }
+        ],
+        "name": "renameApplication",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "bytes32",
@@ -310,12 +611,34 @@ export const defaultAbi = [
                 "type": "bool"
             }
         ],
-        "payable": false,
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "constant": true,
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "UsersAddressUsername",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "bytes32",
@@ -328,7 +651,7 @@ export const defaultAbi = [
                 "type": "uint256"
             }
         ],
-        "name": "UserWallets",
+        "name": "UserSessions",
         "outputs": [
             {
                 "internalType": "bytes32",
@@ -339,9 +662,62 @@ export const defaultAbi = [
                 "internalType": "address",
                 "name": "wallet",
                 "type": "address"
+            },
+            {
+                "internalType": "uint8",
+                "name": "sessionType",
+                "type": "uint8"
+            },
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
             }
         ],
-        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            }
+        ],
+        "name": "validateAppExists",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "validateAppOwner",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "validateInviteActive",
+        "outputs": [],
         "stateMutability": "view",
         "type": "function"
     }
