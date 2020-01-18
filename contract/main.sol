@@ -187,7 +187,8 @@ contract GetLogin is mortal {
        _createUser(usernameHash);
     }
 
-    function createInvite(address payable inviteAddress, bytes32 creatorUsername) public payable userRegistered {
+    function createInvite(address payable inviteAddress) public payable userRegistered {
+        bytes32 creatorUsername = getUsernameByAddress(msg.sender);
         Invites[inviteAddress] = InviteInfo({inviteAddress: inviteAddress, creatorUsername: creatorUsername, registeredUsername: '', isActive: true});
         emit EventInviteCreated(creatorUsername, inviteAddress);
     }
