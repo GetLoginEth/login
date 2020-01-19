@@ -14,7 +14,7 @@ export const sleep = (ms) => {
 };
 
 export const filterUsername = (username) => {
-    return username.trim().toLowerCase();
+    return username.trim();
 };
 
 export const getUsernameHash = (web3, username) => {

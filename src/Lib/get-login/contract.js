@@ -1,70 +1,75 @@
 export const defaultAddresses = {
-    "rinkeby": "0x15530599A94C991cb2734804A779e82635A5815e",
+    "rinkeby": "0xFd3Dc30405dfC8F1E37844E4dCa5c5D1B06C4c2E",
     "mainnet": ""
 };
 
 export const defaultAbi = [
     {
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "anonymous": false,
         "inputs": [
             {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "creatorUsername",
+                "type": "bytes32"
             },
             {
+                "indexed": false,
+                "internalType": "address",
+                "name": "inviteAddress",
+                "type": "address"
+            }
+        ],
+        "name": "EventInviteCreated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "walletAddress",
+                "type": "address"
+            },
+            {
+                "indexed": false,
                 "internalType": "string",
-                "name": "url",
+                "name": "ciphertext",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "iv",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "salt",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "mac",
                 "type": "string"
             }
         ],
-        "name": "addApplicationUrl",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            },
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            }
-        ],
-        "name": "addAppSession",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            }
-        ],
-        "name": "addMainSession",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "applicationId",
-        "outputs": [
-            {
-                "internalType": "uint64",
-                "name": "",
-                "type": "uint64"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
+        "name": "EventStoreWallet",
+        "type": "event"
     },
     {
         "inputs": [
@@ -100,6 +105,176 @@ export const defaultAbi = [
                 "internalType": "bool",
                 "name": "isActive",
                 "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "Invites",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "inviteAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "creatorUsername",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "registeredUsername",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "UserSessions",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            },
+            {
+                "internalType": "uint8",
+                "name": "sessionType",
+                "type": "uint8"
+            },
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "name": "Users",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "UsersAddressUsername",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            },
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            }
+        ],
+        "name": "addAppSession",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "string",
+                "name": "url",
+                "type": "string"
+            }
+        ],
+        "name": "addApplicationUrl",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "applicationId",
+        "outputs": [
+            {
+                "internalType": "uint64",
+                "name": "",
+                "type": "uint64"
             }
         ],
         "stateMutability": "view",
@@ -211,130 +386,6 @@ export const defaultAbi = [
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            }
-        ],
-        "name": "getUsernameByAddress",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            }
-        ],
-        "name": "isAddressRegistered",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "usernameHash",
-                "type": "bytes32"
-            }
-        ],
-        "name": "isUsernameExists",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "creatorUsername",
-                "type": "bytes32"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "inviteAddress",
-                "type": "address"
-            }
-        ],
-        "name": "EventInviteCreated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "walletAddress",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "ciphertext",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "iv",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "salt",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "mac",
-                "type": "string"
-            }
-        ],
-        "name": "EventStoreWallet",
-        "type": "event"
     },
     {
         "inputs": [
@@ -494,31 +545,16 @@ export const defaultAbi = [
         "inputs": [
             {
                 "internalType": "address",
-                "name": "",
+                "name": "wallet",
                 "type": "address"
             }
         ],
-        "name": "Invites",
+        "name": "getUsernameByAddress",
         "outputs": [
             {
-                "internalType": "address",
-                "name": "inviteAddress",
-                "type": "address"
-            },
-            {
                 "internalType": "bytes32",
-                "name": "creatorUsername",
+                "name": "",
                 "type": "bytes32"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "registeredUsername",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -533,6 +569,25 @@ export const defaultAbi = [
             }
         ],
         "name": "isActiveInvite",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "isAddressRegistered",
         "outputs": [
             {
                 "internalType": "bool",
@@ -570,6 +625,25 @@ export const defaultAbi = [
     {
         "inputs": [
             {
+                "internalType": "bytes32",
+                "name": "usernameHash",
+                "type": "bytes32"
+            }
+        ],
+        "name": "isUsernameExists",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "uint64",
                 "name": "appId",
                 "type": "uint64"
@@ -593,87 +667,13 @@ export const defaultAbi = [
     {
         "inputs": [
             {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "name": "Users",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "UsersAddressUsername",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "UserSessions",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            },
-            {
                 "internalType": "address",
                 "name": "wallet",
                 "type": "address"
-            },
-            {
-                "internalType": "uint8",
-                "name": "sessionType",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
             }
         ],
+        "name": "validateAddressRegistered",
+        "outputs": [],
         "stateMutability": "view",
         "type": "function"
     },
@@ -795,7 +795,7 @@ export default class contract {
 
     async sendTx(methodName, balanceEther, ...params) {
         if (typeof balanceEther !== 'string') {
-            throw new Error('Wait string here');
+            throw new Error('Required string for balanceEther');
         }
 
         const data = this.getContract().methods[methodName](...params).encodeABI();
@@ -809,6 +809,12 @@ export default class contract {
 
         const gasPrice = await this.web3.eth.getGasPrice();
         const gasPriceBN = this.web3.utils.toBN(gasPrice);
+        /*let estimateGas = 0;
+        try {
+            estimateGas = await this.web3.eth.estimateGas(result);
+        } catch (e) {
+            estimateGas = 100000;
+        }*/
         let estimateGas = await this.web3.eth.estimateGas(result);
         // additional gas +20%
         estimateGas = Math.round(estimateGas + estimateGas * 0.2);
@@ -826,14 +832,20 @@ export default class contract {
         result.gasLimit = estimateGas;
         result.gasPrice = gasPrice;
         result.nonce = await this.web3.eth.getTransactionCount(this.account.address);
-
         /**
          *
          * @type {SignedTransaction}
          */
         const signed = await this.web3.eth.accounts.signTransaction(result, this.account.privateKey);
+        let sendResult = null;
+        try {
+            sendResult = this.web3.eth.sendSignedTransaction(signed.rawTransaction);
+            console.log(sendResult);
+        } catch (e) {
+            console.error(e);
+        }
 
-        return this.web3.eth.sendSignedTransaction(signed.rawTransaction);
+        return sendResult;
     }
 
     async getUserInfo(usernameHash) {
@@ -849,15 +861,14 @@ export default class contract {
     }
 
     async findWalletInLogs(usernameHash) {
-        const results = await this.getContract().getPastEvents("EventStoreWallet", {
+        const results = await this.getContract().getPastEvents('EventStoreWallet', {
             filter: {
                 username: usernameHash,
-
             },
             fromBlock: 0
         });
 
-        return results.length ? results[0] : null;
+        return results && results.length ? results[0] : null;
     }
 
     async getAppInfo(appId) {
@@ -867,5 +878,22 @@ export default class contract {
         }
 
         return info;
+    }
+
+    async isInviteExists(inviteAddress) {
+        const info = await this.callMethod('Invites', inviteAddress);
+
+        return info && info.isActive;
+    }
+
+    async getInvites(usernameHash) {
+        const results = await this.getContract().getPastEvents('EventInviteCreated', {
+            filter: {
+                creatorUsername: usernameHash,
+            },
+            fromBlock: 0
+        });
+
+        return results;
     }
 }

@@ -106,29 +106,32 @@ export default class Signup extends Logger {
         //console.log(inviteWallet);
         this.contract.setPrivateKey(inviteWallet.privateKey);
 
+        if (!await this.contract.isInviteExists(inviteWallet.address)) {
+            throw new Error('Invite is not active or already used');
+        }
+
         this.log(LOG_SIGN_UP_CHECK_FUNDS);
         const balanceEth = web3.utils.fromWei(await web3.eth.getBalance(inviteWallet.address));
         validateMoreThanZero(balanceEth);
-        console.log(balanceEth);
+        console.log('Invite balance', balanceEth);
 
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
         const wallet = createWallet(web3);
         const newWallet = encryptWallet(wallet, password);
-        console.log(newWallet);
+        //console.log(newWallet);
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
-        //const registrationTransaction = this._createAccountFromWallet(username, inviteWallet, newWallet);
-        //const registrationTransaction = '123';
-        //await this.contract.saveWalletToTransaction(username, newWallet);
-        this.contract.createUserFromInvite(usernameHash, '0x' + newWallet.address, newWallet.crypto.ciphertext, newWallet.crypto.cipherparams.iv, newWallet.crypto.kdfparams.salt, newWallet.crypto.mac)
-            .then(info => {
-                console.log(info);
-                if (onTransactionMined) {
-                    onTransactionMined(info);
-                }
-            });
+        const info = await this.contract.createUserFromInvite(
+            usernameHash,
+            '0x' + newWallet.address,
+            newWallet.crypto.ciphertext,
+            newWallet.crypto.cipherparams.iv,
+            newWallet.crypto.kdfparams.salt,
+            newWallet.crypto.mac);
+        if (onTransactionMined) {
+            onTransactionMined(info);
+        }
 
-
-        return new IInviteRegistration(newWallet/*, registrationTransaction*/);
+        return new IInviteRegistration(newWallet);
     }
 
     /**
