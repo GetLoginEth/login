@@ -18,6 +18,7 @@ const Settings = lazy(() => import('../Settings'));
 const Authorize = lazy(() => import('../Authorize'));
 const Developers = lazy(() => import('../Developers'));
 const Plugin = lazy(() => import('../Plugin'));
+const Invite = lazy(() => import('../Invite'));
 
 const Spinner = () => <div className="App-loading text-center">
     <div className="spinner-border text-success" role="status">
@@ -99,6 +100,10 @@ function App() {
 
                                         <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/xsettings" state={state}>
                                             <Settings/>
+                                        </PrivateRoute>
+
+                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/xinvite" state={state}>
+                                            <Invite/>
                                         </PrivateRoute>
 
                                         <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/dashboard" state={state}>

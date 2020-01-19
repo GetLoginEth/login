@@ -25,7 +25,11 @@ export const reducer = (state, action) => {
             data = {inProcess: false, errorMessage: action.data.message};
             return merge('signin', data);
         case getStatus(ACTION_SIGNIN, STATUS_SUCCESS):
-            return merge('user', {status: USER_STATUS_LOGGED, username: action.data.username});
+            return merge('user', {
+                status: USER_STATUS_LOGGED,
+                username: action.data.username,
+                usernameHash: action.data.usernameHash
+            });
         case getStatus(ACTION_SIGNIN, STATUS_COMPLETE):
             data = {inProcess: false};
             return merge('signin', data);
@@ -93,7 +97,8 @@ export const initialState = {
             return this.status === USER_STATUS_CHECKING;
         },
         status: USER_STATUS_NOT_LOGGED,
-        username: ''
+        username: '',
+        usernameHash: ''
     },
     signup: {
         inProcess: false,
@@ -120,6 +125,12 @@ export const initialState = {
         description: '',
         inProcess: false,
         errorMessage: ''
+    },
+    invite: {
+        inProcessCreation: false,
+        inProcessReceiving: false,
+        status: '',
+        invites: []
     }
 };
 
@@ -144,3 +155,4 @@ export const ACTION_SELF_APP_INFO = 'self_app_info';
 export const ACTION_APP_INFO = 'app_info';
 export const ACTION_ALLOW_APP = 'allow_app';
 export const ACTION_GET_ALLOWED_APP = 'allowed_app';
+export const ACTION_GET_INVITES = 'get_invites';

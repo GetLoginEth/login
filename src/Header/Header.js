@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import './Header.css';
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -13,7 +13,10 @@ function Header({isLoggedIn, isCheckingAuth, username}) {
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
-                        {isLoggedIn && <Link className="nav-link" to="./xsettings">Settings</Link>}
+                        {isLoggedIn && <Fragment>
+                            <Link className="nav-link" to="./xsettings">Settings</Link>
+                            <Link className="nav-link" to="./xinvite">Invite</Link>
+                        </Fragment>}
 
                         {/*<NavDropdown title="Dropdown" id="basic-nav-dropdown">
                             <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>

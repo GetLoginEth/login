@@ -1,6 +1,6 @@
 import {
     ACTION_ALLOW_APP,
-    ACTION_APP_INFO, ACTION_GET_ALLOWED_APP,
+    ACTION_APP_INFO, ACTION_GET_ALLOWED_APP, ACTION_GET_INVITES,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
     ACTION_SELF_APP_INFO,
@@ -19,7 +19,7 @@ import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
-import {validateUserData} from "../Lib/get-login/utils";
+import {getUsernameHash, validateUserData} from "../Lib/get-login/utils";
 import crypto from "../Lib/get-login/crypto";
 import contract, {defaultAddresses} from "../Lib/get-login/contract";
 
@@ -80,6 +80,7 @@ export const getDispatch = () => {
 export const signIn = async (method, username, password, wallet) => {
     // todo prepare username for reducer
     return callMethod(ACTION_SIGNIN, async () => {
+        const usernameHash = getUsernameHash(cryptoInstance.web3, username);
         await signin.signIn(method, username, password, wallet);
         if (method === LOGIN_DATA) {
             setUserData(username, wallet);
@@ -89,7 +90,7 @@ export const signIn = async (method, username, password, wallet) => {
             throw new Error('Not supported method for local storing');
         }
 
-        return {username};
+        return {username, usernameHash};
     });
 };
 
@@ -122,8 +123,10 @@ export const logoutLocal = () => {
 export const setUserData = (username, wallet = null) => {
     if (username) {
         localStorage.setItem('username', username);
+        localStorage.setItem('usernameHash', getUsernameHash(cryptoInstance.web3, username));
     } else {
         localStorage.removeItem('username');
+        localStorage.removeItem('usernameHash');
     }
 
     if (wallet) {
@@ -185,6 +188,10 @@ export const getAllowedApp = async (appId) => {
         }
         return allowedApps[appId];
     }, {appId});
+};
+
+export const getInvites = async (usernameHash) => {
+    return callMethod(ACTION_GET_INVITES, async () => await contractInstance.getInvites(usernameHash));
 };
 
 export const callMethod = async (actionName, func, startData = null) => {
