@@ -156,3 +156,4 @@ export const ACTION_APP_INFO = 'app_info';
 export const ACTION_ALLOW_APP = 'allow_app';
 export const ACTION_GET_ALLOWED_APP = 'allowed_app';
 export const ACTION_GET_INVITES = 'get_invites';
+export const ACTION_CREATE_INVITE = 'create_invite';

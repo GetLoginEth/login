@@ -65,7 +65,8 @@ export const checkLocalCredentials = async () => {
         const data = getUserData();
         await validateUserData(data);
 
-        return {username: data.username, wallet: data.wallet};
+        //return {username: data.username, wallet: data.wallet};
+        return data;
     });
 };
 
@@ -145,8 +146,9 @@ export const setUserData = (username, wallet = null) => {
 export const getUserData = () => {
     const username = localStorage.getItem('username');
     const wallet = JSON.parse(localStorage.getItem('wallet'));
+    const usernameHash = JSON.parse(localStorage.getItem('usernameHash'));
 
-    return {username, wallet};
+    return {username, wallet, usernameHash};
 };
 
 export const initPage = (pageAction) => {
@@ -192,6 +194,12 @@ export const getAllowedApp = async (appId) => {
 
 export const getInvites = async (usernameHash) => {
     return callMethod(ACTION_GET_INVITES, async () => await contractInstance.getInvites(usernameHash));
+};
+
+export const createInvite = async () => {
+    // todo outside actions create empty wallet, store private key, register that key in contract
+    throw new Error('Implement');
+    //return callMethod(ACTION_CREATE_INVITE, async () => await contractInstance.getInvites(usernameHash));
 };
 
 export const callMethod = async (actionName, func, startData = null) => {

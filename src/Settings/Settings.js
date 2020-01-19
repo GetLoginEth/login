@@ -9,6 +9,7 @@ function Settings() {
     return <Fragment>
         <h1>Settings</h1>
         <p>Username: {user.username}</p>
+        <p>Username hash: {user.usernameHash}</p>
         <p>Smart contract address: {app.smartContractAddress}</p>
         <p>Network: {app.network}</p>
         <p>Provider: {app.provider}</p>

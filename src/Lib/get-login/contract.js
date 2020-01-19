@@ -887,13 +887,11 @@ export default class contract {
     }
 
     async getInvites(usernameHash) {
-        const results = await this.getContract().getPastEvents('EventInviteCreated', {
+        return await this.getContract().getPastEvents('EventInviteCreated', {
             filter: {
                 creatorUsername: usernameHash,
             },
             fromBlock: 0
         });
-
-        return results;
     }
 }
