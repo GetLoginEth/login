@@ -780,6 +780,10 @@ export default class contract {
      * @param privateKey
      */
     setPrivateKey(privateKey) {
+        if (!privateKey) {
+            throw new Error('Incorrect private key');
+        }
+        
         if (privateKey.indexOf('0x') === -1) {
             privateKey = '0x' + privateKey;
         }
