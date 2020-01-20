@@ -1,6 +1,6 @@
 import {
     ACTION_ALLOW_APP,
-    ACTION_APP_INFO, ACTION_GET_ALLOWED_APP, ACTION_GET_INVITES,
+    ACTION_APP_INFO, ACTION_CREATE_INVITE, ACTION_GET_ALLOWED_APP, ACTION_GET_INVITE, ACTION_GET_INVITES, ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
     ACTION_SELF_APP_INFO,
@@ -22,6 +22,7 @@ import {translate} from "../Lib/get-login/log-translation";
 import {getUsernameHash, validateUserData} from "../Lib/get-login/utils";
 import crypto from "../Lib/get-login/crypto";
 import contract, {defaultAddresses} from "../Lib/get-login/contract";
+import Invite from "../Lib/get-login/invite";
 
 const currentNetwork = 'rinkeby';
 const smartContractAddress = defaultAddresses[currentNetwork];
@@ -30,6 +31,11 @@ let contractInstance = new contract(cryptoInstance.web3, currentNetwork, smartCo
 let dispatch = null;
 let signup = null;
 let signin = null;
+/**
+ *
+ * @type Invite
+ */
+let invite = null;
 
 export const doDispatch = (type, data = {}) => {
     dispatch({type, data});
@@ -47,10 +53,13 @@ export const init = (dispatch) => {
         };
     };
     setDispatch(dispatch);
+    // todo move init to lib class?
     signup = new Signup(cryptoInstance, contractInstance);
     signin = new Signin(cryptoInstance, contractInstance);
+    invite = new Invite(cryptoInstance, contractInstance);
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
+    invite.setLogger(getLogger(ACTION_INVITE));
     checkLocalCredentials().then();
     doDispatch(getStatus(ACTION_SELF_APP_INFO, STATUS_INIT), {
         network: currentNetwork,
@@ -64,7 +73,8 @@ export const checkLocalCredentials = async () => {
     return callMethod(ACTION_LOCAL_AUTH, async () => {
         const data = getUserData();
         await validateUserData(data);
-        console.log(data);
+        contractInstance.setPrivateKey(data.wallet.privateKey);
+        //console.log(data);
         //return {username: data.username, wallet: data.wallet};
         return data;
     });
@@ -108,7 +118,7 @@ export const signUp = async (method, username, password = '', invite = '') => {
             method = LOGIN_DATA;
         }
 
-        setUserData(username, result.newWallet);
+        setUserData(username, result.decryptedWallet);
         await checkLocalCredentials();
     }
 
@@ -197,10 +207,12 @@ export const getInvites = async (usernameHash) => {
     return callMethod(ACTION_GET_INVITES, async () => await contractInstance.getInvites(usernameHash));
 };
 
+export const getInvite = async (address) => {
+    return callMethod(ACTION_GET_INVITE, async () => await contractInstance.getInvite(address));
+};
+
 export const createInvite = async () => {
-    // todo outside actions create empty wallet, store private key, register that key in contract
-    throw new Error('Implement');
-    //return callMethod(ACTION_CREATE_INVITE, async () => await contractInstance.getInvites(usernameHash));
+    return callMethod(ACTION_CREATE_INVITE, async () => await invite.createInvite());
 };
 
 export const callMethod = async (actionName, func, startData = null) => {

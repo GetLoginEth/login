@@ -1,5 +1,5 @@
 export const defaultAddresses = {
-    "rinkeby": "0xFd3Dc30405dfC8F1E37844E4dCa5c5D1B06C4c2E",
+    "rinkeby": "0x28a426FB3901E84d541fFE6F9e617f74Cf29c4a4",
     "mainnet": ""
 };
 
@@ -745,6 +745,11 @@ export default class contract {
          * @type {Contract}
          */
         this.contract = null;
+        this.sendTxDefault = {
+            balanceEther: '0',
+            isForceSend: false,
+            isNormalizeSendEther: false
+        };
     }
 
     initContract() {
@@ -793,8 +798,8 @@ export default class contract {
         return this.getContract().methods[methodName](...params).call();
     }
 
-    async sendTx(methodName, balanceEther, ...params) {
-        if (typeof balanceEther !== 'string') {
+    async sendTx(methodName, settings = this.sendTxDefault, ...params) {
+        if (typeof settings.balanceEther !== 'string') {
             throw new Error('Required string for balanceEther');
         }
 
@@ -803,32 +808,40 @@ export default class contract {
         let result = {
             from: this.account.address,
             to: this.contractAddress,
-            value: this.web3.utils.toWei(balanceEther, 'ether'),
+            value: this.web3.utils.toWei(settings.balanceEther, 'ether'),
             data
         };
-
+        //console.log(result);
         const gasPrice = await this.web3.eth.getGasPrice();
         const gasPriceBN = this.web3.utils.toBN(gasPrice);
-        /*let estimateGas = 0;
-        try {
+        let estimateGas;
+        if (settings.isForceSend) {
+            try {
+                estimateGas = await this.web3.eth.estimateGas(result);
+            } catch (e) {
+                estimateGas = 100000;
+            }
+        } else {
             estimateGas = await this.web3.eth.estimateGas(result);
-        } catch (e) {
-            estimateGas = 100000;
-        }*/
-        let estimateGas = await this.web3.eth.estimateGas(result);
+        }
+
         // additional gas +20%
         estimateGas = Math.round(estimateGas + estimateGas * 0.2);
         const estimateGasBN = this.web3.utils.toBN(estimateGas);
         const totalGasBN = gasPriceBN.mul(estimateGasBN);
-        /**
-         * @type {BN}
-         */
-        let resultValue = Number(balanceEther) === 0 ? 0 : result.value.sub(totalGasBN);
-        if (resultValue && resultValue.isNeg()) {
-            throw new Error('Too low balance');
+        if (settings.isNormalizeSendEther) {
+            /**
+             * @type {BN}
+             */
+            let resultValue = Number(settings.balanceEther) === 0 ? 0 : this.web3.utils.toBN(result.value).sub(totalGasBN);
+            //console.log(result.value, typeof resultValue, resultValue, resultValue.toString());
+            if (resultValue && resultValue.isNeg()) {
+                throw new Error('Too low balance');
+            }
+
+            result.value = resultValue;
         }
 
-        result.value = resultValue;
         result.gasLimit = estimateGas;
         result.gasPrice = gasPrice;
         result.nonce = await this.web3.eth.getTransactionCount(this.account.address);
@@ -840,7 +853,6 @@ export default class contract {
         let sendResult = null;
         try {
             sendResult = this.web3.eth.sendSignedTransaction(signed.rawTransaction);
-            console.log(sendResult);
         } catch (e) {
             console.error(e);
         }
@@ -853,11 +865,11 @@ export default class contract {
     }
 
     async createUser(usernameHash) {
-        return this.sendTx('createUser', '0', usernameHash);
+        return this.sendTx('createUser', this.sendTxDefault, usernameHash);
     }
 
     async createUserFromInvite(usernameHash, walletAddress, ciphertext, iv, salt, mac) {
-        return this.sendTx('createUserFromInvite', '0', usernameHash, walletAddress, ciphertext, iv, salt, mac);
+        return this.sendTx('createUserFromInvite', this.sendTxDefault, usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
     async findWalletInLogs(usernameHash) {
@@ -886,6 +898,10 @@ export default class contract {
         return info && info.isActive;
     }
 
+    async getInvite(inviteAddress) {
+        return await this.callMethod('Invites', inviteAddress);
+    }
+
     async getInvites(usernameHash) {
         return await this.getContract().getPastEvents('EventInviteCreated', {
             filter: {
@@ -893,5 +909,9 @@ export default class contract {
             },
             fromBlock: 0
         });
+    }
+
+    async createInvite(wallet, balanceEther) {
+        return this.sendTx('createInvite', {...this.sendTxDefault, balanceEther}, wallet);
     }
 }

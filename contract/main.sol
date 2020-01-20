@@ -195,6 +195,7 @@ contract GetLogin is mortal {
         bytes32 creatorUsername = getUsernameByAddress(msg.sender);
         require(isActiveInvite(inviteAddress) == false, "This address already used for invite");
         Invites[inviteAddress] = InviteInfo({inviteAddress: inviteAddress, creatorUsername: creatorUsername, registeredUsername: '', isActive: true});
+        inviteAddress.transfer(msg.value);
         emit EventInviteCreated(creatorUsername, inviteAddress);
     }
 

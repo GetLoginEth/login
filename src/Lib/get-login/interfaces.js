@@ -1,6 +1,7 @@
 export class IInviteRegistration {
-    constructor(newWallet/*, registrationTransaction*/) {
-        this.newWallet = newWallet;
+    constructor(encryptedWallet, decryptedWallet/*, registrationTransaction*/) {
+        this.encryptedWallet = encryptedWallet;
+        this.decryptedWallet = decryptedWallet;
        /* this.registrationTransaction = registrationTransaction;*/
     }
 }

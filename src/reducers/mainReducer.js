@@ -59,6 +59,50 @@ export const reducer = (state, action) => {
             data = {log: [...state.signup.log, action.data], status: action.data, inProcess: true};
             return merge('signup', data);
 
+        case getStatus(ACTION_GET_INVITES, STATUS_INIT):
+            data = {
+                log: [],
+                status: '',
+                inProcessCreation: false,
+                inProcessReceiving: false,
+                errorMessage: '',
+                invites: []
+            };
+            return merge('invite', data);
+        case getStatus(ACTION_GET_INVITES, STATUS_START):
+            data = {
+                log: [],
+                status: '',
+                inProcessCreation: false,
+                inProcessReceiving: true,
+                errorMessage: '',
+                invites: []
+            };
+            return merge('invite', data);
+        case getStatus(ACTION_GET_INVITES, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('invite', data);
+        case getStatus(ACTION_GET_INVITES, STATUS_SUCCESS):
+            data = {invites: action.data};
+            return merge('invite', data);
+        case getStatus(ACTION_GET_INVITES, STATUS_COMPLETE):
+            data = {inProcessReceiving: false};
+            return merge('invite', data);
+        case getStatus(ACTION_GET_INVITES, STATUS_LOG):
+            data = {log: [...state.invite.log, action.data], status: action.data, inProcessReceiving: true};
+            return merge('invite', data);
+
+        case getStatus(ACTION_GET_INVITE, STATUS_SUCCESS):
+            data = {inviteInfo: {...state.invite.inviteInfo, [action.data.inviteAddress]: action.data}};
+            //console.log(data);
+            return merge('invite', data);
+
+        case getStatus(ACTION_CREATE_INVITE, STATUS_SUCCESS):
+            console.log(action.data);
+            data = {createdInvites: [...state.invite.createdInvites, action.data]};
+            console.log(data);
+            return merge('invite', data);
+
         case getStatus(ACTION_LOGOUT, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_NOT_LOGGED, username: ''});
 
@@ -130,7 +174,11 @@ export const initialState = {
         inProcessCreation: false,
         inProcessReceiving: false,
         status: '',
-        invites: []
+        log: [],
+        invites: [],
+        inviteInfo: {},
+        errorMessage: '',
+        createdInvites:[]
     }
 };
 
@@ -151,9 +199,11 @@ export const ACTION_LOCAL_AUTH = 'local_auth';
 export const ACTION_SIGNIN = 'signin';
 export const ACTION_LOGOUT = 'logout';
 export const ACTION_SIGNUP = 'signup';
+export const ACTION_INVITE = 'invite';
 export const ACTION_SELF_APP_INFO = 'self_app_info';
 export const ACTION_APP_INFO = 'app_info';
 export const ACTION_ALLOW_APP = 'allow_app';
 export const ACTION_GET_ALLOWED_APP = 'allowed_app';
 export const ACTION_GET_INVITES = 'get_invites';
+export const ACTION_GET_INVITE = 'get_invite';
 export const ACTION_CREATE_INVITE = 'create_invite';

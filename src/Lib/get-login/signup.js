@@ -116,22 +116,22 @@ export default class Signup extends Logger {
         console.log('Invite balance', balanceEth);
 
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
-        const wallet = createWallet(web3);
-        const newWallet = encryptWallet(wallet, password);
-        //console.log(newWallet);
+        const decryptedWallet = createWallet(web3);
+        const encryptedWallet = encryptWallet(decryptedWallet, password);
+        //console.log(encryptedWallet);
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
         const info = await this.contract.createUserFromInvite(
             usernameHash,
-            '0x' + newWallet.address,
-            newWallet.crypto.ciphertext,
-            newWallet.crypto.cipherparams.iv,
-            newWallet.crypto.kdfparams.salt,
-            newWallet.crypto.mac);
+            '0x' + encryptedWallet.address,
+            encryptedWallet.crypto.ciphertext,
+            encryptedWallet.crypto.cipherparams.iv,
+            encryptedWallet.crypto.kdfparams.salt,
+            encryptedWallet.crypto.mac);
         if (onTransactionMined) {
             onTransactionMined(info);
         }
 
-        return new IInviteRegistration(newWallet);
+        return new IInviteRegistration(encryptedWallet, decryptedWallet);
     }
 
     /**
