@@ -783,7 +783,7 @@ export default class contract {
         if (!privateKey) {
             throw new Error('Incorrect private key');
         }
-        
+
         if (privateKey.indexOf('0x') === -1) {
             privateKey = '0x' + privateKey;
         }
@@ -791,11 +791,6 @@ export default class contract {
         this.privateKey = privateKey;
         this.account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
         this.initContract();
-    }
-
-    saveWalletToTransaction(username, wallet) {
-        // todo check wallet structure && encoded or not
-        // todo send transaction with encoded wallet and username to SC
     }
 
     async callMethod(methodName, ...params) {
