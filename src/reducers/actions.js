@@ -64,7 +64,7 @@ export const checkLocalCredentials = async () => {
     return callMethod(ACTION_LOCAL_AUTH, async () => {
         const data = getUserData();
         await validateUserData(data);
-
+        console.log(data);
         //return {username: data.username, wallet: data.wallet};
         return data;
     });
@@ -82,11 +82,11 @@ export const signIn = async (method, username, password, wallet) => {
     // todo prepare username for reducer
     return callMethod(ACTION_SIGNIN, async () => {
         const usernameHash = getUsernameHash(cryptoInstance.web3, username);
-        await signin.signIn(method, username, password, wallet);
+        const receivedWallet = await signin.signIn(method, username, password, wallet);
         if (method === LOGIN_DATA) {
             setUserData(username, wallet);
         } else if (method === LOGIN_USERNAME_PASSWORD) {
-            setUserData(username);
+            setUserData(username, receivedWallet);
         } else {
             throw new Error('Not supported method for local storing');
         }
@@ -117,11 +117,12 @@ export const signUp = async (method, username, password = '', invite = '') => {
 
 export const logoutLocal = () => {
     return callMethod(ACTION_LOGOUT, async () => {
-        return setUserData(null, null);
+        localStorage.clear();
+        return true;
     });
 };
 
-export const setUserData = (username, wallet = null) => {
+export const setUserData = (username, wallet) => {
     if (username) {
         localStorage.setItem('username', username);
         localStorage.setItem('usernameHash', getUsernameHash(cryptoInstance.web3, username));
@@ -146,7 +147,7 @@ export const setUserData = (username, wallet = null) => {
 export const getUserData = () => {
     const username = localStorage.getItem('username');
     const wallet = JSON.parse(localStorage.getItem('wallet'));
-    const usernameHash = JSON.parse(localStorage.getItem('usernameHash'));
+    const usernameHash = localStorage.getItem('usernameHash');
 
     return {username, wallet, usernameHash};
 };

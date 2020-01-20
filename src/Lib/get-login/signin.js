@@ -70,9 +70,8 @@ export default class Signin extends Logger {
         }
 
         const encryptedWalletData = dataToV3Wallet(txInfo);
-        await decryptWallet(web3, encryptedWalletData, password);
 
-        return true;
+        return await decryptWallet(web3, encryptedWalletData, password);
     }
 
     /**
@@ -129,6 +128,6 @@ export default class Signin extends Logger {
             throw new LoginError(CODE_EMPTY_RESULT);
         }
 
-        return true;
+        return result;
     }
 }
