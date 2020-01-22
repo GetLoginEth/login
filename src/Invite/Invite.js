@@ -14,10 +14,7 @@ function Invite() {
         getInvites(user.usernameHash).then();
     }, []);
 
-    //console.log(state);
-    console.log(user.balance.original);
     const isCanCreateInvite = Number(user.balance.original) >= Number(0.002);
-    console.log(isCanCreateInvite);
     return <Fragment>
         <h1>Invites</h1>
         {user.balance.original !== null && !isCanCreateInvite &&
