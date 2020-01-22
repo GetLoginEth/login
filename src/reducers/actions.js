@@ -1,6 +1,12 @@
 import {
     ACTION_ALLOW_APP,
-    ACTION_APP_INFO, ACTION_CREATE_INVITE, ACTION_GET_ALLOWED_APP, ACTION_GET_INVITE, ACTION_GET_INVITES, ACTION_INVITE,
+    ACTION_APP_INFO,
+    ACTION_CREATE_INVITE,
+    ACTION_GET_ALLOWED_APP,
+    ACTION_GET_BALANCE,
+    ACTION_GET_INVITE,
+    ACTION_GET_INVITES,
+    ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
     ACTION_SELF_APP_INFO,
@@ -68,16 +74,28 @@ export const init = (dispatch) => {
     });
 };
 
-
 export const checkLocalCredentials = async () => {
     return callMethod(ACTION_LOCAL_AUTH, async () => {
         const data = getUserData();
         await validateUserData(data);
         contractInstance.setPrivateKey(data.wallet.privateKey);
-        //console.log(data);
-        //return {username: data.username, wallet: data.wallet};
+        console.log(data.wallet.address);
+        getWalletBalance(data.wallet.address).then();
+
         return data;
     });
+};
+
+export const getWalletBalance = async (wallet) => {
+    return callMethod(ACTION_GET_BALANCE, async () => cryptoInstance.web3.eth.getBalance(wallet)
+        .then(data => {
+            const original = cryptoInstance.web3.utils.fromWei(data);
+            const web = Number(original).toFixed(2);
+            return {
+                original,
+                web
+            };
+        }), wallet);
 };
 
 export const setDispatch = (newDispatch) => {
@@ -89,7 +107,7 @@ export const getDispatch = () => {
 };
 
 export const signIn = async (method, username, password, wallet) => {
-    // todo prepare username for reducer
+    // todo reset all state because new user
     return callMethod(ACTION_SIGNIN, async () => {
         const usernameHash = getUsernameHash(cryptoInstance.web3, username);
         const receivedWallet = await signin.signIn(method, username, password, wallet);
@@ -102,7 +120,8 @@ export const signIn = async (method, username, password, wallet) => {
         }
 
         return {username, usernameHash};
-    });
+    })
+        .then(() => checkLocalCredentials());
 };
 
 export const signUp = async (method, username, password = '', invite = '') => {

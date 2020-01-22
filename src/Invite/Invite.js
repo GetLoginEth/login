@@ -5,7 +5,8 @@ import {createInvite, getInvite, getInvites} from "../reducers/actions";
 
 function Invite() {
     const {state: {user}} = useStateValue();
-    const {state: {app}} = useStateValue();
+    //const {state: {app}} = useStateValue();
+    //const {state} = useStateValue();
     const {state: {invite}} = useStateValue();
     const {state: {invite: {inviteInfo}}} = useStateValue();
 
@@ -13,9 +14,15 @@ function Invite() {
         getInvites(user.usernameHash).then();
     }, []);
 
+    //console.log(state);
+    console.log(user.balance.original);
+    const isCanCreateInvite = Number(user.balance.original) >= Number(0.002);
+    console.log(isCanCreateInvite);
     return <Fragment>
         <h1>Invites</h1>
-        <button className="btn btn-primary" onClick={_ => {
+        {user.balance.original !== null && !isCanCreateInvite &&
+        <p>Your balance must be more than 0.002 ETH to create invite</p>}
+        <button disabled={!isCanCreateInvite} className="btn btn-primary" onClick={_ => {
             createInvite().then();
         }}>Create invite
         </button>

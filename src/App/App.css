@@ -22,3 +22,7 @@ body {
 details p {
     margin-bottom: 0.1rem;
 }
+
+.container {
+    margin-bottom: 100px;
+}
