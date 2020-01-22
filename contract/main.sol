@@ -31,6 +31,7 @@ contract mortal is owned {
 contract GetLogin is mortal {
     event EventStoreWallet(bytes32 indexed username, address indexed walletAddress, string ciphertext, string iv, string salt, string mac);
     event EventInviteCreated(bytes32 indexed creatorUsername, address inviteAddress);
+    event EventAppSession(uint64 indexed appId, bytes32 indexed username, string iv, string ephemPublicKey,string ciphertext, string mac);
 
     uint8 sessionMain = 1;
     uint8 sessionApp = 2;
@@ -209,11 +210,14 @@ contract GetLogin is mortal {
        emit EventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
-    function addAppSession(address wallet, uint64 appId) public payable {
+    function createAppSession(uint64 appId, string memory iv, string memory ephemPublicKey, string memory ciphertext, string memory mac) public payable {
         validateAddressRegistered(msg.sender);
+        validateAppExists(appId);
+        bytes32 username = getUsernameByAddress(msg.sender);
         // todo check only one main session possible
         // todo hide user apps ids?
-        _addSession(wallet, sessionApp, appId);
+        //_addSession(wallet, sessionApp, appId);
+        emit EventAppSession(appId, username, iv, ephemPublicKey, ciphertext, mac);
     }
 
     /*function addMainSession(address wallet) public payable {

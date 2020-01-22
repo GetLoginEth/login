@@ -9,7 +9,7 @@ import {
     ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
-    ACTION_SELF_APP_INFO,
+    ACTION_SELF_APP_INFO, ACTION_SESSION,
     ACTION_SIGNIN,
     ACTION_SIGNUP,
     getStatus,
@@ -29,6 +29,7 @@ import {getUsernameHash, validateUserData} from "../Lib/get-login/utils";
 import crypto from "../Lib/get-login/crypto";
 import contract, {defaultAddresses} from "../Lib/get-login/contract";
 import Invite from "../Lib/get-login/invite";
+import Session from "../Lib/get-login/session";
 
 const currentNetwork = 'rinkeby';
 const smartContractAddress = defaultAddresses[currentNetwork];
@@ -37,6 +38,11 @@ let contractInstance = new contract(cryptoInstance.web3, currentNetwork, smartCo
 let dispatch = null;
 let signup = null;
 let signin = null;
+/**
+ *
+ * @type Session
+ */
+let session = null;
 /**
  *
  * @type Invite
@@ -63,9 +69,11 @@ export const init = (dispatch) => {
     signup = new Signup(cryptoInstance, contractInstance);
     signin = new Signin(cryptoInstance, contractInstance);
     invite = new Invite(cryptoInstance, contractInstance);
+    session = new Session(cryptoInstance, contractInstance);
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
     invite.setLogger(getLogger(ACTION_INVITE));
+    session.setLogger(getLogger(ACTION_SESSION));
     checkLocalCredentials().then();
     doDispatch(getStatus(ACTION_SELF_APP_INFO, STATUS_INIT), {
         network: currentNetwork,
@@ -79,7 +87,7 @@ export const checkLocalCredentials = async () => {
         const data = getUserData();
         await validateUserData(data);
         contractInstance.setPrivateKey(data.wallet.privateKey);
-        console.log(data.wallet.address);
+        cryptoInstance.setAccount(data.wallet.privateKey);
         getWalletBalance(data.wallet.address).then();
 
         return data;
@@ -232,6 +240,14 @@ export const getInvite = async (address) => {
 
 export const createInvite = async () => {
     return callMethod(ACTION_CREATE_INVITE, async () => await invite.createInvite());
+};
+
+export const test = async () => {
+    return callMethod('my_test', async () => {
+        /*const appId = 2;
+        console.log(await session.createSession(appId));
+        console.log(await session.getSessionPrivateKey(appId, localStorage.getItem('usernameHash')));*/
+    });
 };
 
 export const callMethod = async (actionName, func, startData = null) => {

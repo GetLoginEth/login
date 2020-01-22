@@ -1,6 +1,7 @@
 import React, {Fragment} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
+import {test} from "../reducers/actions";
 
 function Settings() {
     const {state: {user}} = useStateValue();
@@ -14,6 +15,11 @@ function Settings() {
         <p>Smart contract address: {app.smartContractAddress}</p>
         <p>Network: {app.network}</p>
         <p>Provider: {app.provider}</p>
+
+        {/*<button className="btn btn-primary" onClick={_ => {
+            test();
+        }}>Test
+        </button>*/}
     </Fragment>;
 }
 

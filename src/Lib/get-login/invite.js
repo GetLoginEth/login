@@ -22,7 +22,6 @@ export default class Invite extends Logger {
         this.contract = contract;
     }
 
-
     async createInvite(sendBalance = '0.001') {
         const {web3} = this.crypto;
 
@@ -34,5 +33,4 @@ export default class Invite extends Logger {
 
         return wallet;
     }
-
 }

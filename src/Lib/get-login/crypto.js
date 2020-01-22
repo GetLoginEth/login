@@ -4,6 +4,12 @@ import Web3 from 'web3';
 export default class crypto {
     /**
      *
+     * @type Account
+     */
+    currentAccount = null;
+
+    /**
+     *
      * @type {crypto}
      */
     static instance = null;
@@ -46,5 +52,13 @@ export default class crypto {
         }
 
         return this.web3.eth.accounts.privateKeyToAccount(invite);
+    }
+
+    setAccount(privateKey) {
+        this.currentAccount = this.web3.eth.accounts.privateKeyToAccount(privateKey);
+    }
+
+    getAccount() {
+        return this.currentAccount;
     }
 }

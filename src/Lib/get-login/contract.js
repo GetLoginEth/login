@@ -1,5 +1,5 @@
 export const defaultAddresses = {
-    "rinkeby": "0x28a426FB3901E84d541fFE6F9e617f74Cf29c4a4",
+    "rinkeby": "0x7d899FCc79100328b210528AC8808310ABf9eA1E",
     "mainnet": ""
 };
 
@@ -8,6 +8,49 @@ export const defaultAbi = [
         "inputs": [],
         "stateMutability": "nonpayable",
         "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "iv",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "ephemPublicKey",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "ciphertext",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "mac",
+                "type": "string"
+            }
+        ],
+        "name": "EventAppSession",
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -234,24 +277,6 @@ export const defaultAbi = [
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            },
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            }
-        ],
-        "name": "addAppSession",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "uint64",
                 "name": "appId",
                 "type": "uint64"
@@ -285,6 +310,39 @@ export const defaultAbi = [
         "name": "close",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "string",
+                "name": "iv",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "ephemPublicKey",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "ciphertext",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "mac",
+                "type": "string"
+            }
+        ],
+        "name": "createAppSession",
+        "outputs": [],
+        "stateMutability": "payable",
         "type": "function"
     },
     {
@@ -912,5 +970,24 @@ export default class contract {
 
     async createInvite(wallet, balanceEther) {
         return this.sendTx('createInvite', {...this.sendTxDefault, balanceEther}, wallet);
+    }
+
+    async createAppSession(appId, iv, ephemPublicKey, ciphertext, mac, balanceEther) {
+        return this.sendTx('createAppSession', {
+            ...this.sendTxDefault,
+            balanceEther
+        }, appId, iv, ephemPublicKey, ciphertext, mac);
+    }
+
+    async getSession(appId, username) {
+        const results = await this.getContract().getPastEvents('EventAppSession', {
+            filter: {
+                appId,
+                username,
+            },
+            fromBlock: 0
+        });
+
+        return results && results.length ? results[0].returnValues : null;
     }
 }

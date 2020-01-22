@@ -212,6 +212,7 @@ export const ACTION_SIGNIN = 'signin';
 export const ACTION_LOGOUT = 'logout';
 export const ACTION_SIGNUP = 'signup';
 export const ACTION_INVITE = 'invite';
+export const ACTION_SESSION = 'session';
 export const ACTION_SELF_APP_INFO = 'self_app_info';
 export const ACTION_APP_INFO = 'app_info';
 export const ACTION_ALLOW_APP = 'allow_app';
