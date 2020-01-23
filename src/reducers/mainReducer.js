@@ -111,18 +111,39 @@ export const reducer = (state, action) => {
             return merge('user', {balance: action.data});
 
         case getStatus(ACTION_APP_INFO, STATUS_START):
-            data = {id: action.data, title: '', description: '', inProcess: true, errorMessage: ''};
+            data = {id: action.data, title: '', description: '', isAppLoading: true, errorMessage: ''};
             return merge('authorizeApp', data);
         case getStatus(ACTION_APP_INFO, STATUS_FAIL):
-            data = {inProcess: false, errorMessage: action.data.message};
+            data = {isAppLoading: false, errorMessage: action.data.message};
             return merge('authorizeApp', data);
         case getStatus(ACTION_APP_INFO, STATUS_SUCCESS):
             data = {
                 id: action.data.id,
                 title: action.data.title,
                 description: action.data.description,
+                isAppLoading: false
+            };
+            return merge('authorizeApp', data);
+
+        case getStatus(ACTION_SESSION, STATUS_START):
+            data = {log: [], status: '', isSessionCreating: true, errorMessage: ''};
+            return merge('authorizeApp', data);
+        /*case getStatus(ACTION_SESSION, STATUS_FAIL):
+            data = {inProcess: false, errorMessage: action.data.message};
+            return merge('authorizeApp', data);
+        case getStatus(ACTION_SESSION, STATUS_SUCCESS):
+            data = {
+                id: action.data.id,
+                title: action.data.title,
+                description: action.data.description,
                 inProcess: false
             };
+            return merge('authorizeApp', data);*/
+        case getStatus(ACTION_SESSION, STATUS_COMPLETE):
+            data = {log: [], status: '', isSessionCreating: false};
+            return merge('authorizeApp', data);
+        case getStatus(ACTION_SESSION, STATUS_LOG):
+            data = {log: [...state.authorizeApp.log, action.data], status: action.data, isSessionCreating: true};
             return merge('authorizeApp', data);
 
         case getStatus(ACTION_SELF_APP_INFO, STATUS_INIT):
@@ -179,7 +200,10 @@ export const initialState = {
         id: null,
         title: '',
         description: '',
-        inProcess: false,
+        isAppLoading: false,
+        isSessionCreating: false,
+        status: '',
+        log: [],
         errorMessage: ''
     },
     invite: {

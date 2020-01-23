@@ -4,7 +4,6 @@ import {allowApp, getAllowedApp, getAppInfo, getLocalUsernameHash} from "../redu
 import {useStateValue} from "../reducers/state";
 
 function Authorize() {
-    const [inProgress, setInProgress] = useState(false);
     const setRedirectUrl = (url) => {
         console.log(url);
         if (isValidRedirectURI(url)) {
@@ -87,7 +86,6 @@ function Authorize() {
     };
 
     const onAllow = async () => {
-        setInProgress(true);
         try {
             const usernameHash = getLocalUsernameHash();
             let info = await getAllowedApp(clientId);
@@ -100,8 +98,6 @@ function Authorize() {
         } catch (e) {
             console.log(e);
         }
-
-        setInProgress(false);
     };
 
     const onBack = () => {
@@ -111,6 +107,7 @@ function Authorize() {
     const isRedirectUri = isValidRedirectURI(redirectUri);
     const isResponseType = isValidResponseType(responseType);
     const isValidParams = isRedirectUri && isResponseType;
+
     return <div className="Authorize">
         <h3 className="text-center">Authorization</h3>
 
@@ -120,18 +117,19 @@ function Authorize() {
                 <button className="btn btn-primary" onClick={onBack}>Back</button>
             </div>}
 
-            {!authorizeApp.inProcess && !authorizeApp.errorMessage && <Fragment>
+            {!authorizeApp.isAppLoading && !authorizeApp.errorMessage && <Fragment>
                 <p>ID: {authorizeApp.id}</p>
                 <p>Title: {authorizeApp.title}</p>
                 <p>Description: {authorizeApp.description}</p>
                 <p>Redirect URL not checked</p>
 
                 {isValidParams && <Fragment>
-                    <button className="btn btn-success" onClick={onAllow} disabled={inProgress}>
-                        Allow
+                    <button className="btn btn-success" onClick={onAllow} disabled={authorizeApp.isSessionCreating}>
+                        {authorizeApp.isSessionCreating &&
+                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"/>} Allow
                     </button>
                     <button className="btn btn-danger float-right" onClick={onDecline}
-                            disabled={inProgress}>
+                            disabled={authorizeApp.isSessionCreating}>
                         Decline
                     </button>
                 </Fragment>}
@@ -147,10 +145,12 @@ function Authorize() {
 
                     <button className="btn btn-primary" onClick={onBack}>Back</button>
                 </Fragment>}
+
+                {authorizeApp.status.length > 0 && <p className="mt-3">{authorizeApp.status}</p>}
             </Fragment>}
         </div>
 
-        {authorizeApp.inProcess && <div className="App-loading text-center">
+        {authorizeApp.isAppLoading && <div className="App-loading text-center">
             <div className="spinner-border text-success" role="status">
                 <span className="sr-only">Loading...</span>
             </div>
