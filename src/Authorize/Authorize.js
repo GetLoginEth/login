@@ -1,9 +1,10 @@
-import React, {Fragment, useEffect} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import './Authorize.css';
 import {allowApp, getAllowedApp, getAppInfo, getLocalUsernameHash} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
 
 function Authorize() {
+    const [inProgress, setInProgress] = useState(false);
     const setRedirectUrl = (url) => {
         console.log(url);
         if (isValidRedirectURI(url)) {
@@ -86,14 +87,21 @@ function Authorize() {
     };
 
     const onAllow = async () => {
-        const usernameHash = getLocalUsernameHash();
-        let info = await getAllowedApp(clientId);
+        setInProgress(true);
+        try {
+            const usernameHash = getLocalUsernameHash();
+            let info = await getAllowedApp(clientId);
 
-        if (!info) {
-            info = await allowApp(clientId);
+            if (!info) {
+                info = await allowApp(clientId);
+            }
+
+            successReturn(info.transactionHash, usernameHash);
+        } catch (e) {
+            console.log(e);
         }
 
-        successReturn(info.transactionHash, usernameHash);
+        setInProgress(false);
     };
 
     const onBack = () => {
@@ -119,10 +127,12 @@ function Authorize() {
                 <p>Redirect URL not checked</p>
 
                 {isValidParams && <Fragment>
-                    <button className="btn btn-success" onClick={onAllow} disabled={!isValidParams}>Allow
+                    <button className="btn btn-success" onClick={onAllow} disabled={inProgress}>
+                        Allow
                     </button>
                     <button className="btn btn-danger float-right" onClick={onDecline}
-                            disabled={!isValidParams}>Decline
+                            disabled={inProgress}>
+                        Decline
                     </button>
                 </Fragment>}
 

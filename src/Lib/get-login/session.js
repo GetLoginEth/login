@@ -43,6 +43,10 @@ export default class Session extends Logger {
 
     async getSessionInfo(appId, usernameHash) {
         const encryptedSession = await this.contract.getSession(appId, usernameHash);
+        if (!encryptedSession) {
+            throw new Error('Session not found');
+        }
+
         encryptedSession.privateKey = await EthCrypto.decryptWithPrivateKey(this.crypto.getAccount().privateKey, encryptedSession.returnValues);
 
         return encryptedSession;

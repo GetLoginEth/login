@@ -228,11 +228,8 @@ export const getAllowedApp = async (appId) => {
             return appToken;
         } else {
             const sessionInfo = await session.getSessionInfo(appId, usernameHash);
-            if (sessionInfo) {
-                return setRawAccessToken(appId, sessionInfo);
-            } else {
-                throw new Error('Access token for app not found');
-            }
+
+            return setRawAccessToken(appId, sessionInfo);
         }
     }, {appId});
 };
