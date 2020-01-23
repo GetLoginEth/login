@@ -1,6 +1,6 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {Fragment, useEffect} from 'react';
 import './Authorize.css';
-import {allowApp, getAllowedApp, getAppInfo} from "../reducers/actions";
+import {allowApp, getAllowedApp, getAppInfo, getLocalUsernameHash} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
 
 function Authorize() {
@@ -73,9 +73,10 @@ function Authorize() {
     useEffect(_ => {
         getAppInfo(clientId).then();
         getAllowedApp(clientId)
-            .then(accessToken => {
-                if (accessToken) {
-                    successReturn(accessToken, 'some_username_hash');
+            .then(info => {
+                if (info) {
+                    const usernameHash = getLocalUsernameHash();
+                    successReturn(info.transactionHash, usernameHash);
                 }
             });
     }, [clientId]);
@@ -85,18 +86,14 @@ function Authorize() {
     };
 
     const onAllow = async () => {
-        // todo get real username hash
-        const usernameHash = 'usernameHash_sge4g34g34g34';
-        let accessToken = await getAllowedApp(clientId);
+        const usernameHash = getLocalUsernameHash();
+        let info = await getAllowedApp(clientId);
 
-        if (accessToken) {
-            successReturn(accessToken, usernameHash);
-        } else {
-            // todo move token creation to allowApp method
-            accessToken = createRandomAccessToken();
-            await allowApp(clientId, accessToken);
-            successReturn(accessToken, usernameHash);
+        if (!info) {
+            info = await allowApp(clientId);
         }
+
+        successReturn(info.transactionHash, usernameHash);
     };
 
     const onBack = () => {

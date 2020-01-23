@@ -35,19 +35,16 @@ export default class Session extends Logger {
         const publicKey = privateToPublic(privateKey).toString('hex');
         //console.log(privateKey);
         //console.log(publicKey);
-        const encrypted = await EthCrypto.encryptWithPublicKey(
-            publicKey,
-            wallet.privateKey
-        );
+        const encrypted = await EthCrypto.encryptWithPublicKey(publicKey, wallet.privateKey);
+        const createdSession = await this.contract.createAppSession(appId, encrypted.iv, encrypted.ephemPublicKey, encrypted.ciphertext, encrypted.mac, sendBalance);
 
-        //console.log(encrypted);
-        await this.contract.createAppSession(appId, encrypted.iv, encrypted.ephemPublicKey, encrypted.ciphertext, encrypted.mac, sendBalance);
-
-        return wallet;
+        return {wallet, createdSession};
     }
 
-    async getSessionPrivateKey(appId, usernameHash) {
+    async getSessionInfo(appId, usernameHash) {
         const encryptedSession = await this.contract.getSession(appId, usernameHash);
-        return await EthCrypto.decryptWithPrivateKey(this.crypto.getAccount().privateKey, encryptedSession);
+        encryptedSession.privateKey = await EthCrypto.decryptWithPrivateKey(this.crypto.getAccount().privateKey, encryptedSession.returnValues);
+
+        return encryptedSession;
     }
 }

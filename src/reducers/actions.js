@@ -189,6 +189,10 @@ export const getUserData = () => {
     return {username, wallet, usernameHash};
 };
 
+export const getLocalUsernameHash = () => {
+    return getUserData()['usernameHash'];
+};
+
 export const initPage = (pageAction) => {
     doDispatch(getStatus(pageAction, STATUS_INIT));
 };
@@ -197,37 +201,79 @@ export const getAppInfo = async (appId) => {
     return callMethod(ACTION_APP_INFO, async () => await contractInstance.getAppInfo(appId), appId);
 };
 
-export const allowApp = async (appId, token) => {
-    return callMethod(ACTION_ALLOW_APP, async () => {
-        const key = 'allowed_apps';
-        let allowedApps = localStorage.getItem(key);
-        if (typeof allowedApps !== 'string') {
-            allowedApps = '{}';
-        }
+export const allowApp = async (appId) => {
+    return await callMethod(ACTION_ALLOW_APP, async () => {
+        const sessionInfo = await session.createSession(appId);
 
-        allowedApps = JSON.parse(allowedApps);
-        if (typeof allowedApps !== 'object') {
-            allowedApps = {};
-        }
-        allowedApps[appId] = token;
-        localStorage.setItem(key, JSON.stringify(allowedApps));
-    }, {appId, token});
+        return setRawAccessToken(appId, {
+            transactionHash: sessionInfo.createdSession.transactionHash,
+            privateKey: sessionInfo.wallet.privateKey
+        });
+    }, {appId});
 };
 
 export const getAllowedApp = async (appId) => {
     return callMethod(ACTION_GET_ALLOWED_APP, async () => {
-        const key = 'allowed_apps';
-        let allowedApps = localStorage.getItem(key);
-        if (typeof allowedApps !== 'string') {
-            allowedApps = '{}';
+        if (!appId) {
+            throw new Error('Empty appId');
         }
 
-        allowedApps = JSON.parse(allowedApps);
-        if (typeof allowedApps !== 'object') {
-            allowedApps = {};
+        const usernameHash = getLocalUsernameHash();
+        if (!usernameHash) {
+            throw new Error('Empty username');
         }
-        return allowedApps[appId];
+
+        const appToken = getAccessToken(appId);
+        if (appToken) {
+            return appToken;
+        } else {
+            const sessionInfo = await session.getSessionInfo(appId, usernameHash);
+            if (sessionInfo) {
+                return setRawAccessToken(appId, sessionInfo);
+            } else {
+                throw new Error('Access token for app not found');
+            }
+        }
     }, {appId});
+};
+
+const accessTokenKey = 'allowed_apps';
+const getAccessToken = (appId) => {
+    const data = getAllAccessTokens()[appId];
+    if (!data) {
+        return null;
+    }
+
+    return typeof data === 'string' ? JSON.parse(data) : data;
+};
+
+const setRawAccessToken = (appId, rawTokenInfo) => {
+    const allTokens = getAllAccessTokens();
+    allTokens[appId] = {
+        privateKey: rawTokenInfo.privateKey,
+        transactionHash: rawTokenInfo.transactionHash
+    };
+    saveAllAccessTokens(allTokens);
+
+    return getAccessToken(appId);
+};
+
+const getAllAccessTokens = () => {
+    let allowedApps = localStorage.getItem(accessTokenKey);
+    if (typeof allowedApps !== 'string') {
+        allowedApps = '{}';
+    }
+
+    allowedApps = JSON.parse(allowedApps);
+    if (typeof allowedApps !== 'object') {
+        allowedApps = {};
+    }
+
+    return allowedApps;
+};
+
+const saveAllAccessTokens = (data) => {
+    localStorage.setItem(accessTokenKey, JSON.stringify(data));
 };
 
 export const getInvites = async (usernameHash) => {
@@ -244,9 +290,10 @@ export const createInvite = async () => {
 
 export const test = async () => {
     return callMethod('my_test', async () => {
-        /*const appId = 2;
-        console.log(await session.createSession(appId));
-        console.log(await session.getSessionPrivateKey(appId, localStorage.getItem('usernameHash')));*/
+        const appId = 2;
+        //console.log(await session.createSession(appId));
+        //console.log(await session.getSessionPrivateKey(appId, localStorage.getItem('usernameHash')));
+        console.log(await session.getSessionInfo(appId, localStorage.getItem('usernameHash')));
     });
 };
 

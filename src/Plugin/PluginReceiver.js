@@ -54,16 +54,20 @@ export default class PluginReceiver {
         }
 
         window.addEventListener('message', this._listener);
-        getAllowedApp(clientId).then(access_token => {
-            console.log(access_token);
-            const is_client_allowed = !!access_token;
-            window.parent.postMessage({
-                'type': 'get_login_init',
-                'client_id': clientId,
-                access_token,
-                is_client_allowed
-            }, '*');
-        });
+        getAllowedApp(clientId)
+            .then(info => {
+                console.log(info);
+                const is_client_allowed = !!info;
+                let result = {
+                    type: 'get_login_init',
+                    client_id: clientId,
+                    is_client_allowed
+                };
+                if (info) {
+                    result.access_token = info.transactionHash;
+                }
 
+                window.parent.postMessage(result, '*');
+            });
     }
 }

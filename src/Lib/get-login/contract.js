@@ -941,8 +941,13 @@ export default class contract {
     }
 
     async getAppInfo(appId) {
+        appId = Number(appId);
+        if (!appId || isNaN(appId) || appId <= 0) {
+            throw new Error('Incorrect appId');
+        }
+
         const info = await this.callMethod('Applications', appId);
-        if (Number(appId) !== Number(info.id)) {
+        if (appId !== Number(info.id)) {
             throw new Error('App not found');
         }
 
@@ -988,6 +993,6 @@ export default class contract {
             fromBlock: 0
         });
 
-        return results && results.length ? results[0].returnValues : null;
+        return results && results.length ? results[0] : null;
     }
 }
