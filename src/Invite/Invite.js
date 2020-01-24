@@ -2,6 +2,7 @@ import React, {Fragment, useEffect} from 'react';
 import './Invite.css';
 import {useStateValue} from "../reducers/state";
 import {createInvite, getInvite, getInvites} from "../reducers/actions";
+import WaitButton from "../Elements/WaitButton";
 
 function Invite() {
     const {state: {user}} = useStateValue();
@@ -19,10 +20,12 @@ function Invite() {
         <h1>Invites</h1>
         {user.balance.original !== null && !isCanCreateInvite &&
         <p>Your balance must be more than 0.002 ETH to create invite</p>}
-        <button disabled={!isCanCreateInvite} className="btn btn-primary" onClick={_ => {
-            createInvite().then();
-        }}>Create invite
-        </button>
+        <WaitButton disabled={invite.inProcessCreation}>
+            <button disabled={!isCanCreateInvite} className="btn btn-primary" onClick={_ => {
+                createInvite().then();
+            }}>Create invite
+            </button>
+        </WaitButton>
 
         {invite.createdInvites.length > 0 && <div className="mt-3">
             <h4>Created invites</h4>
@@ -45,10 +48,13 @@ function Invite() {
                 return <p
                     key={index}>{item.returnValues.inviteAddress} <span
                     className="mr-2">{info && (info.isActive ? '/ Active' : '/ Used')}</span>
+
                     <button className="btn btn-secondary btn-sm" onClick={_ => {
                         getInvite(item.returnValues.inviteAddress).then();
-                    }}>Check
+                    }}>
+                        Check
                     </button>
+
                 </p>
             })}
         </div>}

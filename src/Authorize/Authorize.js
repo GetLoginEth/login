@@ -2,6 +2,7 @@ import React, {Fragment, useEffect, useState} from 'react';
 import './Authorize.css';
 import {allowApp, getAllowedApp, getAppInfo, getLocalUsernameHash} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
+import WaitButton from "../Elements/WaitButton";
 
 function Authorize() {
     const setRedirectUrl = (url) => {
@@ -124,10 +125,12 @@ function Authorize() {
                 <p>Redirect URL not checked</p>
 
                 {isValidParams && <Fragment>
-                    <button className="btn btn-success" onClick={onAllow} disabled={authorizeApp.isSessionCreating}>
-                        {authorizeApp.isSessionCreating &&
-                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"/>} Allow
-                    </button>
+                    <WaitButton disabled={authorizeApp.isSessionCreating}>
+                        <button className="btn btn-success" onClick={onAllow}>
+                            Allow
+                        </button>
+                    </WaitButton>
+
                     <button className="btn btn-danger float-right" onClick={onDecline}
                             disabled={authorizeApp.isSessionCreating}>
                         Decline

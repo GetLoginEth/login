@@ -59,6 +59,13 @@ export const reducer = (state, action) => {
             data = {log: [...state.signup.log, action.data], status: action.data, inProcess: true};
             return merge('signup', data);
 
+        case getStatus(ACTION_CREATE_INVITE, STATUS_START):
+            data = {inProcessCreation: true};
+            return merge('invite', data);
+        case getStatus(ACTION_CREATE_INVITE, STATUS_COMPLETE):
+            data = {inProcessCreation: false};
+            return merge('invite', data);
+
         case getStatus(ACTION_GET_INVITES, STATUS_INIT):
             data = {
                 log: [],

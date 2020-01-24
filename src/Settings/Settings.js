@@ -1,7 +1,6 @@
 import React, {Fragment} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
-import {test} from "../reducers/actions";
 
 function Settings() {
     const {state: {user}} = useStateValue();
