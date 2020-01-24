@@ -193,6 +193,10 @@ export const getLocalUsernameHash = () => {
     return getUserData()['usernameHash'];
 };
 
+export const getLocalUsername = () => {
+    return getUserData()['username'];
+};
+
 export const initPage = (pageAction) => {
     doDispatch(getStatus(pageAction, STATUS_INIT));
 };

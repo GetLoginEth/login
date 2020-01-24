@@ -1,4 +1,4 @@
-import {getAllowedApp} from "../reducers/actions";
+import {getAllowedApp, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
 
 export default class PluginReceiver {
     constructor() {
@@ -37,8 +37,15 @@ export default class PluginReceiver {
 
     async getUserInfo() {
         return {
-            username: 'satoshi',
-            one: 'two'
+            username: getLocalUsername(),
+            usernameHash: getLocalUsernameHash()
+        };
+    }
+
+    async sendTransaction(transaction) {
+        return {
+            result: 'ok',
+            transaction
         };
     }
 
@@ -46,7 +53,6 @@ export default class PluginReceiver {
         if (!clientId) {
             const params = new URLSearchParams(window.location.search);
             clientId = params.get('client_id');
-            console.log('clientId', clientId);
         }
 
         if (!clientId) {
@@ -56,7 +62,6 @@ export default class PluginReceiver {
         window.addEventListener('message', this._listener);
         getAllowedApp(clientId)
             .then(info => {
-                console.log(info);
                 const is_client_allowed = !!info;
                 let result = {
                     type: 'get_login_init',
