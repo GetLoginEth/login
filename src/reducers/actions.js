@@ -9,7 +9,8 @@ import {
     ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
-    ACTION_SELF_APP_INFO, ACTION_SESSION,
+    ACTION_SELF_APP_INFO,
+    ACTION_SESSION,
     ACTION_SIGNIN,
     ACTION_SIGNUP,
     getStatus,
@@ -98,6 +99,7 @@ export const getWalletBalance = async (wallet) => {
     return callMethod(ACTION_GET_BALANCE, async () => cryptoInstance.web3.eth.getBalance(wallet)
         .then(data => {
             const original = cryptoInstance.web3.utils.fromWei(data);
+            // todo fix situation when 3.65898484 displays as 3.66
             const web = Number(original).toFixed(2);
             return {
                 original,
@@ -202,7 +204,7 @@ export const initPage = (pageAction) => {
 };
 
 export const getAppInfo = async (appId) => {
-    return callMethod(ACTION_APP_INFO, async () => await contractInstance.getAppInfo(appId), appId);
+    return callMethod(ACTION_APP_INFO, async () => await contractInstance.getApplication(appId), appId);
 };
 
 export const allowApp = async (appId) => {

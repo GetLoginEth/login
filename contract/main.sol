@@ -71,7 +71,7 @@ contract GetLogin is mortal {
     struct Application
     {
         uint64 id;
-        // todo define a uniform variable name
+        // todo define a uniform variable name (usernameHash or username)
         bytes32 usernameHash;
         string title;
         string description;
@@ -101,23 +101,23 @@ contract GetLogin is mortal {
         require(isAddressRegistered(ownerWallet) == false, "Wallet already used");
         Users[usernameHash] = UserInfo({username: usernameHash, isActive: true});
         UsersAddressUsername[ownerWallet] = Username({username: usernameHash, isActive: true});
-        //addMainSession(msg.sender);
         _addSessionInit(usernameHash, ownerWallet, sessionMain, 0);
     }
 
     function _createApplication(bytes32 usernameHash, string memory title, string memory description) private returns (uint64) {
-        // todo only main session can create and edit app?
+        // todo only main session can create and edit app (check it in top hierarchy method)?
         // todo emit event?
         string[] memory allowedUrls;
-        Applications[applicationId] = Application({id: applicationId, usernameHash: usernameHash, title: title, description: description, allowedUrls: allowedUrls, isActive: true});
+        uint64 appId = applicationId;
+        Applications[appId] = Application({id: appId, usernameHash: usernameHash, title: title, description: description, allowedUrls: allowedUrls, isActive: true});
         applicationId++;
 
-        return applicationId;
+        return appId;
     }
 
     function _addApplicationUrl(uint64 appId, string memory url) private {
         // todo emit event?
-        Applications[appId].allowedUrls.push(url);
+         Applications[appId].allowedUrls.push(url);
     }
 
     function _deleteApplicationUrl(uint64 appId, uint index) private {
@@ -167,6 +167,7 @@ contract GetLogin is mortal {
     }
 
     function addApplicationUrl(uint64 appId, string memory url) public {
+        // todo check is user address is not session
         validateAddressRegistered(msg.sender);
         validateAppOwner(appId, msg.sender);
         _addApplicationUrl(appId, url);

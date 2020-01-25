@@ -1,5 +1,5 @@
 export const defaultAddresses = {
-    "rinkeby": "0x7d899FCc79100328b210528AC8808310ABf9eA1E",
+    "rinkeby": "0x9282e5434d22a1FA5f87Cda2498C877D644c334c",
     "mainnet": ""
 };
 
@@ -940,13 +940,13 @@ export default class contract {
         return results && results.length ? results[0] : null;
     }
 
-    async getAppInfo(appId) {
+    async getApplication(appId) {
         appId = Number(appId);
         if (!appId || isNaN(appId) || appId <= 0) {
             throw new Error('Incorrect appId');
         }
 
-        const info = await this.callMethod('Applications', appId);
+        const info = await this.callMethod('getApplication', appId);
         if (appId !== Number(info.id)) {
             throw new Error('App not found');
         }

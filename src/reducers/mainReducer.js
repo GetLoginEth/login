@@ -126,8 +126,10 @@ export const reducer = (state, action) => {
         case getStatus(ACTION_APP_INFO, STATUS_SUCCESS):
             data = {
                 id: action.data.id,
+                usernameHash: action.data.usernameHash,
                 title: action.data.title,
                 description: action.data.description,
+                allowedUrls: action.data.allowedUrls,
                 isAppLoading: false
             };
             return merge('authorizeApp', data);
@@ -207,6 +209,8 @@ export const initialState = {
         id: null,
         title: '',
         description: '',
+        usernameHash: '',
+        allowedUrls: [],
         isAppLoading: false,
         isSessionCreating: false,
         status: '',

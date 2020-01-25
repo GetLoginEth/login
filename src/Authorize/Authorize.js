@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {Fragment, useEffect} from 'react';
 import './Authorize.css';
 import {allowApp, getAllowedApp, getAppInfo, getLocalUsernameHash} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
@@ -6,7 +6,7 @@ import WaitButton from "../Elements/WaitButton";
 
 function Authorize() {
     const setRedirectUrl = (url) => {
-        console.log(url);
+        //console.log(url);
         if (isValidRedirectURI(url)) {
             const result = new URL(url);
             result.hash = '';
@@ -26,7 +26,7 @@ function Authorize() {
                 redirectUrl = new URL(redirectUrl);
             }
 
-            console.log(redirectUrl);
+            //console.log(redirectUrl);
             if (redirectUrl && redirectUrl.protocol === 'https:') {
             } else {
                 throw new Error();
@@ -44,7 +44,6 @@ function Authorize() {
 
     const {state: {authorizeApp}} = useStateValue();
     const params = new URLSearchParams(window.location.search);
-    console.log(params);
     const clientId = params.get('client_id');
     /**
      *
@@ -57,30 +56,32 @@ function Authorize() {
         window.location.replace(`${redirectUri.toString()}#access_token=${accessToken}&user_id=${usernameHash}`);
     };
 
-    const randomText = count => {
-        let text = '';
-        let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-        for (let i = 0; i < count; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-        return text;
-    };
-
-    const createRandomAccessToken = () => {
-        return randomText(64);
-    };
+    useEffect(_ => {
+        const check = async () => {
+            await getAppInfo(clientId);
+        };
+        check().then();
+    }, [clientId]);
 
     useEffect(_ => {
-        getAppInfo(clientId).then();
-        getAllowedApp(clientId)
-            .then(info => {
-                if (info) {
-                    const usernameHash = getLocalUsernameHash();
-                    successReturn(info.transactionHash, usernameHash);
-                }
-            });
-    }, [clientId]);
+        const check = async () => {
+            if (!authorizeApp.id) {
+                return;
+            }
+
+            const info = await getAllowedApp(clientId);
+            if (!info) {
+                return;
+            }
+
+            const usernameHash = getLocalUsernameHash();
+            if (Array.isArray(authorizeApp.allowedUrls) && authorizeApp.allowedUrls.includes(redirectUri.href)) {
+                successReturn(info.transactionHash, usernameHash);
+            }
+
+        };
+        check().then();
+    }, [clientId, authorizeApp, redirectUri]);
 
     const onDecline = () => {
         window.location.replace(redirectUri.toString() + '#error=access_denied&error_reason=user_denied&error_description=User denied your request');
@@ -108,6 +109,7 @@ function Authorize() {
     const isRedirectUri = isValidRedirectURI(redirectUri);
     const isResponseType = isValidResponseType(responseType);
     const isValidParams = isRedirectUri && isResponseType;
+    const isUrlAllowed = authorizeApp.allowedUrls.includes(redirectUri.href);
 
     return <div className="Authorize">
         <h3 className="text-center">Authorization</h3>
@@ -122,9 +124,8 @@ function Authorize() {
                 <p>ID: {authorizeApp.id}</p>
                 <p>Title: {authorizeApp.title}</p>
                 <p>Description: {authorizeApp.description}</p>
-                <p>Redirect URL not checked</p>
 
-                {isValidParams && <Fragment>
+                {isValidParams && isUrlAllowed && <Fragment>
                     <WaitButton disabled={authorizeApp.isSessionCreating}>
                         <button className="btn btn-success" onClick={onAllow}>
                             Allow
@@ -137,7 +138,10 @@ function Authorize() {
                     </button>
                 </Fragment>}
 
-                {!isValidParams && <Fragment>
+                {(!isValidParams || !isUrlAllowed) && <Fragment>
+                    {!isUrlAllowed &&
+                    <p className="text-danger">redirect_uri is not allowed by application.</p>}
+
                     {!isRedirectUri &&
                     <p className="text-danger">Application passed incorrect redirect_uri.</p>}
 
