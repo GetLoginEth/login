@@ -1,17 +1,35 @@
 import {getAllowedApp, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
 
 export default class PluginReceiver {
-    constructor() {
+    /**
+     *
+     * @type {Web3|null}
+     */
+    web3 = null;
+
+    constructor(web3) {
+        this.web3 = web3;
         this.allowedMethods = [
-            'getUserInfo'
+            'getUserInfo',
+            'callContractMethod'
         ];
     }
 
+    getWeb3() {
+        return this.web3;
+    }
+
+    setWeb3(web3) {
+        this.web3 = web3;
+    }
+
     _listener = (event) => {
+        //console.log(event);
         if (typeof event.data !== 'object' || event.data.app !== 'get_login') {
             return;
         }
 
+        // todo check access_token
         if (!event.data.method || !this.allowedMethods.includes(event.data.method)) {
             event.source.postMessage({
                 id: event.data.id,
@@ -42,11 +60,17 @@ export default class PluginReceiver {
         };
     }
 
-    async sendTransaction(transaction) {
+    async sendTransaction({transaction}) {
         return {
             result: 'ok',
             transaction
         };
+    }
+
+    async callContractMethod({abi, address, method, params}) {
+        const contract = new this.web3.eth.Contract(abi, address);
+
+        return contract.methods[method](params).call();
     }
 
     init(clientId = null) {

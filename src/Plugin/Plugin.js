@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import './Plugin.css';
 import PluginReceiver from "./PluginReceiver";
+import {web3} from "../reducers/actions";
 
 function Plugin() {
     useEffect(_ => {
@@ -8,7 +9,7 @@ function Plugin() {
             return;
         }
 
-        window.pluginReceiver = new PluginReceiver();
+        window.pluginReceiver = new PluginReceiver(web3);
         window.pluginReceiver.init();
     }, []);
     return <div className="Plugin">

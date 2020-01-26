@@ -6,28 +6,25 @@ class GetLoginApi {
     redirectUrl = null;
     iframe = null;
     isInitInProgress = false;
+    accessToken = '';
+    clientAbi = [];
+
     /**
      * In seconds
      * @type {number}
      */
     sendMessageTimeout = 60;
 
-    /*constructor() {
-    }*/
 
     isReady() {
         return !!this.iframe;
     }
 
-    /* _messageListener(data) {
-         //console.log(data);
-     }*/
-
     _randomUid() {
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
 
-    _sendMessage(method, data = null) {
+    _sendMessage(accessToken, method, params = null) {
         //console.log('call ' + method);
         if (!this.iframe) {
             throw new Error('Empty iframe');
@@ -38,6 +35,7 @@ class GetLoginApi {
             let timeout = setTimeout(() => {
                 reject('Timeout error');
             }, this.sendMessageTimeout * 1000);
+
             const listener = (event) => {
                 if (typeof event.data !== 'object' || event.data.id !== id) {
                     return;
@@ -52,12 +50,13 @@ class GetLoginApi {
                     reject(event.data.error ? event.data.error : 'Unknown error');
                 }
             };
+
             window.addEventListener('message', listener);
             const message = {
                 id,
                 app: 'get_login',
                 method,
-                data
+                params
             };
 
             this.iframe.postMessage(message, this.pluginUrl);
@@ -73,6 +72,14 @@ class GetLoginApi {
                 }
             }, 100);
         }));
+    }
+
+    setClientAbi(abi) {
+        this.clientAbi = abi;
+    }
+
+    getClientAbi() {
+        return this.clientAbi;
     }
 
     getAuthorizeUrl(appId = this.appId, redirectUrl = this.redirectUrl) {
@@ -146,6 +153,7 @@ class GetLoginApi {
 
         await waitFrameLoaded();
 
+        this.accessToken = answerData.access_token;
         return {
             result: true,
             data: answerData
@@ -153,8 +161,21 @@ class GetLoginApi {
     }
 
     async getUserInfo() {
-        // todo send with access token to validate is authorized
-        return this._sendMessage('getUserInfo');
+        return this._sendMessage(this.accessToken, 'getUserInfo');
+    }
+
+    async callContractMethod(address, method, params) {
+        const abi = this.getClientAbi();
+        if (!abi) {
+            throw new Error('Empty abi');
+        }
+
+        return this._sendMessage(this.accessToken, 'callContractMethod', {
+            abi: this.getClientAbi(),
+            address,
+            method,
+            params
+        });
     }
 }
 
