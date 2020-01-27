@@ -1,4 +1,5 @@
 import {getAllowedApp, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
+import contract from "../Lib/get-login/contract";
 
 export default class PluginReceiver {
     /**
@@ -6,12 +7,15 @@ export default class PluginReceiver {
      * @type {Web3|null}
      */
     web3 = null;
+    appId = null;
+    accessToken = null;
 
     constructor(web3) {
         this.web3 = web3;
         this.allowedMethods = [
             'getUserInfo',
-            'callContractMethod'
+            'callContractMethod',
+            'sendTransaction'
         ];
     }
 
@@ -29,7 +33,10 @@ export default class PluginReceiver {
             return;
         }
 
-        // todo check access_token
+        this.appId = event.data.appId;
+        this.accessToken = event.data.accessToken;
+
+        // todo check access_token and appId
         if (!event.data.method || !this.allowedMethods.includes(event.data.method)) {
             event.source.postMessage({
                 id: event.data.id,
@@ -60,11 +67,21 @@ export default class PluginReceiver {
         };
     }
 
-    async sendTransaction({transaction}) {
-        return {
-            result: 'ok',
-            transaction
-        };
+    async sendTransaction({abi, address, method, params}) {
+        const app = await getAllowedApp(this.appId);
+        console.log(app.privateKey);
+        console.log(this.web3.eth.accounts.privateKeyToAccount(app.privateKey));
+        if (!app) {
+            throw new Error('Access token not found');
+        }
+        /**
+         *
+         * @type {contract}
+         */
+            // todo move 'rinkeby' to global scope
+        const mainContract = new contract(this.web3, 'rinkeby', address, abi);
+        mainContract.setPrivateKey(app.privateKey);
+        return await mainContract.sendTx(method, null, params);
     }
 
     async callContractMethod({abi, address, method, params}) {

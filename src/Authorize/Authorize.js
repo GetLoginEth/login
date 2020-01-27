@@ -94,6 +94,10 @@ function Authorize() {
 
             if (!info) {
                 info = await allowApp(clientId);
+                if (!info) {
+                    console.log('Can not allow app. Empty result');
+                    return;
+                }
             }
 
             successReturn(info.transactionHash, usernameHash);

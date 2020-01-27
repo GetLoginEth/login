@@ -22,7 +22,7 @@ export default class Invite extends Logger {
         this.contract = contract;
     }
 
-    async createInvite(sendBalance = '0.001') {
+    async createInvite(sendBalance = '0.1') {
         const {web3} = this.crypto;
 
         this.log(INVITE_CREATE_WALLET);

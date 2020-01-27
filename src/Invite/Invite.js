@@ -39,7 +39,7 @@ function Invite() {
         </div>}
 
         {invite.invites.length > 0 && <div className="mt-3">
-            <h4>Previously created invites IDs</h4>
+            <h4>Previously created invites</h4>
             <small>There are public keys. You can not use it as invites</small>
             {invite.invites.map((item, index) => {
                 const inviteAddress = item.returnValues.inviteAddress;

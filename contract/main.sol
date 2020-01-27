@@ -91,7 +91,7 @@ contract GetLogin is mortal {
         bytes32 username = keccak256('admin');
         _createUser(username, msg.sender);
         uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app');
-        _addApplicationUrl(newAppId, 'https://localhost:3001');
+        _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
     }
 
     /* Private methods */
@@ -211,13 +211,15 @@ contract GetLogin is mortal {
        emit EventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
-    function createAppSession(uint64 appId, string memory iv, string memory ephemPublicKey, string memory ciphertext, string memory mac) public payable {
+    function createAppSession(uint64 appId, address payable wallet, string memory iv, string memory ephemPublicKey, string memory ciphertext, string memory mac) public payable {
         validateAddressRegistered(msg.sender);
         validateAppExists(appId);
         bytes32 username = getUsernameByAddress(msg.sender);
         // todo check only one main session possible
         // todo hide user apps ids?
         //_addSession(wallet, sessionApp, appId);
+        UsersAddressUsername[wallet] = Username({isActive: true, username: username});
+        wallet.transfer(msg.value);
         emit EventAppSession(appId, username, iv, ephemPublicKey, ciphertext, mac);
     }
 

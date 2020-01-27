@@ -299,7 +299,7 @@ export const test = async () => {
         //console.log(await session.createSession(appId));
         //console.log(await session.getSessionPrivateKey(appId, localStorage.getItem('usernameHash')));
         //console.log(await session.getSessionInfo(appId, localStorage.getItem('usernameHash')));
-        const contract = new cryptoInstance.web3.eth.Contract([
+        /*const contract = new cryptoInstance.web3.eth.Contract([
             {
                 "inputs": [
                     {
@@ -441,7 +441,7 @@ export const test = async () => {
         ], '0x25a7D3AD29dba10BE86496B1D6367224B06123D2');
         contract.methods['getNotes']('0xf23ec0bb4210edd5cba85afd05127efcd2fc6a781bfed49188da1081670b22d8').call().then(data => {
             console.log(data);
-        });
+        });*/
     });
 };
 

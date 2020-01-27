@@ -55,6 +55,8 @@ class GetLoginApi {
             const message = {
                 id,
                 app: 'get_login',
+                appId: this.appId,
+                accessToken,
                 method,
                 params
             };
@@ -171,6 +173,20 @@ class GetLoginApi {
         }
 
         return this._sendMessage(this.accessToken, 'callContractMethod', {
+            abi: this.getClientAbi(),
+            address,
+            method,
+            params
+        });
+    }
+
+    async sendTransaction(address, method, params) {
+        const abi = this.getClientAbi();
+        if (!abi) {
+            throw new Error('Empty abi');
+        }
+
+        return this._sendMessage(this.accessToken, 'sendTransaction', {
             abi: this.getClientAbi(),
             address,
             method,

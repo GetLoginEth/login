@@ -23,7 +23,7 @@ export default class Session extends Logger {
         this.contract = contract;
     }
 
-    async createSession(appId, sendBalance = '0.0001') {
+    async createSession(appId, sendBalance = '0.03') {
         const {web3} = this.crypto;
 
         this.log(SESSION_CREATE_WALLET);
@@ -31,12 +31,12 @@ export default class Session extends Logger {
         //console.log(wallet);
 
         this.log(SESSION_REGISTER_WALLET);
-        const privateKey = Buffer.from(this.crypto.getAccount().privateKey, 'hex');
+        const privateKey = Buffer.from(this.crypto.getAccount().privateKey.replace('0x', ''), 'hex');
         const publicKey = privateToPublic(privateKey).toString('hex');
         //console.log(privateKey);
         //console.log(publicKey);
         const encrypted = await EthCrypto.encryptWithPublicKey(publicKey, wallet.privateKey);
-        const createdSession = await this.contract.createAppSession(appId, encrypted.iv, encrypted.ephemPublicKey, encrypted.ciphertext, encrypted.mac, sendBalance);
+        const createdSession = await this.contract.createAppSession(appId, wallet.address, encrypted.iv, encrypted.ephemPublicKey, encrypted.ciphertext, encrypted.mac, sendBalance);
 
         return {wallet, createdSession};
     }

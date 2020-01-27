@@ -155,6 +155,10 @@ export const reducer = (state, action) => {
             data = {log: [...state.authorizeApp.log, action.data], status: action.data, isSessionCreating: true};
             return merge('authorizeApp', data);
 
+        case getStatus(ACTION_ALLOW_APP, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('authorizeApp', data);
+
         case getStatus(ACTION_SELF_APP_INFO, STATUS_INIT):
             return merge('app', action.data);
         default:
