@@ -22,11 +22,11 @@ import {
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
-import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
+import Signup, {LOG_SIGN_UP_USER_REGISTRATION, SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
-import {getUsernameHash, validateUserData} from "../Lib/get-login/utils";
+import {createWallet, encryptWallet, getUsernameHash, validateUserData} from "../Lib/get-login/utils";
 import crypto from "../Lib/get-login/crypto";
 import contract, {defaultAddresses} from "../Lib/get-login/contract";
 import Invite from "../Lib/get-login/invite";
@@ -295,153 +295,7 @@ export const createInvite = async () => {
 
 export const test = async () => {
     return callMethod('my_test', async () => {
-        //const appId = 2;
-        //console.log(await session.createSession(appId));
-        //console.log(await session.getSessionPrivateKey(appId, localStorage.getItem('usernameHash')));
-        //console.log(await session.getSessionInfo(appId, localStorage.getItem('usernameHash')));
-        /*const contract = new cryptoInstance.web3.eth.Contract([
-            {
-                "inputs": [
-                    {
-                        "internalType": "string",
-                        "name": "text",
-                        "type": "string"
-                    }
-                ],
-                "name": "createNote",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "getLoginAddress",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "bytes32",
-                        "name": "usernameHash",
-                        "type": "bytes32"
-                    }
-                ],
-                "name": "getNotes",
-                "outputs": [
-                    {
-                        "components": [
-                            {
-                                "internalType": "uint256",
-                                "name": "id",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "bytes32",
-                                "name": "usernameHash",
-                                "type": "bytes32"
-                            },
-                            {
-                                "internalType": "string",
-                                "name": "text",
-                                "type": "string"
-                            },
-                            {
-                                "internalType": "bool",
-                                "name": "isActive",
-                                "type": "bool"
-                            }
-                        ],
-                        "internalType": "struct Notes.Note[]",
-                        "name": "",
-                        "type": "tuple[]"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "wallet",
-                        "type": "address"
-                    }
-                ],
-                "name": "getUsername",
-                "outputs": [
-                    {
-                        "internalType": "bytes32",
-                        "name": "",
-                        "type": "bytes32"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "newAddress",
-                        "type": "address"
-                    }
-                ],
-                "name": "setGetLoginAddress",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "bytes32",
-                        "name": "",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "UserNotes",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "id",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "usernameHash",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "text",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "bool",
-                        "name": "isActive",
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            }
-        ], '0x25a7D3AD29dba10BE86496B1D6367224B06123D2');
-        contract.methods['getNotes']('0xf23ec0bb4210edd5cba85afd05127efcd2fc6a781bfed49188da1081670b22d8').call().then(data => {
-            console.log(data);
-        });*/
+
     });
 };
 

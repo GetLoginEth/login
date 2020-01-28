@@ -22,6 +22,11 @@ export default class Invite extends Logger {
         this.contract = contract;
     }
 
+    /**
+     *
+     * @param sendBalance
+     * @returns {Promise<Account>}
+     */
     async createInvite(sendBalance = '0.1') {
         const {web3} = this.crypto;
 

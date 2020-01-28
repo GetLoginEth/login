@@ -15,11 +15,12 @@ function Invite() {
         getInvites(user.usernameHash).then();
     }, []);
 
-    const isCanCreateInvite = Number(user.balance.original) >= Number(0.002);
+    // todo get invite min value from global state
+    const isCanCreateInvite = Number(user.balance.original) >= Number(0.1);
     return <Fragment>
         <h1>Invites</h1>
         {user.balance.original !== null && !isCanCreateInvite &&
-        <p>Your balance must be more than 0.002 ETH to create invite</p>}
+        <p>Your balance must be more than 0.1 ETH to create invite</p>}
         <WaitButton disabled={invite.inProcessCreation}>
             <button disabled={!isCanCreateInvite} className="btn btn-primary" onClick={_ => {
                 createInvite().then();

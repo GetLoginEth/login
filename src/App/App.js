@@ -69,7 +69,8 @@ function App() {
 
                         <Header isLoggedIn={state.user.isLoggedIn()}
                                 isCheckingAuth={state.user.isCheckingAuth()}
-                                username={state.user.username}/>
+                                username={state.user.username}
+                                balance={state.user.balance.web}/>
                         <main role="main">
                             <div className="container">
                                 <Suspense fallback={<Spinner/>}>

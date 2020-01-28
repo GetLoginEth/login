@@ -105,16 +105,16 @@ export const reducer = (state, action) => {
             return merge('invite', data);
 
         case getStatus(ACTION_CREATE_INVITE, STATUS_SUCCESS):
-            console.log(action.data);
+            //console.log(action.data);
             data = {createdInvites: [...state.invite.createdInvites, action.data]};
-            console.log(data);
+            //console.log(data);
             return merge('invite', data);
 
         case getStatus(ACTION_LOGOUT, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_NOT_LOGGED, username: ''});
 
         case getStatus(ACTION_GET_BALANCE, STATUS_SUCCESS):
-            console.log(action.data);
+            //console.log(action.data);
             return merge('user', {balance: action.data});
 
         case getStatus(ACTION_APP_INFO, STATUS_START):
