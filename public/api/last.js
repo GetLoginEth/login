@@ -1,20 +1,21 @@
 class GetLoginApi {
-    appId = null;
-    baseUrl = null;
-    pluginUrl = null;
-    authUrl = null;
-    redirectUrl = null;
-    iframe = null;
-    isInitInProgress = false;
-    accessToken = '';
-    clientAbi = [];
+    constructor() {
+        this.appId = null;
+        this.baseUrl = null;
+        this.pluginUrl = null;
+        this.authUrl = null;
+        this.redirectUrl = null;
+        this.iframe = null;
+        this.isInitInProgress = false;
+        this.accessToken = '';
+        this.clientAbi = [];
 
-    /**
-     * In seconds
-     * @type {number}
-     */
-    sendMessageTimeout = 60;
-
+        /**
+         * In seconds
+         * @type {number}
+         */
+        this.sendMessageTimeout = 60;
+    }
 
     isReady() {
         return !!this.iframe;
