@@ -31,7 +31,8 @@ contract mortal is owned {
 contract GetLogin is mortal {
     event EventStoreWallet(bytes32 indexed username, address indexed walletAddress, string ciphertext, string iv, string salt, string mac);
     event EventInviteCreated(bytes32 indexed creatorUsername, address inviteAddress);
-    event EventAppSession(uint64 indexed appId, bytes32 indexed username, string iv, string ephemPublicKey,string ciphertext, string mac);
+    event EventAppSession(uint64 indexed appId, bytes32 indexed username, string iv, string ephemPublicKey, string ciphertext, string mac);
+    event EventAppCreated(bytes32 indexed creatorUsername, uint64 indexed appId);
 
     uint8 sessionMain = 1;
     uint8 sessionApp = 2;
@@ -92,32 +93,31 @@ contract GetLogin is mortal {
         _createUser(username, msg.sender);
         uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app');
         _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
+        _addApplicationUrl(newAppId, 'https://localhost:3001');
     }
 
     /* Private methods */
     function _createUser(bytes32 usernameHash, address ownerWallet) private {
-        // todo emit event?
         require(isUsernameExists(usernameHash) == false, "Username already used");
         require(isAddressRegistered(ownerWallet) == false, "Wallet already used");
-        Users[usernameHash] = UserInfo({username: usernameHash, isActive: true});
-        UsersAddressUsername[ownerWallet] = Username({username: usernameHash, isActive: true});
+        Users[usernameHash] = UserInfo({username : usernameHash, isActive : true});
+        UsersAddressUsername[ownerWallet] = Username({username : usernameHash, isActive : true});
         _addSessionInit(usernameHash, ownerWallet, sessionMain, 0);
     }
 
     function _createApplication(bytes32 usernameHash, string memory title, string memory description) private returns (uint64) {
-        // todo only main session can create and edit app (check it in top hierarchy method)?
-        // todo emit event?
         string[] memory allowedUrls;
         uint64 appId = applicationId;
-        Applications[appId] = Application({id: appId, usernameHash: usernameHash, title: title, description: description, allowedUrls: allowedUrls, isActive: true});
+        Applications[appId] = Application({id : appId, usernameHash : usernameHash, title : title, description : description, allowedUrls : allowedUrls, isActive : true});
         applicationId++;
+        emit EventAppCreated(usernameHash, appId);
 
         return appId;
     }
 
     function _addApplicationUrl(uint64 appId, string memory url) private {
         // todo emit event?
-         Applications[appId].allowedUrls.push(url);
+        Applications[appId].allowedUrls.push(url);
     }
 
     function _deleteApplicationUrl(uint64 appId, uint index) private {
@@ -126,14 +126,14 @@ contract GetLogin is mortal {
     }
 
     function _addSessionInit(bytes32 usernameHash, address wallet, uint8 sessionType, uint64 appId) private {
-        UserSessions[usernameHash].push(UserSession({username: usernameHash, wallet: wallet, sessionType: sessionType, appId: appId}));
+        UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
     }
 
     function _addSession(address wallet, uint8 sessionType, uint64 appId) private {
         validateAppExists(appId);
         require(isAddressRegistered(wallet) == true, "Address already used");
         bytes32 usernameHash = getUsernameByAddress(wallet);
-        UserSessions[usernameHash].push(UserSession({username: usernameHash, wallet: wallet, sessionType: sessionType, appId: appId}));
+        UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
     }
 
     /* End of private methods */
@@ -144,8 +144,8 @@ contract GetLogin is mortal {
     }
 
     function validateAppExists(uint64 appId) public view {
-        // todo return app info?
-        getApplication(appId);
+        Application memory app = Applications[appId];
+        require(app.isActive == true, "App not found");
     }
 
     function validateInviteActive(address wallet) public view {
@@ -153,17 +153,18 @@ contract GetLogin is mortal {
     }
 
     function validateAddressRegistered(address wallet) public view {
-        require(isAddressRegistered(wallet), "Only registered user can call this function");
+        require(isAddressRegistered(wallet) == true, "This wallet address not registered");
     }
 
     /* End validators */
 
 
     /* Public methods */
-    function createApplication(string memory title, string memory description) public {
+    function createApplication(string memory title, string memory description) public returns (uint64) {
+        // todo only main session can create and edit app (check it in top hierarchy method)?
         validateAddressRegistered(msg.sender);
         bytes32 usernameHash = getUsernameByAddress(msg.sender);
-        _createApplication(usernameHash, title, description);
+        return _createApplication(usernameHash, title, description);
     }
 
     function addApplicationUrl(uint64 appId, string memory url) public {
@@ -189,26 +190,27 @@ contract GetLogin is mortal {
     }
 
     function createUser(bytes32 usernameHash) public payable {
-       _createUser(usernameHash, msg.sender);
+        _createUser(usernameHash, msg.sender);
     }
 
     function createInvite(address payable inviteAddress) public payable {
         validateAddressRegistered(msg.sender);
         bytes32 creatorUsername = getUsernameByAddress(msg.sender);
         require(isActiveInvite(inviteAddress) == false, "This address already used for invite");
-        Invites[inviteAddress] = InviteInfo({inviteAddress: inviteAddress, creatorUsername: creatorUsername, registeredUsername: '', isActive: true});
+        Invites[inviteAddress] = InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsername, registeredUsername : '', isActive : true});
         inviteAddress.transfer(msg.value);
         emit EventInviteCreated(creatorUsername, inviteAddress);
     }
 
-    function createUserFromInvite(bytes32 usernameHash, address walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
-       validateInviteActive(msg.sender);
-       require(isAddressRegistered(walletAddress) == false, "Address already registered");
-       InviteInfo storage invite = Invites[msg.sender];
-       _createUser(usernameHash, walletAddress);
-       invite.isActive = false;
-       invite.registeredUsername = usernameHash;
-       emit EventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
+    function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
+        validateInviteActive(msg.sender);
+        require(isAddressRegistered(walletAddress) == false, "Address already registered");
+        InviteInfo storage invite = Invites[msg.sender];
+        _createUser(usernameHash, walletAddress);
+        invite.isActive = false;
+        invite.registeredUsername = usernameHash;
+        walletAddress.transfer(msg.value);
+        emit EventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
     function createAppSession(uint64 appId, address payable wallet, string memory iv, string memory ephemPublicKey, string memory ciphertext, string memory mac) public payable {
@@ -218,7 +220,7 @@ contract GetLogin is mortal {
         // todo check only one main session possible
         // todo hide user apps ids?
         //_addSession(wallet, sessionApp, appId);
-        UsersAddressUsername[wallet] = Username({isActive: true, username: username});
+        UsersAddressUsername[wallet] = Username({isActive : true, username : username});
         wallet.transfer(msg.value);
         emit EventAppSession(appId, username, iv, ephemPublicKey, ciphertext, mac);
     }
@@ -232,10 +234,9 @@ contract GetLogin is mortal {
 
     /* View methods */
     function getApplication(uint64 id) public view returns (Application memory) {
-        Application memory app = Applications[id];
-        require(app.isActive == true, "App not found");
+        validateAppExists(id);
 
-        return app;
+        return Applications[id];
     }
 
     function getUserInfo(bytes32 usernameHash) public view returns (UserInfo memory) {
@@ -248,7 +249,7 @@ contract GetLogin is mortal {
 
     function isAddressRegistered(address wallet) public view returns (bool) {
         Username memory currentUser = UsersAddressUsername[wallet];
-        if(currentUser.isActive != true){
+        if (currentUser.isActive != true) {
             return false;
         }
 
