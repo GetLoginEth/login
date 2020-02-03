@@ -4,11 +4,9 @@ let getLogin;
 
 contract("GetLogin", async accounts => {
     describe('User', async () => {
-
         beforeEach(async () => {
             getLogin = await GetLogin.deployed();
         });
-
 
         it("Is admin created", async () => {
             const usernameHash = web3.utils.keccak256('admin');
@@ -23,12 +21,14 @@ contract("GetLogin", async accounts => {
             await willFail(getLogin.createUser(usernameHash, {from: accounts[1]}), 'Username already used');
         });
 
-        /*it("Create new user without invite", async () => {
-            // igor
-            const usernameHash = '0x79f83765412a9277d8e547b789add1c2c4f861218677fc27d9bfb4e9c77a1b82';
-            const getLogin = await GetLogin.deployed();
+        it("Create new user without invite", async () => {
+            const usernameHash = web3.utils.keccak256('igor');
             await getLogin.createUser(usernameHash, {from: accounts[1]});
+        });
 
-        });*/
+        it("Create new user from old address", async () => {
+            const usernameHash = web3.utils.keccak256('igor1');
+            await willFail(getLogin.createUser(usernameHash, {from: accounts[1]}), 'Wallet already used');
+        });
     });
 });

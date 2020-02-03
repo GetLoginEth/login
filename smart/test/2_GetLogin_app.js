@@ -4,8 +4,14 @@ let getLogin;
 
 contract("GetLogin", async accounts => {
     describe('App', async () => {
+        before(async () => {
+            getLogin = await GetLogin.deployed();
+            const usernameHash = web3.utils.keccak256('igor');
+            await getLogin.createUser(usernameHash, {from: accounts[1]});
+        });
+
         beforeEach(async () => {
-            getLogin = await GetLogin.deployed()
+            getLogin = await GetLogin.deployed();
         });
 
         it("Is first app created", async () => {
@@ -52,7 +58,6 @@ contract("GetLogin", async accounts => {
             const title = "Wow! New Great App";
             const description = "Oxoxo. 9000. Great description";
 
-            //const getLogin = await GetLogin.deployed();
             await getLogin.renameApplication(appId, title, description, {from: accounts[0]});
             const app = await getLogin.getApplication(appId);
             assert.equal(app.title, title, "Incorrect app title");
@@ -87,6 +92,22 @@ contract("GetLogin", async accounts => {
                 assert.equal(url, "", "Incorrect url");
             }
         });
-    });
 
+        it("Rename app from other account", async () => {
+            const appId = 2;
+            const title = "Info from new user";
+            const description = "Absolutely great description";
+            await willFail(getLogin.renameApplication(appId, title, description, {from: accounts[1]}), 'You do not have access to this application');
+        });
+
+        it("Add url from other account", async () => {
+            const appId = 2;
+            await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'You do not have access to this application');
+        });
+
+        it("Delete url from other account", async () => {
+            const appId = 2;
+            await willFail(getLogin.deleteApplicationUrl(appId, 0, {from: accounts[1]}), 'You do not have access to this application');
+        });
+    });
 });

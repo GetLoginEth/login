@@ -1,7 +1,7 @@
 pragma solidity ^0.6.1;
 pragma experimental ABIEncoderV2;
 
-contract owned {
+/*contract owned {
     address payable owner;
     constructor() public {owner = msg.sender;}
 
@@ -26,9 +26,9 @@ contract mortal is owned {
     function close() public onlyOwner {
         selfdestruct(owner);
     }
-}
+}*/
 
-contract GetLogin is mortal {
+contract GetLogin /*is mortal*/ {
     event EventStoreWallet(bytes32 indexed username, address indexed walletAddress, string ciphertext, string iv, string salt, string mac);
     event EventInviteCreated(bytes32 indexed creatorUsername, address inviteAddress);
     event EventAppSession(uint64 indexed appId, bytes32 indexed username, string iv, string ephemPublicKey, string ciphertext, string mac);
@@ -131,7 +131,7 @@ contract GetLogin is mortal {
 
     function _addSession(address wallet, uint8 sessionType, uint64 appId) private {
         validateAppExists(appId);
-        require(isAddressRegistered(wallet) == true, "Address already used");
+        validateAddressRegistered(wallet);
         bytes32 usernameHash = getUsernameByAddress(wallet);
         UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
     }
@@ -140,6 +140,7 @@ contract GetLogin is mortal {
 
     /* Validators */
     function validateAppOwner(uint64 appId, address wallet) public view {
+        validateAddressRegistered(wallet);
         require(isAppOwner(appId, wallet) == true, "You do not have access to this application");
     }
 
@@ -153,11 +154,13 @@ contract GetLogin is mortal {
     }
 
     function validateAddressRegistered(address wallet) public view {
-        require(isAddressRegistered(wallet) == true, "This wallet address not registered");
+        require(isAddressRegistered(wallet) == true, "Address already used");
     }
 
+    function validateInviteAvailable(address wallet) public view {
+        require(isActiveInvite(wallet) == false, "This address already used for invite");
+    }
     /* End validators */
-
 
     /* Public methods */
     function createApplication(string memory title, string memory description) public returns (uint64) {
@@ -169,22 +172,21 @@ contract GetLogin is mortal {
 
     function addApplicationUrl(uint64 appId, string memory url) public {
         // todo check is user address is not session
-        validateAddressRegistered(msg.sender);
+        validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         _addApplicationUrl(appId, url);
     }
 
     function renameApplication(uint64 appId, string memory title, string memory description) public {
-        validateAddressRegistered(msg.sender);
+        validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         Application storage app = Applications[appId];
-        require(app.isActive == true, "App not found");
         app.title = title;
         app.description = description;
     }
 
     function deleteApplicationUrl(uint64 appId, uint index) public {
-        validateAddressRegistered(msg.sender);
+        validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         _deleteApplicationUrl(appId, index);
     }
@@ -194,9 +196,10 @@ contract GetLogin is mortal {
     }
 
     function createInvite(address payable inviteAddress) public payable {
+        // todo only main session can create invite
+        validateInviteAvailable(inviteAddress);
         validateAddressRegistered(msg.sender);
         bytes32 creatorUsername = getUsernameByAddress(msg.sender);
-        require(isActiveInvite(inviteAddress) == false, "This address already used for invite");
         Invites[inviteAddress] = InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsername, registeredUsername : '', isActive : true});
         inviteAddress.transfer(msg.value);
         emit EventInviteCreated(creatorUsername, inviteAddress);
