@@ -5,6 +5,7 @@ import {StateContext, StateProvider} from '../reducers/state';
 import {initialState, reducer} from '../reducers/mainReducer';
 import Header from "../Header";
 import Footer from "../Footer";
+import Spinner from "../Elements/Spinner";
 import preval from 'preval.macro';
 
 const Main = lazy(() => import('../Main'));
@@ -19,12 +20,6 @@ const Authorize = lazy(() => import('../Authorize'));
 const Developers = lazy(() => import('../Developers'));
 const Plugin = lazy(() => import('../Plugin'));
 const Invite = lazy(() => import('../Invite'));
-
-const Spinner = () => <div className="App-loading text-center">
-    <div className="spinner-border text-success" role="status">
-        <span className="sr-only">Loading...</span>
-    </div>
-</div>;
 
 function PrivateRoute({children, state, ...rest}) {
     //console.log(rest);

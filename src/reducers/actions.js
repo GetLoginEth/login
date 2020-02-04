@@ -5,7 +5,7 @@ import {
     ACTION_GET_ALLOWED_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
-    ACTION_GET_INVITES,
+    ACTION_GET_INVITES, ACTION_GET_MY_APPS,
     ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
@@ -291,6 +291,14 @@ export const getInvite = async (address) => {
 
 export const createInvite = async () => {
     return callMethod(ACTION_CREATE_INVITE, async () => await invite.createInvite());
+};
+
+export const getApps = async (usernameHash) => {
+    return callMethod(ACTION_GET_MY_APPS, async () => await contractInstance.getApps(usernameHash));
+};
+
+export const getMyApps = async () => {
+    return callMethod(ACTION_GET_MY_APPS, async () => await contractInstance.getApps(getLocalUsernameHash()));
 };
 
 export const test = async () => {

@@ -3,6 +3,7 @@ import './Authorize.css';
 import {allowApp, getAllowedApp, getAppInfo, getLocalUsernameHash} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
 import WaitButton from "../Elements/WaitButton";
+import Spinner from "../Elements/Spinner";
 
 function Authorize() {
     const setRedirectUrl = (url) => {
@@ -161,11 +162,7 @@ function Authorize() {
             </Fragment>}
         </div>
 
-        {authorizeApp.isAppLoading && <div className="App-loading text-center">
-            <div className="spinner-border text-success" role="status">
-                <span className="sr-only">Loading...</span>
-            </div>
-        </div>}
+        {authorizeApp.isAppLoading && <Spinner/>}
     </div>;
 }
 

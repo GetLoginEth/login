@@ -155,6 +155,20 @@ export const reducer = (state, action) => {
             data = {log: [...state.authorizeApp.log, action.data], status: action.data, isSessionCreating: true};
             return merge('authorizeApp', data);
 
+        case getStatus(ACTION_GET_MY_APPS, STATUS_START):
+            data = {inProcessReceiving: true, errorMessage: ''};
+            return merge('myApps', data);
+        case getStatus(ACTION_GET_MY_APPS, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('myApps', data);
+        case getStatus(ACTION_GET_MY_APPS, STATUS_SUCCESS):
+            data = {apps: action.data};
+            return merge('myApps', data);
+        case getStatus(ACTION_GET_MY_APPS, STATUS_COMPLETE):
+            data = {inProcessReceiving: false,};
+            return merge('myApps', data);
+
+
         case getStatus(ACTION_ALLOW_APP, STATUS_FAIL):
             data = {errorMessage: action.data.message};
             return merge('authorizeApp', data);
@@ -230,6 +244,13 @@ export const initialState = {
         inviteInfo: {},
         errorMessage: '',
         createdInvites: []
+    },
+    myApps: {
+        inProcessCreation: false,
+        inProcessReceiving: false,
+        status: '',
+        log: [],
+        apps: []
     }
 };
 
@@ -260,3 +281,5 @@ export const ACTION_GET_INVITES = 'get_invites';
 export const ACTION_GET_INVITE = 'get_invite';
 export const ACTION_CREATE_INVITE = 'create_invite';
 export const ACTION_GET_BALANCE = 'get_balance';
+export const ACTION_GET_MY_APPS = 'get_my_apps';
+export const ACTION_CREATE_MY_APP = 'create_my_app';

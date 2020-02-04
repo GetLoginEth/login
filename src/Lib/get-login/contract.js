@@ -1,5 +1,5 @@
 export const defaultAddresses = {
-    "rinkeby": "0x8cc0D9698824d73A9ae15d69C94ac7335cf082D6",
+    "rinkeby": "0xD66521103Cb882d6afEb051Ae3e986506Af56409",
     "mainnet": ""
 };
 
@@ -8,6 +8,25 @@ export const defaultAbi = [
         "inputs": [],
         "stateMutability": "nonpayable",
         "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "creatorUsername",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            }
+        ],
+        "name": "EventAppCreated",
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -306,13 +325,6 @@ export const defaultAbi = [
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "close",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
         "inputs": [
             {
                 "internalType": "uint64",
@@ -364,7 +376,13 @@ export const defaultAbi = [
             }
         ],
         "name": "createApplication",
-        "outputs": [],
+        "outputs": [
+            {
+                "internalType": "uint64",
+                "name": "",
+                "type": "uint64"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
     },
@@ -783,6 +801,19 @@ export const defaultAbi = [
         "outputs": [],
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "validateInviteAvailable",
+        "outputs": [],
+        "stateMutability": "view",
+        "type": "function"
     }
 ];
 
@@ -995,6 +1026,15 @@ export default class contract {
 
     async getInvites(usernameHash) {
         return await this.getContract().getPastEvents('EventInviteCreated', {
+            filter: {
+                creatorUsername: usernameHash,
+            },
+            fromBlock: 0
+        });
+    }
+
+    async getApps(usernameHash) {
+        return await this.getContract().getPastEvents('EventAppCreated', {
             filter: {
                 creatorUsername: usernameHash,
             },
