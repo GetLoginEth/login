@@ -5,7 +5,7 @@ import {
     ACTION_GET_ALLOWED_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
-    ACTION_GET_INVITES, ACTION_GET_MY_APPS,
+    ACTION_GET_INVITES, ACTION_GET_MY_APPS, ACTION_GET_MY_APPS_INFO,
     ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
@@ -209,6 +209,17 @@ export const getAppInfo = async (appId) => {
     return callMethod(ACTION_APP_INFO, async () => await contractInstance.getApplication(appId), appId);
 };
 
+export const getAppsInfo = async (appIds) => {
+    return callMethod(ACTION_GET_MY_APPS_INFO, async () => {
+        let result = {};
+        for (const appId of appIds) {
+            result[appIds] = await contractInstance.getApplication(appId);
+        }
+
+        return result;
+    }, appIds);
+};
+
 export const allowApp = async (appId) => {
     return await callMethod(ACTION_ALLOW_APP, async () => {
         const sessionInfo = await session.createSession(appId);
@@ -293,9 +304,9 @@ export const createInvite = async () => {
     return callMethod(ACTION_CREATE_INVITE, async () => await invite.createInvite());
 };
 
-export const getApps = async (usernameHash) => {
+/*export const getApps = async (usernameHash) => {
     return callMethod(ACTION_GET_MY_APPS, async () => await contractInstance.getApps(usernameHash));
-};
+};*/
 
 export const getMyApps = async () => {
     return callMethod(ACTION_GET_MY_APPS, async () => await contractInstance.getApps(getLocalUsernameHash()));

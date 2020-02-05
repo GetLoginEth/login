@@ -168,6 +168,18 @@ export const reducer = (state, action) => {
             data = {inProcessReceiving: false,};
             return merge('myApps', data);
 
+        /*case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_START):
+            data = {inProcessReceiving: true, errorMessage: ''};
+            return merge('appsInfo', data);*/
+        /*case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('appsInfo', data);*/
+        case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_SUCCESS):
+            //data = {apps: action.data};
+            return merge('appsInfo', action.data);
+        /*case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_COMPLETE):
+            data = {inProcessReceiving: false,};
+            return merge('appsInfo', data);*/
 
         case getStatus(ACTION_ALLOW_APP, STATUS_FAIL):
             data = {errorMessage: action.data.message};
@@ -251,7 +263,8 @@ export const initialState = {
         status: '',
         log: [],
         apps: []
-    }
+    },
+    appsInfo: {}
 };
 
 export const STATUS_INIT = 'init';
@@ -282,4 +295,5 @@ export const ACTION_GET_INVITE = 'get_invite';
 export const ACTION_CREATE_INVITE = 'create_invite';
 export const ACTION_GET_BALANCE = 'get_balance';
 export const ACTION_GET_MY_APPS = 'get_my_apps';
+export const ACTION_GET_MY_APPS_INFO = 'get_my_apps_info';
 export const ACTION_CREATE_MY_APP = 'create_my_app';

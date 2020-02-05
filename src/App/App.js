@@ -22,7 +22,7 @@ const DevelopersAppInfo = lazy(() => import('../DevelopersAppInfo'));
 const Plugin = lazy(() => import('../Plugin'));
 const Invite = lazy(() => import('../Invite'));
 
-function PrivateRoute({children, state, ...rest}) {
+function PrivateRoute({children, state, computedMatch, ...rest}) {
     //console.log(rest);
     return (
         <Route
@@ -31,7 +31,10 @@ function PrivateRoute({children, state, ...rest}) {
                 if (state.user.isCheckingAuth()) {
                     return <Spinner/>;
                 } else {
-                    return state.user.isLoggedIn() ? (children) : (
+                    const newChildren = React.cloneElement(children, {
+                        computedMatch
+                    });
+                    return state.user.isLoggedIn() ? (newChildren) : (
                         <Redirect to={{pathname: "./login", state: {from: location}}}/>);
                 }
             }}
