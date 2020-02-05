@@ -18,6 +18,7 @@ const Terms = lazy(() => import('../Page/Terms'));
 const Settings = lazy(() => import('../Settings'));
 const Authorize = lazy(() => import('../Authorize'));
 const Developers = lazy(() => import('../Developers'));
+const DevelopersAppInfo = lazy(() => import('../DevelopersAppInfo'));
 const Plugin = lazy(() => import('../Plugin'));
 const Invite = lazy(() => import('../Invite'));
 
@@ -114,9 +115,14 @@ function App() {
                                             <Authorize/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/developers"
+                                        <PrivateRoute exact path="/:swarm_protocol?/:swarm_hash?/developers"
                                                       state={state}>
                                             <Developers/>
+                                        </PrivateRoute>
+
+                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/developers-:id"
+                                                      state={state}>
+                                            <DevelopersAppInfo/>
                                         </PrivateRoute>
 
                                         <Route path="*">
