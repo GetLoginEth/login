@@ -33,7 +33,8 @@ function PrivateRoute({children, state, computedMatch, ...rest}) {
                     return <Spinner/>;
                 } else {
                     const newChildren = React.cloneElement(children, {
-                        computedMatch
+                        computedMatch,
+                        location
                     });
                     return state.user.isLoggedIn() ? (newChildren) : (
                         <Redirect to={{pathname: "./login", state: {from: location}}}/>);

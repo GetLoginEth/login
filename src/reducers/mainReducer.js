@@ -274,6 +274,7 @@ export const initialState = {
         inProcessCreation: false,
         inProcessReceiving: false,
         status: '',
+        errorMessage: '',
         log: [],
         apps: []
     },

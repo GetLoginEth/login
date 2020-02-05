@@ -1,19 +1,18 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './DevelopersAppCreate.css';
-import {createApplication, getAppsInfo} from "../reducers/actions";
+import {createApplication} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
-import Spinner from "../Elements/Spinner";
 import WaitButton from "../Elements/WaitButton";
+import {Redirect} from "react-router-dom";
 
-function DevelopersAppCreate({computedMatch}) {
-    //const appId = computedMatch.params.id;
+function DevelopersAppCreate({location}) {
     const {state: {myApps}} = useStateValue();
-    const {state: {appsInfo}} = useStateValue();
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [allowedUrls, setAllowedUrls] = useState('');
     const [allowedSmartContracts, setAllowedSmartContracts] = useState('');
+    const [redirect, setRedirect] = useState(null);
 
     useEffect(_ => {
         //getAppsInfo([appId]).then();
@@ -22,16 +21,20 @@ function DevelopersAppCreate({computedMatch}) {
     const isSaveDisabled = () => {
         return !title || !description || !allowedUrls || !allowedSmartContracts;
     };
-
-    //const app = appsInfo[appId];
     return <div className="DevelopersAppInfo">
+        {redirect ? redirect : ''}
         <h1 className="text-center">Create new app</h1>
+        {myApps.errorMessage && <div className="alert alert-danger" role="alert">
+            {myApps.errorMessage}
+        </div>}
         <form onSubmit={e => {
             e.preventDefault();
-            createApplication(title, description).then(data => {
-                // todo redirect to all apps page
-                console.log(data);
-            });
+            createApplication(title, description, allowedUrls.split("\n"), allowedSmartContracts.split("\n"))
+                .then(data => {
+                    if (data) {
+                        setRedirect(<Redirect to={{pathname: "./developers", state: {from: location}}}/>);
+                    }
+                });
         }}>
             <fieldset disabled={myApps.inProcessCreation}>
                 <div className="form-group">

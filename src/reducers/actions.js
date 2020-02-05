@@ -312,8 +312,8 @@ export const getMyApps = async () => {
     return callMethod(ACTION_GET_MY_APPS, async () => await contractInstance.getApps(getLocalUsernameHash()));
 };
 
-export const createApplication = async (title, description) => {
-    return callMethod(ACTION_CREATE_MY_APP, async () => await contractInstance.createApplication(title, description));
+export const createApplication = async (title, description, allowedUrls = [], allowedContracts = []) => {
+    return callMethod(ACTION_CREATE_MY_APP, async () => await contractInstance.createApplication(title, description, allowedUrls, allowedContracts));
 };
 
 export const test = async () => {

@@ -1,34 +1,7 @@
 pragma solidity ^0.6.1;
 pragma experimental ABIEncoderV2;
 
-/*contract owned {
-    address payable owner;
-    constructor() public {owner = msg.sender;}
-
-    // This contract only defines a modifier but does not use
-    // it: it will be used in derived contracts.
-    // The function body is inserted where the special symbol
-    // `_;` in the definition of a modifier appears.
-    // This means that if the owner calls this function, the
-    // function is executed and otherwise, an exception is
-    // thrown.
-    modifier onlyOwner {
-        require(msg.sender == owner, "Only owner can call this function.");
-        _;
-    }
-}
-
-contract mortal is owned {
-    // This contract inherits the `onlyOwner` modifier from
-    // `owned` and applies it to the `close` function, which
-    // causes that calls to `close` only have an effect if
-    // they are made by the stored owner.
-    function close() public onlyOwner {
-        selfdestruct(owner);
-    }
-}*/
-
-contract GetLogin /*is mortal*/ {
+contract GetLogin {
     event EventStoreWallet(bytes32 indexed username, address indexed walletAddress, string ciphertext, string iv, string salt, string mac);
     event EventInviteCreated(bytes32 indexed creatorUsername, address inviteAddress);
     event EventAppSession(uint64 indexed appId, bytes32 indexed username, string iv, string ephemPublicKey, string ciphertext, string mac);
@@ -77,6 +50,7 @@ contract GetLogin /*is mortal*/ {
         string title;
         string description;
         string[] allowedUrls;
+        address[] allowedContracts;
         bool isActive;
     }
 
@@ -91,9 +65,13 @@ contract GetLogin /*is mortal*/ {
     constructor() public {
         bytes32 username = keccak256('admin');
         _createUser(username, msg.sender);
-        uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app');
+        string[] memory allowedUrls;
+        address[] memory allowedContracts;
+        uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app', allowedUrls, allowedContracts);
         _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
         _addApplicationUrl(newAppId, 'https://localhost:3001');
+        _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
+        _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
     }
 
     /* Private methods */
@@ -105,10 +83,9 @@ contract GetLogin /*is mortal*/ {
         _addSessionInit(usernameHash, ownerWallet, sessionMain, 0);
     }
 
-    function _createApplication(bytes32 usernameHash, string memory title, string memory description) private returns (uint64) {
-        string[] memory allowedUrls;
+    function _createApplication(bytes32 usernameHash, string memory title, string memory description, string[] memory allowedUrls, address[] memory allowedContracts) private returns (uint64) {
         uint64 appId = applicationId;
-        Applications[appId] = Application({id : appId, usernameHash : usernameHash, title : title, description : description, allowedUrls : allowedUrls, isActive : true});
+        Applications[appId] = Application({id : appId, usernameHash : usernameHash, title : title, description : description, allowedUrls : allowedUrls, allowedContracts : allowedContracts, isActive : true});
         applicationId++;
         emit EventAppCreated(usernameHash, appId);
 
@@ -116,13 +93,19 @@ contract GetLogin /*is mortal*/ {
     }
 
     function _addApplicationUrl(uint64 appId, string memory url) private {
-        // todo emit event?
         Applications[appId].allowedUrls.push(url);
     }
 
+    function _addApplicationContract(uint64 appId, address wallet) private {
+        Applications[appId].allowedContracts.push(wallet);
+    }
+
     function _deleteApplicationUrl(uint64 appId, uint index) private {
-        // todo emit event?
         delete Applications[appId].allowedUrls[index];
+    }
+
+    function _deleteApplicationContract(uint64 appId, uint index) private {
+        delete Applications[appId].allowedContracts[index];
     }
 
     function _addSessionInit(bytes32 usernameHash, address wallet, uint8 sessionType, uint64 appId) private {
@@ -163,11 +146,11 @@ contract GetLogin /*is mortal*/ {
     /* End validators */
 
     /* Public methods */
-    function createApplication(string memory title, string memory description) public returns (uint64) {
+    function createApplication(string memory title, string memory description, string[] memory allowedUrls, address[] memory allowedContracts) public returns (uint64) {
         // todo only main session can create and edit app (check it in top hierarchy method)?
         validateAddressRegistered(msg.sender);
         bytes32 usernameHash = getUsernameByAddress(msg.sender);
-        return _createApplication(usernameHash, title, description);
+        return _createApplication(usernameHash, title, description, allowedUrls, allowedContracts);
     }
 
     function addApplicationUrl(uint64 appId, string memory url) public {
@@ -175,6 +158,13 @@ contract GetLogin /*is mortal*/ {
         validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         _addApplicationUrl(appId, url);
+    }
+
+    function addApplicationContract(uint64 appId, address wallet) public {
+        // todo check is user address is not session
+        validateAppExists(appId);
+        validateAppOwner(appId, msg.sender);
+        _addApplicationContract(appId, wallet);
     }
 
     function renameApplication(uint64 appId, string memory title, string memory description) public {
@@ -189,6 +179,12 @@ contract GetLogin /*is mortal*/ {
         validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         _deleteApplicationUrl(appId, index);
+    }
+
+    function deleteApplicationContract(uint64 appId, uint index) public {
+        validateAppExists(appId);
+        validateAppOwner(appId, msg.sender);
+        _deleteApplicationContract(appId, index);
     }
 
     function createUser(bytes32 usernameHash) public payable {

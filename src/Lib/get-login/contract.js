@@ -1,9 +1,217 @@
 export const defaultAddresses = {
-    "rinkeby": "0xD66521103Cb882d6afEb051Ae3e986506Af56409",
+    "rinkeby": "0x126406bF6270423A8e3050DD087fE437962ce6D2",
     "mainnet": ""
 };
 
 export const defaultAbi = [
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "addApplicationContract",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "string",
+                "name": "url",
+                "type": "string"
+            }
+        ],
+        "name": "addApplicationUrl",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "internalType": "string[]",
+                "name": "allowedUrls",
+                "type": "string[]"
+            },
+            {
+                "internalType": "address[]",
+                "name": "allowedContracts",
+                "type": "address[]"
+            }
+        ],
+        "name": "createApplication",
+        "outputs": [
+            {
+                "internalType": "uint64",
+                "name": "",
+                "type": "uint64"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "address payable",
+                "name": "wallet",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "iv",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "ephemPublicKey",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "ciphertext",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "mac",
+                "type": "string"
+            }
+        ],
+        "name": "createAppSession",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address payable",
+                "name": "inviteAddress",
+                "type": "address"
+            }
+        ],
+        "name": "createInvite",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "usernameHash",
+                "type": "bytes32"
+            }
+        ],
+        "name": "createUser",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "usernameHash",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address payable",
+                "name": "walletAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "ciphertext",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "iv",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "salt",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "mac",
+                "type": "string"
+            }
+        ],
+        "name": "createUserFromInvite",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+            }
+        ],
+        "name": "deleteApplicationContract",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+            }
+        ],
+        "name": "deleteApplicationUrl",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
     {
         "inputs": [],
         "stateMutability": "nonpayable",
@@ -137,6 +345,42 @@ export const defaultAbi = [
         "inputs": [
             {
                 "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            }
+        ],
+        "name": "renameApplication",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "applicationId",
+        "outputs": [
+            {
+                "internalType": "uint64",
+                "name": "",
+                "type": "uint64"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
                 "name": "",
                 "type": "uint64"
             }
@@ -175,302 +419,6 @@ export const defaultAbi = [
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "Invites",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "inviteAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "creatorUsername",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "registeredUsername",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "UserSessions",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            },
-            {
-                "internalType": "uint8",
-                "name": "sessionType",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "name": "Users",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "UsersAddressUsername",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            },
-            {
-                "internalType": "string",
-                "name": "url",
-                "type": "string"
-            }
-        ],
-        "name": "addApplicationUrl",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "applicationId",
-        "outputs": [
-            {
-                "internalType": "uint64",
-                "name": "",
-                "type": "uint64"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            },
-            {
-                "internalType": "address payable",
-                "name": "wallet",
-                "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "iv",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "ephemPublicKey",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "ciphertext",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "mac",
-                "type": "string"
-            }
-        ],
-        "name": "createAppSession",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "title",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
-            }
-        ],
-        "name": "createApplication",
-        "outputs": [
-            {
-                "internalType": "uint64",
-                "name": "",
-                "type": "uint64"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address payable",
-                "name": "inviteAddress",
-                "type": "address"
-            }
-        ],
-        "name": "createInvite",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "usernameHash",
-                "type": "bytes32"
-            }
-        ],
-        "name": "createUser",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "usernameHash",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address payable",
-                "name": "walletAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "ciphertext",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "iv",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "salt",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "mac",
-                "type": "string"
-            }
-        ],
-        "name": "createUserFromInvite",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            },
-            {
-                "internalType": "uint256",
-                "name": "index",
-                "type": "uint256"
-            }
-        ],
-        "name": "deleteApplicationUrl",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "uint64",
                 "name": "id",
                 "type": "uint64"
@@ -504,6 +452,11 @@ export const defaultAbi = [
                         "internalType": "string[]",
                         "name": "allowedUrls",
                         "type": "string[]"
+                    },
+                    {
+                        "internalType": "address[]",
+                        "name": "allowedContracts",
+                        "type": "address[]"
                     },
                     {
                         "internalType": "bool",
@@ -645,6 +598,40 @@ export const defaultAbi = [
         "inputs": [
             {
                 "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "Invites",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "inviteAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "creatorUsername",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "registeredUsername",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
                 "name": "wallet",
                 "type": "address"
             }
@@ -725,24 +712,88 @@ export const defaultAbi = [
     {
         "inputs": [
             {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "name": "Users",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "UsersAddressUsername",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "isActive",
+                "type": "bool"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "UserSessions",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "username",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            },
+            {
+                "internalType": "uint8",
+                "name": "sessionType",
+                "type": "uint8"
+            },
+            {
                 "internalType": "uint64",
                 "name": "appId",
                 "type": "uint64"
-            },
-            {
-                "internalType": "string",
-                "name": "title",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
             }
         ],
-        "name": "renameApplication",
-        "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -981,8 +1032,8 @@ export default class contract {
         return this.sendTx('createUser', this.sendTxDefault, usernameHash);
     }
 
-    async createApplication(title, description) {
-        return this.sendTx('createApplication', this.sendTxDefault, title, description);
+    async createApplication(title, description, allowedUrls = [], allowedContracts = []) {
+        return this.sendTx('createApplication', this.sendTxDefault, title, description, allowedUrls, allowedContracts);
     }
 
     async createUserFromInvite(usernameHash, walletAddress, ciphertext, iv, salt, mac) {

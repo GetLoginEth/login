@@ -22,6 +22,7 @@ function DevelopersAppInfo({computedMatch}) {
             <p>Title: {app.title}</p>
             <p>Description: {app.description}</p>
             <p>URLs: {app.allowedUrls.map((item, i) => <span key={i}>{item}<br/></span>)}</p>
+            <p>Contracts: {app.allowedContracts.map((item, i) => <span key={i}>{item}<br/></span>)}</p>
         </Fragment>}
     </div>;
 }

@@ -29,8 +29,6 @@ function Developers() {
                 <th scope="col">ID</th>
                 <th scope="col">Title</th>
                 <th scope="col">Description</th>
-                <th scope="col">Urls</th>
-                <th scope="col">Contracts</th>
                 <th scope="col">Actions</th>
             </tr>
             </thead>
@@ -42,11 +40,8 @@ function Developers() {
                     <th scope="row">{appId}</th>
                     <td>{appsInfo[appId] ? appsInfo[appId].title : '...'}</td>
                     <td>{appsInfo[appId] ? appsInfo[appId].description : '...'}</td>
-                    <td>{appsInfo[appId] ? appsInfo[appId].allowedUrls.map((item, i) => <p
-                        key={i}>{item}</p>) : '...'}</td>
-                    <td>...</td>
                     <td>
-                        <Link to={`./developers-${item.returnValues.appId}`} className="btn btn-secondary btn-sm">View</Link>
+                        <Link to={`./developers-${item.returnValues.appId}`} className="btn btn-info btn-sm">View</Link>
                     </td>
                 </tr>
             })}
