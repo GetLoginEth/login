@@ -181,18 +181,18 @@ export const reducer = (state, action) => {
             data = {inProcessCreation: false,};
             return merge('myApps', data);
 
-        /*case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_START):
+        case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_START):
             data = {inProcessReceiving: true, errorMessage: ''};
-            return merge('appsInfo', data);*/
-        /*case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_FAIL):
+            return merge('appsInfo', data);
+        case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_FAIL):
             data = {errorMessage: action.data.message};
-            return merge('appsInfo', data);*/
+            return merge('appsInfo', data);
         case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_SUCCESS):
             //data = {apps: action.data};
             return merge('appsInfo', action.data);
-        /*case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_COMPLETE):
+        case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_COMPLETE):
             data = {inProcessReceiving: false,};
-            return merge('appsInfo', data);*/
+            return merge('appsInfo', data);
 
         case getStatus(ACTION_ALLOW_APP, STATUS_FAIL):
             data = {errorMessage: action.data.message};
@@ -278,7 +278,10 @@ export const initialState = {
         log: [],
         apps: []
     },
-    appsInfo: {}
+    appsInfo: {
+        inProcessReceiving: false,
+        errorMessage: ''
+    }
 };
 
 export const STATUS_INIT = 'init';
@@ -311,3 +314,4 @@ export const ACTION_GET_BALANCE = 'get_balance';
 export const ACTION_GET_MY_APPS = 'get_my_apps';
 export const ACTION_GET_MY_APPS_INFO = 'get_my_apps_info';
 export const ACTION_CREATE_MY_APP = 'create_my_app';
+export const ACTION_DELETE_MY_APP = 'delete_my_app';

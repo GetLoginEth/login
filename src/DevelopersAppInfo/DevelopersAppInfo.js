@@ -23,6 +23,7 @@ function DevelopersAppInfo({computedMatch}) {
             <p>Description: {app.description}</p>
             <p>URLs: {app.allowedUrls.map((item, i) => <span key={i}>{item}<br/></span>)}</p>
             <p>Contracts: {app.allowedContracts.map((item, i) => <span key={i}>{item}<br/></span>)}</p>
+            <p>Is active: {app.isActive.toString()}</p>
         </Fragment>}
     </div>;
 }

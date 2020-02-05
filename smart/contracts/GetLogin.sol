@@ -104,6 +104,10 @@ contract GetLogin {
         delete Applications[appId].allowedUrls[index];
     }
 
+    function _deleteApplication(uint64 appId) private {
+        Applications[appId].isActive = false;
+    }
+
     function _deleteApplicationContract(uint64 appId, uint index) private {
         delete Applications[appId].allowedContracts[index];
     }
@@ -187,6 +191,12 @@ contract GetLogin {
         _deleteApplicationContract(appId, index);
     }
 
+    function deleteApplication(uint64 appId) public {
+        validateAppExists(appId);
+        validateAppOwner(appId, msg.sender);
+        _deleteApplication(appId);
+    }
+
     function createUser(bytes32 usernameHash) public payable {
         _createUser(usernameHash, msg.sender);
     }
@@ -235,6 +245,10 @@ contract GetLogin {
     function getApplication(uint64 id) public view returns (Application memory) {
         validateAppExists(id);
 
+        return Applications[id];
+    }
+
+    function getAnyApplication(uint64 id) public view returns (Application memory) {
         return Applications[id];
     }
 

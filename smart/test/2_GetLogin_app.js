@@ -115,5 +115,13 @@ contract("GetLogin", async accounts => {
             const appId = 2;
             await willFail(getLogin.deleteApplicationUrl(appId, 0, {from: accounts[1]}), 'You do not have access to this application');
         });
+
+        it("Delete application", async () => {
+            const appId = 2;
+            await getLogin.deleteApplication(appId);
+            await willFail(getLogin.getApplication(appId), 'App not found');
+            await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world'), 'App not found');
+            await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'App not found');
+        });
     });
 });

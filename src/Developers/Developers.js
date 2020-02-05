@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import './Developers.css';
-import {getAppsInfo, getMyApps} from "../reducers/actions";
+import {deleteApplication, getAppsInfo, getMyApps} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
 import Spinner from "../Elements/Spinner";
 import {Link} from "react-router-dom";
@@ -16,9 +16,12 @@ function Developers() {
         });
     }, []);
 
-    console.log(appsInfo);
+    //console.log(appsInfo);
     return <div className="Developers">
         <h1 className="text-center">Developers portal</h1>
+        {appsInfo.errorMessage && <div className="alert alert-danger" role="alert">
+            {appsInfo.errorMessage}
+        </div>}
         <Link className="btn btn-primary mb-3" to="./developers-create">Create new app</Link>
         {myApps.inProcessReceiving && (!myApps.apps || myApps.apps.length === 0) && <Spinner/>}
 
@@ -36,12 +39,25 @@ function Developers() {
 
             {myApps.apps.map((item, i) => {
                 const appId = item.returnValues.appId;
+                const isLoaded = !!appsInfo[appId];
+                const app = appsInfo[appId];
                 return <tr key={i}>
                     <th scope="row">{appId}</th>
-                    <td>{appsInfo[appId] ? appsInfo[appId].title : '...'}</td>
-                    <td>{appsInfo[appId] ? appsInfo[appId].description : '...'}</td>
+                    <td>{isLoaded ? app.title : '...'}</td>
+                    <td>{isLoaded ? app.description : '...'}</td>
                     <td>
-                        <Link to={`./developers-${item.returnValues.appId}`} className="btn btn-info btn-sm">View</Link>
+                        <Link to={`./developers-${appId}`} className="btn btn-info btn-sm mr-1">View</Link>
+
+                        <button disabled={!isLoaded || !app.isActive} onClick={_ => {
+                            if (window.confirm('Really delete?')) {
+                                deleteApplication(appId).then(() => {
+                                    alert(`App ${appId} deleted`);
+                                });
+                            }
+                        }} className="btn btn-danger btn-sm">
+                            Delete
+                        </button>
+
                     </td>
                 </tr>
             })}
