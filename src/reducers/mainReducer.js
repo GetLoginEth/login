@@ -168,6 +168,19 @@ export const reducer = (state, action) => {
             data = {inProcessReceiving: false,};
             return merge('myApps', data);
 
+        case getStatus(ACTION_CREATE_MY_APP, STATUS_START):
+            data = {inProcessCreation: true, errorMessage: ''};
+            return merge('myApps', data);
+        case getStatus(ACTION_CREATE_MY_APP, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('myApps', data);
+        /*case getStatus(ACTION_CREATE_MY_APP, STATUS_SUCCESS):
+            data = {apps: action.data};
+            return merge('myApps', data);*/
+        case getStatus(ACTION_CREATE_MY_APP, STATUS_COMPLETE):
+            data = {inProcessCreation: false,};
+            return merge('myApps', data);
+
         /*case getStatus(ACTION_GET_MY_APPS_INFO, STATUS_START):
             data = {inProcessReceiving: true, errorMessage: ''};
             return merge('appsInfo', data);*/

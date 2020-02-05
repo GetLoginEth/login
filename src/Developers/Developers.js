@@ -19,6 +19,7 @@ function Developers() {
     console.log(appsInfo);
     return <div className="Developers">
         <h1 className="text-center">Developers portal</h1>
+        <Link className="btn btn-primary mb-3" to="./developers-create">Create new app</Link>
         {myApps.inProcessReceiving && (!myApps.apps || myApps.apps.length === 0) && <Spinner/>}
 
         {myApps.apps && myApps.apps.length > 0 &&
@@ -45,7 +46,7 @@ function Developers() {
                         key={i}>{item}</p>) : '...'}</td>
                     <td>...</td>
                     <td>
-                        <Link to={`./developers-${item.returnValues.appId}`} className="btn btn-primary">View</Link>
+                        <Link to={`./developers-${item.returnValues.appId}`} className="btn btn-secondary btn-sm">View</Link>
                     </td>
                 </tr>
             })}

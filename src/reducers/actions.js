@@ -1,7 +1,7 @@
 import {
     ACTION_ALLOW_APP,
     ACTION_APP_INFO,
-    ACTION_CREATE_INVITE,
+    ACTION_CREATE_INVITE, ACTION_CREATE_MY_APP,
     ACTION_GET_ALLOWED_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
@@ -213,7 +213,7 @@ export const getAppsInfo = async (appIds) => {
     return callMethod(ACTION_GET_MY_APPS_INFO, async () => {
         let result = {};
         for (const appId of appIds) {
-            result[appIds] = await contractInstance.getApplication(appId);
+            result[appId] = await contractInstance.getApplication(appId);
         }
 
         return result;
@@ -310,6 +310,10 @@ export const createInvite = async () => {
 
 export const getMyApps = async () => {
     return callMethod(ACTION_GET_MY_APPS, async () => await contractInstance.getApps(getLocalUsernameHash()));
+};
+
+export const createApplication = async (title, description) => {
+    return callMethod(ACTION_CREATE_MY_APP, async () => await contractInstance.createApplication(title, description));
 };
 
 export const test = async () => {

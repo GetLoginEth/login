@@ -981,6 +981,10 @@ export default class contract {
         return this.sendTx('createUser', this.sendTxDefault, usernameHash);
     }
 
+    async createApplication(title, description) {
+        return this.sendTx('createApplication', this.sendTxDefault, title, description);
+    }
+
     async createUserFromInvite(usernameHash, walletAddress, ciphertext, iv, salt, mac) {
         // todo check send tx only from invited address
         let params = {...this.sendTxDefault};
