@@ -8,7 +8,7 @@ Last project build hosted at [getlogin.eth](https://swarm-gateways.net/bzz:/getl
 
 ### Register your app in GetLogin smart contract
 
-1) Get last contract address (rinkeby) in file `src/Lib/get-login/contract.js`
+1) Get last contract address from url: `https://swarm-gateways.net/bzz:/getlogin.eth/xsettings`
 
 2) Register as user with method `createUser(usernameHash)` where `usernameHash` is keccak256 hash of your username. Or pass if you already registered.
 
