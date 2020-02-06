@@ -16,10 +16,10 @@ function Settings() {
         <p>Network: {app.network}</p>
         <p>Provider: {app.provider}</p>
 
-        <button className="btn btn-primary" onClick={_ => {
+        {/*<button className="btn btn-primary" onClick={_ => {
             test();
         }}>Test
-        </button>
+        </button>*/}
     </Fragment>;
 }
 
