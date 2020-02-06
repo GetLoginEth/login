@@ -31,10 +31,11 @@ function Signup() {
         const invite = window.location.hash.replace('#', '');
         if (isCorrectInvite(invite)) {
             setInvite(invite);
-            setMethod(SIGN_UP_INVITE);
+            //setMethod(SIGN_UP_INVITE);
         } else {
-            setMethod(LOGIN_WEB3);
+            //setMethod(LOGIN_WEB3);
         }
+        setMethod(SIGN_UP_INVITE);
     }, []);
 
     const onSubmit = async data => {
@@ -55,7 +56,7 @@ function Signup() {
     };
     const isDisabled = () => {
         // todo copy username password validation from sign in
-        return username.length < 3 || password.length < 3 || (invite.length > 0 && !isCorrectInvite(invite)) || signup.inProcess;
+        return username.length < 3 || password.length < 3 || (invite.length > 0 && !isCorrectInvite(invite)) || signup.inProcess || (method === SIGN_UP_INVITE && !invite);
     };
     const onDropDownChange = (item) => {
         setMethod(item.key);
@@ -106,26 +107,26 @@ function Signup() {
                             /*ref={register}*//>
                     </Form.Group>
 
+                    {/*<Dropdown as={ButtonGroup} className="btn-block">*/}
+                    <Button variant="primary"
+                            type="submit"
+                        /*className="col-md-10"*/
+                            className="col-md-12"
+                            disabled={isDisabled()}
+                    >
+                        {signup.inProcess &&
+                        <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"/>}
+                        Sign up with {getDropDownTitle(method)}</Button>
 
-                    <Dropdown as={ButtonGroup} className="btn-block">
-                        <Button variant="primary"
-                                type="submit"
-                                className="col-md-10"
-                                disabled={isDisabled()}
-                        >
-                            {signup.inProcess &&
-                            <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"/>}
-                            Sign up with {getDropDownTitle(method)}</Button>
-
-                        <Dropdown.Toggle className="" split variant="primary"
+                    {/*<Dropdown.Toggle className="" split variant="primary"
                                          id="dropdown-split-basic"/>
 
                         <Dropdown.Menu>
                             {dropDown.map(item => <Dropdown.Item
                                 key={item.key}
                                 onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
-                        </Dropdown.Menu>
-                    </Dropdown>
+                        </Dropdown.Menu>*/}
+                    {/*</Dropdown>*/}
 
                     {signup.log.length > 0 && <details className="mt-2">
                         <summary>{signup.status}</summary>
