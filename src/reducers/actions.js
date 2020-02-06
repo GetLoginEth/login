@@ -97,6 +97,9 @@ export const checkLocalCredentials = async () => {
         contractInstance.setPrivateKey(data.wallet.privateKey);
         cryptoInstance.setAccount(data.wallet.privateKey);
         getWalletBalance(data.wallet.address).then();
+        setInterval(_ => {
+            getWalletBalance(data.wallet.address).then();
+        }, 30000);
 
         return data;
     });
