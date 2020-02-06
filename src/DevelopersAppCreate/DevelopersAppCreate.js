@@ -21,6 +21,8 @@ function DevelopersAppCreate({location}) {
     const isSaveDisabled = () => {
         return !title || !description || !allowedUrls || !allowedSmartContracts;
     };
+
+    // todo after creation and redirect display info about tx mining
     return <div className="DevelopersAppInfo">
         {redirect ? redirect : ''}
         <h1 className="text-center">Create new app</h1>

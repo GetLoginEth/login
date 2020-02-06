@@ -6,8 +6,6 @@ import WaitButton from "../Elements/WaitButton";
 
 function Invite() {
     const {state: {user}} = useStateValue();
-    //const {state: {app}} = useStateValue();
-    //const {state} = useStateValue();
     const {state: {invite}} = useStateValue();
     const {state: {invite: {inviteInfo}}} = useStateValue();
 

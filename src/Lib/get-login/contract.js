@@ -1096,14 +1096,34 @@ export default class contract {
          * @type {SignedTransaction}
          */
         const signed = await this.web3.eth.accounts.signTransaction(result, this.account.privateKey);
-        let sendResult = null;
+        /*let sendResult = null;
         try {
             sendResult = this.web3.eth.sendSignedTransaction(signed.rawTransaction);
         } catch (e) {
             console.error(e);
-        }
+        }*/
 
-        return sendResult;
+        return new Promise(((resolve, reject) => {
+            this.web3.eth.sendSignedTransaction(signed.rawTransaction)
+                .on('transactionHash', hash => {
+                    console.log(hash);
+                    resolve(hash);
+                })
+                .on('receipt', receipt => {
+                    console.log(receipt);
+                })
+                .on('confirmation', (confNumber, receipt) => {
+                    console.log(confNumber, receipt);
+                })
+                .on('error', error => {
+                    console.log(error);
+                    reject(error);
+                })
+                .then(function (receipt) {
+                    // will be fired once the receipt is mined
+                    console.log(receipt);
+                });
+        }));
     }
 
     async getUserInfo(usernameHash) {
