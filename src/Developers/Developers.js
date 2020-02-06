@@ -27,6 +27,8 @@ function Developers() {
         <Link className="btn btn-primary mb-3" to="./developers-create">Create new app</Link>
         {myApps.inProcessReceiving && (!myApps.apps || myApps.apps.length === 0) && <Spinner/>}
 
+        {!myApps.inProcessReceiving && myApps.apps.length === 0 && <p>You do not have created apps</p>}
+
         {myApps.apps && myApps.apps.length > 0 &&
         <table className="table table-bordered">
             <thead>
@@ -38,7 +40,6 @@ function Developers() {
             </tr>
             </thead>
             <tbody>
-
             {myApps.apps.map((item, i) => {
                 const appId = item.returnValues.appId;
                 const isLoaded = !!appsInfo[appId];
