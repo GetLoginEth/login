@@ -123,5 +123,13 @@ contract("GetLogin", async accounts => {
             await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world'), 'App not found');
             await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'App not found');
         });
+
+        it("Restore application", async () => {
+            const appId = 2;
+            await getLogin.restoreApplication(appId);
+            await getLogin.getApplication(appId);
+            await getLogin.addApplicationUrl(appId, 'https://hello.world');
+            await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'You do not have access to this application');
+        });
     });
 });

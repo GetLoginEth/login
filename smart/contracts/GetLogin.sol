@@ -104,12 +104,12 @@ contract GetLogin {
         delete Applications[appId].allowedUrls[index];
     }
 
-    function _deleteApplication(uint64 appId) private {
-        Applications[appId].isActive = false;
-    }
-
     function _deleteApplicationContract(uint64 appId, uint index) private {
         delete Applications[appId].allowedContracts[index];
+    }
+
+    function _setApplicationActive(uint64 appId, bool isActive) private {
+        Applications[appId].isActive = isActive;
     }
 
     function _addSessionInit(bytes32 usernameHash, address wallet, uint8 sessionType, uint64 appId) private {
@@ -194,7 +194,13 @@ contract GetLogin {
     function deleteApplication(uint64 appId) public {
         validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
-        _deleteApplication(appId);
+        _setApplicationActive(appId, false);
+    }
+
+    function restoreApplication(uint64 appId) public {
+        //validateAppExists(appId);
+        validateAppOwner(appId, msg.sender);
+        _setApplicationActive(appId, true);
     }
 
     function createUser(bytes32 usernameHash) public payable {
@@ -271,7 +277,8 @@ contract GetLogin {
 
     function isAppOwner(uint64 appIp, address checkAddress) public view returns (bool) {
         bytes32 currentUsernameHash = getUsernameByAddress(checkAddress);
-        return getApplication(appIp).usernameHash == currentUsernameHash;
+        //return getApplication(appIp).usernameHash == currentUsernameHash;
+        return Applications[appIp].usernameHash == currentUsernameHash;
     }
 
     function getUserByAddress(address wallet) public view returns (UserInfo memory) {

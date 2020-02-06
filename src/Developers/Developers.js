@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import './Developers.css';
-import {deleteApplication, getAppsInfo, getMyApps} from "../reducers/actions";
+import {deleteApplication, getAppsInfo, getMyApps, restoreApplication} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
 import Spinner from "../Elements/Spinner";
 import {Link} from "react-router-dom";
@@ -11,8 +11,10 @@ function Developers() {
 
     useEffect(_ => {
         getMyApps().then(data => {
-            const ids = data.map(item => item.returnValues.appId);
-            getAppsInfo(ids).then();
+            if (data) {
+                const ids = data.map(item => item.returnValues.appId);
+                getAppsInfo(ids).then();
+            }
         });
     }, []);
 
@@ -48,7 +50,7 @@ function Developers() {
                     <td>
                         <Link to={`./developers-${appId}`} className="btn btn-info btn-sm mr-1">View</Link>
 
-                        <button disabled={!isLoaded || !app.isActive} onClick={_ => {
+                        {app && app.isActive && <button disabled={!isLoaded} onClick={_ => {
                             if (window.confirm('Really delete?')) {
                                 deleteApplication(appId).then(() => {
                                     alert(`App ${appId} deleted`);
@@ -56,7 +58,17 @@ function Developers() {
                             }
                         }} className="btn btn-danger btn-sm">
                             Delete
-                        </button>
+                        </button>}
+
+                        {app && !app.isActive && <button disabled={!isLoaded} onClick={_ => {
+                            if (window.confirm('Really restore?')) {
+                                restoreApplication(appId).then(() => {
+                                    alert(`App ${appId} restored`);
+                                });
+                            }
+                        }} className="btn btn-success btn-sm">
+                            Restore
+                        </button>}
 
                     </td>
                 </tr>

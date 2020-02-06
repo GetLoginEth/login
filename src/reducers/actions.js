@@ -1,14 +1,19 @@
 import {
     ACTION_ALLOW_APP,
     ACTION_APP_INFO,
-    ACTION_CREATE_INVITE, ACTION_CREATE_MY_APP, ACTION_DELETE_MY_APP,
+    ACTION_CREATE_INVITE,
+    ACTION_CREATE_MY_APP,
+    ACTION_DELETE_MY_APP,
     ACTION_GET_ALLOWED_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
-    ACTION_GET_INVITES, ACTION_GET_MY_APPS, ACTION_GET_MY_APPS_INFO,
+    ACTION_GET_INVITES,
+    ACTION_GET_MY_APPS,
+    ACTION_GET_MY_APPS_INFO,
     ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
+    ACTION_RESTORE_MY_APP,
     ACTION_SELF_APP_INFO,
     ACTION_SESSION,
     ACTION_SIGNIN,
@@ -22,11 +27,11 @@ import {
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
-import Signup, {LOG_SIGN_UP_USER_REGISTRATION, SIGN_UP_INVITE} from "../Lib/get-login/signup";
+import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
-import {createWallet, encryptWallet, getUsernameHash, validateUserData} from "../Lib/get-login/utils";
+import {getUsernameHash, validateUserData} from "../Lib/get-login/utils";
 import crypto from "../Lib/get-login/crypto";
 import contract, {defaultAddresses} from "../Lib/get-login/contract";
 import Invite from "../Lib/get-login/invite";
@@ -318,6 +323,10 @@ export const createApplication = async (title, description, allowedUrls = [], al
 
 export const deleteApplication = async (id) => {
     return callMethod(ACTION_DELETE_MY_APP, async () => await contractInstance.deleteApplication(id));
+};
+
+export const restoreApplication = async (id) => {
+    return callMethod(ACTION_RESTORE_MY_APP, async () => await contractInstance.restoreApplication(id));
 };
 
 export const test = async () => {

@@ -1,5 +1,5 @@
 export const defaultAddresses = {
-    "rinkeby": "0x8114F6B64485a8E54b5e0d7A3ce863e6777DDF06",
+    "rinkeby": "0xDdEF9b33BcE9CE8841a5Be269A6FfA567F9D67dA",
     "mainnet": ""
 };
 
@@ -868,6 +868,19 @@ export const defaultAbi = [
     {
         "inputs": [
             {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            }
+        ],
+        "name": "restoreApplication",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address",
                 "name": "wallet",
                 "type": "address"
@@ -1107,6 +1120,10 @@ export default class contract {
 
     async deleteApplication(id) {
         return this.sendTx('deleteApplication', this.sendTxDefault, id);
+    }
+
+    async restoreApplication(id) {
+        return this.sendTx('restoreApplication', this.sendTxDefault, id);
     }
 
     async createUserFromInvite(usernameHash, walletAddress, ciphertext, iv, salt, mac) {
