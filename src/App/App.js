@@ -20,6 +20,7 @@ const Authorize = lazy(() => import('../Authorize'));
 const Developers = lazy(() => import('../Developers'));
 const DevelopersAppInfo = lazy(() => import('../DevelopersAppInfo'));
 const DevelopersAppCreate = lazy(() => import('../DevelopersAppCreate'));
+const DevelopersAppEdit = lazy(() => import('../DevelopersAppEdit'));
 const Plugin = lazy(() => import('../Plugin'));
 const Invite = lazy(() => import('../Invite'));
 
@@ -128,6 +129,11 @@ function App() {
                                         <PrivateRoute exact path="/:swarm_protocol?/:swarm_hash?/developers-create"
                                                       state={state}>
                                             <DevelopersAppCreate/>
+                                        </PrivateRoute>
+
+                                        <PrivateRoute exact path="/:swarm_protocol?/:swarm_hash?/developers-edit-:id"
+                                                      state={state}>
+                                            <DevelopersAppEdit/>
                                         </PrivateRoute>
 
                                         <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/developers-:id"

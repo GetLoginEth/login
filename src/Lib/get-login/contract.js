@@ -1,5 +1,5 @@
 export const defaultAddresses = {
-    "rinkeby": "0xDdEF9b33BcE9CE8841a5Be269A6FfA567F9D67dA",
+    "rinkeby": "0x107A572Cd04eB7F54a47EbDDB19633671DB11366",
     "mainnet": ""
 };
 
@@ -531,6 +531,39 @@ export const defaultAbi = [
         "inputs": [
             {
                 "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            },
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "internalType": "string[]",
+                "name": "allowedUrls",
+                "type": "string[]"
+            },
+            {
+                "internalType": "address[]",
+                "name": "allowedContracts",
+                "type": "address[]"
+            }
+        ],
+        "name": "editApplication",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
                 "name": "id",
                 "type": "uint64"
             }
@@ -848,29 +881,6 @@ export const defaultAbi = [
                 "internalType": "uint64",
                 "name": "appId",
                 "type": "uint64"
-            },
-            {
-                "internalType": "string",
-                "name": "title",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
-            }
-        ],
-        "name": "renameApplication",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
             }
         ],
         "name": "restoreApplication",
@@ -1136,6 +1146,10 @@ export default class contract {
 
     async createApplication(title, description, allowedUrls = [], allowedContracts = []) {
         return this.sendTx('createApplication', this.sendTxDefault, title, description, allowedUrls, allowedContracts);
+    }
+
+    async editApplication(id, title, description, allowedUrls = [], allowedContracts = []) {
+        return this.sendTx('editApplication', this.sendTxDefault, id, title, description, allowedUrls, allowedContracts);
     }
 
     async deleteApplication(id) {

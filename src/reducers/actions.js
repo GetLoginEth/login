@@ -3,7 +3,7 @@ import {
     ACTION_APP_INFO,
     ACTION_CREATE_INVITE,
     ACTION_CREATE_MY_APP,
-    ACTION_DELETE_MY_APP,
+    ACTION_DELETE_MY_APP, ACTION_EDIT_MY_APP,
     ACTION_GET_ALLOWED_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
@@ -322,6 +322,10 @@ export const getMyApps = async () => {
 
 export const createApplication = async (title, description, allowedUrls = [], allowedContracts = []) => {
     return callMethod(ACTION_CREATE_MY_APP, async () => await contractInstance.createApplication(title, description, allowedUrls, allowedContracts));
+};
+
+export const editApplication = async (id, title, description, allowedUrls = [], allowedContracts = []) => {
+    return callMethod(ACTION_EDIT_MY_APP, async () => await contractInstance.editApplication(id, title, description, allowedUrls, allowedContracts));
 };
 
 export const deleteApplication = async (id) => {

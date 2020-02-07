@@ -53,15 +53,31 @@ contract("GetLogin", async accounts => {
             }
         });
 
-        it("Can rename app", async () => {
+        it("Can edit app", async () => {
             const appId = 2;
             const title = "Wow! New Great App";
             const description = "Oxoxo. 9000. Great description";
+            const allowedUrls = ['https://one.com/123', 'https://ya.com/321', 'https://google.com/777',];
+            const allowedContracts = ['0xD66521103Cb882d6afEb051Ae3e986506Af56409', '0x25a7D3AD29dba10BE86496B1D6367224B06123D2', '0xbe171aa7da559a655e4b7a603ca335716864439d',];
 
-            await getLogin.renameApplication(appId, title, description, {from: accounts[0]});
+            await getLogin.editApplication(appId, title, description, allowedUrls, allowedContracts);
             const app = await getLogin.getApplication(appId);
             assert.equal(app.title, title, "Incorrect app title");
             assert.equal(app.description, description, "Incorrect app title");
+            assert.equal(app.allowedUrls.length, allowedUrls.length, "Incorrect size of allowedUrls");
+            assert.equal(app.allowedContracts.length, allowedContracts.length, "Incorrect size of allowedContracts");
+
+            for (let i = 0; i < allowedUrls.length; i++) {
+                const url = app.allowedUrls[i];
+                const expectedUrl = allowedUrls[i];
+                assert.equal(url, expectedUrl, "Incorrect url");
+            }
+
+            for (let i = 0; i < allowedContracts.length; i++) {
+                const contract = app.allowedContracts[i].toLowerCase();
+                const expectedContract = allowedContracts[i].toLowerCase();
+                assert.equal(contract, expectedContract, "Incorrect contract");
+            }
         });
 
         it("Can delete app urls and contracts", async () => {
@@ -103,7 +119,8 @@ contract("GetLogin", async accounts => {
             const appId = 2;
             const title = "Info from new user";
             const description = "Absolutely great description";
-            await willFail(getLogin.renameApplication(appId, title, description, {from: accounts[1]}), 'You do not have access to this application');
+            const app = await getLogin.getApplication(appId);
+            await willFail(getLogin.editApplication(appId, title, description, app.allowedUrls, app.allowedContracts, {from: accounts[1]}), 'You do not have access to this application');
         });
 
         it("Add url from other account", async () => {

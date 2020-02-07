@@ -314,5 +314,6 @@ export const ACTION_GET_BALANCE = 'get_balance';
 export const ACTION_GET_MY_APPS = 'get_my_apps';
 export const ACTION_GET_MY_APPS_INFO = 'get_my_apps_info';
 export const ACTION_CREATE_MY_APP = 'create_my_app';
+export const ACTION_EDIT_MY_APP = 'edit_my_app';
 export const ACTION_DELETE_MY_APP = 'delete_my_app';
 export const ACTION_RESTORE_MY_APP = 'restore_my_app';

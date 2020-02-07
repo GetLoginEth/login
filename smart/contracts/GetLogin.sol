@@ -69,7 +69,7 @@ contract GetLogin {
         address[] memory allowedContracts;
         uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app', allowedUrls, allowedContracts);
         _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
-        _addApplicationUrl(newAppId, 'https://localhost:3001');
+        _addApplicationUrl(newAppId, 'https://localhost:3001/');
         _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
         _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
     }
@@ -157,6 +157,16 @@ contract GetLogin {
         return _createApplication(usernameHash, title, description, allowedUrls, allowedContracts);
     }
 
+    function editApplication(uint64 appId, string memory title, string memory description, string[] memory allowedUrls, address[] memory allowedContracts) public {
+        validateAppExists(appId);
+        validateAppOwner(appId, msg.sender);
+        Application storage app = Applications[appId];
+        app.title = title;
+        app.description = description;
+        app.allowedUrls = allowedUrls;
+        app.allowedContracts = allowedContracts;
+    }
+
     function addApplicationUrl(uint64 appId, string memory url) public {
         // todo check is user address is not session
         validateAppExists(appId);
@@ -169,14 +179,6 @@ contract GetLogin {
         validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         _addApplicationContract(appId, wallet);
-    }
-
-    function renameApplication(uint64 appId, string memory title, string memory description) public {
-        validateAppExists(appId);
-        validateAppOwner(appId, msg.sender);
-        Application storage app = Applications[appId];
-        app.title = title;
-        app.description = description;
     }
 
     function deleteApplicationUrl(uint64 appId, uint index) public {

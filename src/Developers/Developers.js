@@ -51,6 +51,8 @@ function Developers() {
                     <td>
                         <Link to={`./developers-${appId}`} className="btn btn-info btn-sm mr-1">View</Link>
 
+                        <Link to={`./developers-edit-${appId}`} className="btn btn-secondary btn-sm mr-1">Edit</Link>
+
                         {app && app.isActive && <button disabled={!isLoaded} onClick={_ => {
                             if (window.confirm('Really delete?')) {
                                 deleteApplication(appId).then(() => {

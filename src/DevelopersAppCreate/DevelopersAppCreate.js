@@ -23,7 +23,7 @@ function DevelopersAppCreate({location}) {
     };
 
     // todo after creation and redirect display info about tx mining
-    return <div className="DevelopersAppInfo">
+    return <div className="DevelopersAppCreate">
         {redirect ? redirect : ''}
         <h1 className="text-center">Create new app</h1>
         {myApps.errorMessage && <div className="alert alert-danger" role="alert">
