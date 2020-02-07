@@ -194,6 +194,20 @@ export const reducer = (state, action) => {
             data = {inProcessReceiving: false,};
             return merge('appsInfo', data);
 
+        case getStatus(ACTION_EDIT_MY_APP, STATUS_START):
+            data = {inProcessEditing: true, errorMessage: ''};
+            return merge('myApps', data);
+        case getStatus(ACTION_EDIT_MY_APP, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('myApps', data);
+        case getStatus(ACTION_EDIT_MY_APP, STATUS_SUCCESS):
+            //data = {apps: action.data};
+            //return merge('myApps', action.data);
+            return state;
+        case getStatus(ACTION_EDIT_MY_APP, STATUS_COMPLETE):
+            data = {inProcessEditing: false,};
+            return merge('myApps', data);
+
         case getStatus(ACTION_ALLOW_APP, STATUS_FAIL):
             data = {errorMessage: action.data.message};
             return merge('authorizeApp', data);
@@ -272,6 +286,7 @@ export const initialState = {
     },
     myApps: {
         inProcessCreation: false,
+        inProcessEditing: false,
         inProcessReceiving: false,
         status: '',
         errorMessage: '',

@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './DevelopersAppEdit.css';
-import {createApplication, editApplication, getAppsInfo} from "../reducers/actions";
+import {editApplication, getAppsInfo} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
-import WaitButton from "../Elements/WaitButton";
 import {Redirect} from "react-router-dom";
 import DevelopersForm from "../Developers/DevelopersForm";
 
@@ -32,7 +31,7 @@ function DevelopersAppEdit({computedMatch, location}) {
                 .then(data => {
                     setRedirect(<Redirect to={{pathname: "./developers", state: {from: location}}}/>);
                 });
-        }} initValues={app}/>}
+        }} initValues={app} isFormDisabled={myApps.inProcessEditing} isWaitButton={myApps.inProcessEditing}/>}
     </div>;
 }
 

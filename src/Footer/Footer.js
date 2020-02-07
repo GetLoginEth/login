@@ -10,7 +10,7 @@ function Footer({buildDate}) {
             </Link> · <Link
                 to="./terms">Terms</Link> · <Link to="./developers">
                 Developers
-            </Link> · <a href="https://github.com/GetLoginEth/login" target="_blank">
+            </Link> · <a href="https://github.com/GetLoginEth/login" target="_blank" rel="noopener noreferrer">
                 GitHub
             </a>
             </span>
