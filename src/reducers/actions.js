@@ -100,6 +100,11 @@ export const checkLocalCredentials = async () => {
         setInterval(_ => {
             getWalletBalance(data.wallet.address).then();
         }, 30000);
+        const redirectUrl = window.sessionStorage.getItem('redirect_url');
+        if (redirectUrl) {
+            window.location.replace(redirectUrl);
+            window.sessionStorage.removeItem('redirect_url')
+        }
 
         return data;
     });

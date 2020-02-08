@@ -103,6 +103,7 @@ export default class PluginReceiver {
         window.addEventListener('message', this._listener);
         getAllowedApp(clientId)
             .then(info => {
+                console.log(info);
                 const is_client_allowed = !!info;
                 let result = {
                     type: 'get_login_init',

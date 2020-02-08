@@ -37,8 +37,15 @@ function PrivateRoute({children, state, computedMatch, ...rest}) {
                         computedMatch,
                         location
                     });
-                    return state.user.isLoggedIn() ? (newChildren) : (
-                        <Redirect to={{pathname: "./login", state: {from: location}}}/>);
+                    if (state.user.isLoggedIn()) {
+                        return newChildren;
+                    } else {
+                        if (!window.location.href.indexOf('/logout')) {
+                            window.sessionStorage.setItem('redirect_url', window.location.href);
+                        }
+
+                        return <Redirect to={{pathname: "./login", state: {from: location}}}/>;
+                    }
                 }
             }}
         />
