@@ -1,11 +1,17 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useEffect} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
-import {test} from "../reducers/actions";
+import {getMySessions, test} from "../reducers/actions";
+import Spinner from "../Elements/Spinner";
 
 function Settings() {
     const {state: {user}} = useStateValue();
     const {state: {app}} = useStateValue();
+    const {state: {mySessions}} = useStateValue();
+
+    useEffect(_ => {
+        getMySessions().then();
+    }, []);
 
     return <Fragment>
         <h1>Settings</h1>
@@ -20,6 +26,17 @@ function Settings() {
             test();
         }}>Test
         </button>*/}
+
+        <h1>My apps sessions</h1>
+
+        {mySessions.inProcessReceiving && <Spinner/>}
+
+        {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <p>Sessions not opened</p>}
+
+        {mySessions.sessions.length > 0 && mySessions.sessions.map((item, i) => <p key={i}>
+            App ID: {item.returnValues.appId} / Tx hash: <a target="_blank"
+                                                            href={`https://rinkeby.etherscan.io/tx/${item.transactionHash}`}>{item.transactionHash}</a>
+        </p>)}
     </Fragment>;
 }
 

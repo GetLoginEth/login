@@ -9,7 +9,7 @@ import {
     ACTION_GET_INVITE,
     ACTION_GET_INVITES,
     ACTION_GET_MY_APPS,
-    ACTION_GET_MY_APPS_INFO,
+    ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS,
     ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
@@ -339,6 +339,10 @@ export const deleteApplication = async (id) => {
 
 export const restoreApplication = async (id) => {
     return callMethod(ACTION_RESTORE_MY_APP, async () => await contractInstance.restoreApplication(id));
+};
+
+export const getMySessions = async () => {
+    return callMethod(ACTION_GET_MY_SESSIONS, async () => await contractInstance.getSessions(getLocalUsernameHash()));
 };
 
 export const test = async () => {

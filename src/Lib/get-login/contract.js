@@ -1257,4 +1257,13 @@ export default class contract {
 
         return results && results.length ? results[0] : null;
     }
+
+    async getSessions(username) {
+        return await this.getContract().getPastEvents('EventAppSession', {
+            filter: {
+                username,
+            },
+            fromBlock: 0
+        });
+    }
 }

@@ -194,6 +194,19 @@ export const reducer = (state, action) => {
             data = {inProcessReceiving: false,};
             return merge('appsInfo', data);
 
+        case getStatus(ACTION_GET_MY_SESSIONS, STATUS_START):
+            data = {inProcessReceiving: true, errorMessage: ''};
+            return merge('mySessions', data);
+        case getStatus(ACTION_GET_MY_SESSIONS, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('mySessions', data);
+        case getStatus(ACTION_GET_MY_SESSIONS, STATUS_SUCCESS):
+            data = {sessions: action.data};
+            return merge('mySessions', data);
+        case getStatus(ACTION_GET_MY_SESSIONS, STATUS_COMPLETE):
+            data = {inProcessReceiving: false,};
+            return merge('mySessions', data);
+
         case getStatus(ACTION_EDIT_MY_APP, STATUS_START):
             data = {inProcessEditing: true, errorMessage: ''};
             return merge('myApps', data);
@@ -296,6 +309,11 @@ export const initialState = {
     appsInfo: {
         inProcessReceiving: false,
         errorMessage: ''
+    },
+    mySessions: {
+        inProcessReceiving: false,
+        errorMessage: '',
+        sessions: []
     }
 };
 
@@ -332,3 +350,4 @@ export const ACTION_CREATE_MY_APP = 'create_my_app';
 export const ACTION_EDIT_MY_APP = 'edit_my_app';
 export const ACTION_DELETE_MY_APP = 'delete_my_app';
 export const ACTION_RESTORE_MY_APP = 'restore_my_app';
+export const ACTION_GET_MY_SESSIONS = 'get_my_sessions';
