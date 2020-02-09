@@ -67,10 +67,11 @@ export default class PluginReceiver {
         };
     }
 
-    async sendTransaction({abi, address, method, params}) {
+    async sendTransaction(data) {
+        const {abi, address, method, txParams, params} = data;
         const app = await getAllowedApp(this.appId);
-        console.log(app.privateKey);
-        console.log(this.web3.eth.accounts.privateKeyToAccount(app.privateKey));
+        //console.log('my app', app);
+        //console.log(this.web3.eth.accounts.privateKeyToAccount(app.privateKey));
         if (!app) {
             throw new Error('Access token not found');
         }
@@ -81,7 +82,8 @@ export default class PluginReceiver {
             // todo move 'rinkeby' to global scope
         const mainContract = new contract(this.web3, 'rinkeby', address, abi);
         mainContract.setPrivateKey(app.privateKey);
-        return await mainContract.sendTx(method, null, params);
+
+        return await mainContract.sendTx(method, params, txParams);
     }
 
     async callContractMethod({abi, address, method, params}) {

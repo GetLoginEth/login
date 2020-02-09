@@ -985,7 +985,24 @@ export default class contract {
         this.sendTxDefault = {
             balanceEther: '0',
             isForceSend: false,
-            isNormalizeSendEther: false
+            isNormalizeSendEther: false,
+            resolveMethod: 'transactionHash',
+            // when validated and sent (fast)
+            onTransactionHash: _ => {
+
+            },
+            //
+            onReceipt: _ => {
+
+            },
+            // when new confirmation
+            onConfirmation: _ => {
+
+            },
+            // when mined (slow)
+            onMined: _ => {
+
+            },
         };
     }
 
@@ -1034,8 +1051,10 @@ export default class contract {
         return this.getContract().methods[methodName](...params).call();
     }
 
-    async sendTx(methodName, settings = {...this.sendTxDefault}, ...params) {
-        if (!settings) {
+    async sendTx(methodName, settings = null, ...params) {
+        if (settings) {
+            settings = {...this.sendTxDefault, ...settings};
+        } else {
             settings = this.sendTxDefault;
         }
 
@@ -1117,21 +1136,48 @@ export default class contract {
             this.web3.eth.sendSignedTransaction(signed.rawTransaction)
                 .on('transactionHash', hash => {
                     console.log(hash);
-                    resolve(hash);
+                    if (settings.onTransactionHash) {
+                        settings.onTransactionHash(hash);
+                    }
+
+                    if (settings.resolveMethod === 'transactionHash') {
+                        resolve(hash);
+                    }
                 })
                 .on('receipt', receipt => {
                     console.log(receipt);
+                    if (settings.onReceipt) {
+                        settings.onReceipt(receipt);
+                    }
+
+                    if (settings.resolveMethod === 'receipt') {
+                        resolve(receipt);
+                    }
                 })
                 .on('confirmation', (confNumber, receipt) => {
                     console.log(confNumber, receipt);
+                    if (settings.onConfirmation) {
+                        settings.onConfirmation(confNumber, receipt);
+                    }
+
+                    if (settings.resolveMethod === 'confirmation') {
+                        resolve(confNumber, receipt);
+                    }
                 })
                 .on('error', error => {
                     console.log(error);
                     reject(error);
                 })
-                .then(function (receipt) {
+                .then(receipt => {
                     // will be fired once the receipt is mined
                     console.log(receipt);
+                    if (settings.onMined) {
+                        settings.onMined(receipt);
+                    }
+
+                    if (settings.resolveMethod === 'mined') {
+                        resolve(receipt);
+                    }
                 });
         }));
     }

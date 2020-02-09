@@ -181,7 +181,7 @@ class GetLoginApi {
         });
     }
 
-    async sendTransaction(address, method, params) {
+    async sendTransaction(address, method, txParams, params) {
         const abi = this.getClientAbi();
         if (!abi) {
             throw new Error('Empty abi');
@@ -191,6 +191,7 @@ class GetLoginApi {
             abi: this.getClientAbi(),
             address,
             method,
+            txParams,
             params
         });
     }

@@ -20,9 +20,16 @@ Last project build hosted at [getlogin.eth](https://swarm-gateways.net/bzz:/getl
 
 Add `<script async src="https://swarm-gateways.net/bzz:/getlogin.eth/api/last.js"></script>` to `<head>`
 
-Init: `window.getLoginApi.init(appId, 'https://swarm-gateways.net/bzz:/getlogin.eth/', redirectUrl).then(data => {
-                               alert(data);
-                           });` where `appId` is your app id stored in step 3 of registration app instruction, `redirectUrl` is your app url.
+Init: 
+
+```javascript
+window.getLoginApi.init(appId, 'https://swarm-gateways.net/bzz:/getlogin.eth/', redirectUrl)
+.then(data => {
+    console.log(data);
+});
+``` 
+                           
+where `appId` is your app id stored in step 3 of registration app instruction, `redirectUrl` is your app url.
                            
 Call methods: `window.getLoginApi.getUserInfo().then(data => alert(JSON.stringify(data))).catch(e => alert(e));`
 
@@ -30,21 +37,40 @@ Call methods: `window.getLoginApi.getUserInfo().then(data => alert(JSON.stringif
 
 Set contract ABI: `window.getLoginApi.setClientAbi(abi);`
 
-Call getNotes method: `window.getLoginApi.callContractMethod(address, 'getNotes', usernameHash)
-            .then(data => {
-                console.log(data);
-            })
-            .catch(e => {
-                console.log(e);
-            });`
+Call getNotes method which defined in your dapp contract: 
 
-Send transaction to contract: `window.getLoginApi.sendTransaction(address, 'createNote', noteText)
-                                                           .then(data => {
-                                                               console.log(data);
-                                                           })
-                                                           .catch(e => {
-                                                               console.log(e);
-                                                           })`
+```javascript
+window.getLoginApi.callContractMethod(address, 'getNotes', usernameHash)
+.then(data => {
+    console.log(data);
+})
+.catch(e => {
+    console.log(e);
+});
+```
+
+`address` is your dapp address
+
+Send transaction to your dapp contract: 
+```javascript
+window.getLoginApi.sendTransaction(address, 'createNote', noteText, {resolveMethod: 'mined'})
+.then(data => {
+    console.log(data);
+})
+.catch(e => {
+    console.log(e);
+});
+```
+
+`address` is your dapp address
+
+`createNote` is your dapp method defined in contract
+                                                     
+One important param is `resolveMethod`. Values of this param can be: 
+
+'mined' - fired when tx sent and mined (slow)
+
+'transactionHash' - when tx sent (fast)
 
 ### Building project
 In the project directory, you can run:
