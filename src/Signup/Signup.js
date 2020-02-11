@@ -12,6 +12,7 @@ import {Link} from "react-router-dom";
 import {LOGIN_TREZOR, LOGIN_WEB3, validateInvite} from "../Lib/get-login/utils";
 import {ACTION_SIGNUP} from "../reducers/mainReducer";
 import Spinner from "../Elements/Spinner";
+import WaitButton from "../Elements/WaitButton";
 
 function Signup() {
     const {state: {signup}} = useStateValue();
@@ -151,7 +152,7 @@ function Signup() {
                                       placeholder="Username"
                                       onChange={e => setUsername(e.target.value)}
                                       value={username}
-                            /*ref={register}*//>
+                        />
                     </Form.Group>
 
                     <Form.Group controlId="formBasicPassword" className={(method === LOGIN_TREZOR) ? "d-none" : ""}>
@@ -160,7 +161,7 @@ function Signup() {
                                       placeholder="Password"
                                       onChange={e => setPassword(e.target.value)}
                                       value={password}
-                            /*ref={register}*//>
+                        />
                     </Form.Group>
 
                     <Form.Group controlId="formInvite" className={(method === SIGN_UP_INVITE) ? "" : "d-none"}>
@@ -169,19 +170,17 @@ function Signup() {
                                       placeholder="Invite"
                                       onChange={e => setInvite(e.target.value)}
                                       value={invite}
-                            /*ref={register}*//>
+                        />
                     </Form.Group>
 
                     <Dropdown as={ButtonGroup} className="btn-block">
-                        <Button variant="primary"
-                                type="submit"
-                                className="col-md-10"
-                            //className="col-md-12"
-                                disabled={isDisabled()}
-                        >
-                            {signup.inProcess &&
-                            <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"/>}
-                            Sign up with {getDropDownTitle(method)}</Button>
+                        <WaitButton disabled={signup.inProcess}>
+                            <Button variant="primary"
+                                    type="submit"
+                                    className="col-md-10"
+                                    disabled={isDisabled()}
+                            >Sign up with {getDropDownTitle(method)}</Button>
+                        </WaitButton>
 
                         <Dropdown.Toggle className="" split variant="primary"
                                          id="dropdown-split-basic"/>
