@@ -1,3 +1,5 @@
+const ethereumjs = require('ethereumjs-tx').Transaction;
+
 export const defaultAddresses = {
     "rinkeby": "0x107A572Cd04eB7F54a47EbDDB19633671DB11366",
     "mainnet": ""
@@ -1004,6 +1006,15 @@ export default class contract {
 
             },
         };
+
+        // method for external sign (trezor, web3 and etc)
+        this.externalSign = null;
+        this.externalAddress = null;
+    }
+
+    setExternalSign(func, address) {
+        this.externalSign = func;
+        this.externalAddress = address;
     }
 
     initContract() {
@@ -1052,6 +1063,7 @@ export default class contract {
     }
 
     async sendTx(methodName, settings = null, ...params) {
+        const accountAddress = this.externalAddress ? this.externalAddress : this.account.address;
         if (settings) {
             settings = {...this.sendTxDefault, ...settings};
         } else {
@@ -1063,7 +1075,7 @@ export default class contract {
         }
 
         if (settings.balanceEther === 'all') {
-            settings.balanceEther = await this.web3.eth.getBalance(this.account.address);
+            settings.balanceEther = await this.web3.eth.getBalance(accountAddress);
             settings.balanceEther = this.web3.utils.fromWei(settings.balanceEther);
             settings.isNormalizeSendEther = true;
         }
@@ -1075,7 +1087,7 @@ export default class contract {
          * @type {{data: string, from: string, to: *, value: BN}}
          */
         let result = {
-            from: this.account.address,
+            from: accountAddress,
             to: this.contractAddress,
             value: this.web3.utils.toWei(settings.balanceEther, 'ether'),
             data
@@ -1119,18 +1131,28 @@ export default class contract {
 
         result.gasLimit = estimateGas;
         result.gasPrice = gasPrice;
-        result.nonce = await this.web3.eth.getTransactionCount(this.account.address);
+        result.nonce = await this.web3.eth.getTransactionCount(accountAddress);
         /**
          *
          * @type {SignedTransaction}
          */
-        const signed = await this.web3.eth.accounts.signTransaction(result, this.account.privateKey);
-        /*let sendResult = null;
-        try {
-            sendResult = this.web3.eth.sendSignedTransaction(signed.rawTransaction);
-        } catch (e) {
-            console.error(e);
-        }*/
+        let signed;
+        if (this.externalSign) {
+            result.gasLimit = result.gasLimit.toString();
+            result.nonce = result.nonce.toString();
+            result.gasLimit = this.web3.utils.numberToHex(result.gasLimit);
+            result.gasPrice = this.web3.utils.numberToHex(result.gasPrice);
+            result.nonce = this.web3.utils.numberToHex(result.nonce);
+
+            signed = await this.externalSign(result);
+            result = {...result, ...signed};
+
+            let ethtx = new ethereumjs(result, {chain: this.network});
+            const serializedTx = ethtx.serialize();
+            signed.rawTransaction = '0x' + serializedTx.toString('hex');
+        } else {
+            signed = await this.web3.eth.accounts.signTransaction(result, this.account.privateKey);
+        }
 
         return new Promise(((resolve, reject) => {
             this.web3.eth.sendSignedTransaction(signed.rawTransaction)

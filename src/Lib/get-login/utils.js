@@ -9,9 +9,9 @@ export const PASSWORD_MAX_LENGTH = 300;
 export const LOGIN_WEB3 = 'login_web3';
 export const LOGIN_TREZOR = 'login_trezor';
 
-export const sleep = (ms) => {
+/*export const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
-};
+};*/
 
 export const filterUsername = (username) => {
     return username.trim();

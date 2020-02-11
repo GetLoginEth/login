@@ -41,7 +41,7 @@ export const CODE_MESSAGES = {
     [CODE_NOT_ENOUGH_FUNDS]: 'Not enough funds',
     [CODE_INCORRECT_DATA]: 'Incorrect data',
     [CODE_USERNAME_NOT_FOUND]: 'Username not found',
-    [CODE_BALANCE_ZERO_OR_LESS]: 'Balance zero or less',
+    [CODE_BALANCE_ZERO_OR_LESS]: 'Not enough balance',
 };
 
 export const RESULT_OK = 'ok';

@@ -6,13 +6,16 @@
   "dependencies": {
     "bootstrap": "4.3.1",
     "eth-crypto": "^1.5.1",
+    "ethereumjs-tx": "^2.1.2",
     "ethereumjs-util": "^6.2.0",
+    "ethereumjs-wallet": "^0.6.3",
     "preval.macro": "^4.0.0",
     "react": "^16.11.0",
     "react-bootstrap": "^1.0.0-beta.16",
     "react-dom": "^16.11.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
+    "trezor-connect": "^8.0.13",
     "web3": "^1.2.4"
   },
   "scripts": {

@@ -207,6 +207,19 @@ export const reducer = (state, action) => {
             data = {inProcessReceiving: false,};
             return merge('mySessions', data);
 
+        case getStatus(ACTION_GET_TREZOR_ADDRESSES, STATUS_START):
+            data = {inProcessReceiving: true, errorMessage: ''};
+            return merge('trezorAddresses', data);
+        case getStatus(ACTION_GET_TREZOR_ADDRESSES, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('trezorAddresses', data);
+        case getStatus(ACTION_GET_TREZOR_ADDRESSES, STATUS_SUCCESS):
+            data = {addresses: action.data};
+            return merge('trezorAddresses', data);
+        case getStatus(ACTION_GET_TREZOR_ADDRESSES, STATUS_COMPLETE):
+            data = {inProcessReceiving: false,};
+            return merge('trezorAddresses', data);
+
         case getStatus(ACTION_EDIT_MY_APP, STATUS_START):
             data = {inProcessEditing: true, errorMessage: ''};
             return merge('myApps', data);
@@ -314,6 +327,11 @@ export const initialState = {
         inProcessReceiving: false,
         errorMessage: '',
         sessions: []
+    },
+    trezorAddresses: {
+        inProcessReceiving: false,
+        errorMessage: '',
+        addresses: []
     }
 };
 
@@ -351,3 +369,4 @@ export const ACTION_EDIT_MY_APP = 'edit_my_app';
 export const ACTION_DELETE_MY_APP = 'delete_my_app';
 export const ACTION_RESTORE_MY_APP = 'restore_my_app';
 export const ACTION_GET_MY_SESSIONS = 'get_my_sessions';
+export const ACTION_GET_TREZOR_ADDRESSES = 'get_trezor_addresses';

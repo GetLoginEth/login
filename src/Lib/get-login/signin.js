@@ -24,6 +24,7 @@ export const LOG_LOG_IN_DECODE_WALLET = 'log_in_decode_wallet';
 
 export const LOGIN_USERNAME_PASSWORD = 'login_username_password';
 export const LOGIN_DATA = 'login_data';
+export const LOGIN_WEB3_PROVIDER = 'login_web3_provider';
 
 export default class Signin extends Logger {
     constructor(crypto, contract) {

@@ -9,7 +9,7 @@ import {
     ACTION_GET_INVITE,
     ACTION_GET_INVITES,
     ACTION_GET_MY_APPS,
-    ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS,
+    ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS, ACTION_GET_TREZOR_ADDRESSES,
     ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
@@ -28,20 +28,30 @@ import {
     STATUS_SUCCESS
 } from "./mainReducer";
 import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
-import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
+import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD, LOGIN_WEB3_PROVIDER} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
-import {getUsernameHash, validateUserData} from "../Lib/get-login/utils";
+import {getUsernameHash, LOGIN_TREZOR, validateUserData} from "../Lib/get-login/utils";
 import crypto from "../Lib/get-login/crypto";
 import contract, {defaultAddresses} from "../Lib/get-login/contract";
 import Invite from "../Lib/get-login/invite";
 import Session from "../Lib/get-login/session";
+import TrezorConnect from 'trezor-connect';
+
+TrezorConnect.manifest({
+    email: 'igor.shadurin@gmail.com',
+    appUrl: 'https//swarm-gateways.net/bzz:/getlogin.eth'
+});
 
 const currentNetwork = 'rinkeby';
 const smartContractAddress = defaultAddresses[currentNetwork];
 let cryptoInstance = crypto.getInstance();
 let contractInstance = new contract(cryptoInstance.web3, currentNetwork, smartContractAddress);
 let dispatch = null;
+/**
+ *
+ * @type Signup
+ */
 let signup = null;
 let signin = null;
 /**
@@ -136,10 +146,13 @@ export const signIn = async (method, username, password, wallet) => {
     return callMethod(ACTION_SIGNIN, async () => {
         const usernameHash = getUsernameHash(cryptoInstance.web3, username);
         const receivedWallet = await signin.signIn(method, username, password, wallet);
-        if (method === LOGIN_DATA) {
-            setUserData(username, wallet);
-        } else if (method === LOGIN_USERNAME_PASSWORD) {
-            setUserData(username, receivedWallet);
+        /*if (method === LOGIN_DATA) {
+            setUserData(username, wallet, LOGIN_DATA);
+        } else */
+        if (method === LOGIN_USERNAME_PASSWORD) {
+            setUserData(username, receivedWallet, LOGIN_USERNAME_PASSWORD);
+        } else if (method === LOGIN_WEB3_PROVIDER) {
+            setUserData(username, receivedWallet, LOGIN_WEB3_PROVIDER);
         } else {
             throw new Error('Not supported method for local storing');
         }
@@ -149,12 +162,12 @@ export const signIn = async (method, username, password, wallet) => {
         .then(() => checkLocalCredentials());
 };
 
-export const signUp = async (method, username, password = '', invite = '') => {
+export const signUp = async (method, username, password = '', invite = '', options = {}) => {
     /** @type {IInviteRegistration} */
     const result = await callMethod(ACTION_SIGNUP, async () => {
         return await signup.signUp(method, username, password, invite, info => {
             doDispatch(getStatus(ACTION_SIGNUP, STATUS_MINED), info);
-        });
+        }, options);
     });
 
     if (result && [SIGN_UP_INVITE/*, LOGIN_WEB3, LOGIN_TREZOR*/].includes(method)) {
@@ -164,6 +177,8 @@ export const signUp = async (method, username, password = '', invite = '') => {
 
         setUserData(username, result.decryptedWallet);
         await checkLocalCredentials();
+    } else if (result && method === LOGIN_TREZOR) {
+
     }
 
     return result;
@@ -176,7 +191,7 @@ export const logoutLocal = () => {
     });
 };
 
-export const setUserData = (username, wallet) => {
+export const setUserData = (username, wallet, type) => {
     if (username) {
         localStorage.setItem('username', username);
         localStorage.setItem('usernameHash', getUsernameHash(cryptoInstance.web3, username));
@@ -193,6 +208,12 @@ export const setUserData = (username, wallet) => {
         localStorage.setItem('wallet', wallet);
     } else {
         localStorage.removeItem('wallet');
+    }
+
+    if (type) {
+        localStorage.setItem('type', type);
+    } else {
+        localStorage.removeItem('type');
     }
 
     return true;
@@ -212,6 +233,10 @@ export const getLocalUsernameHash = () => {
 
 export const getLocalUsername = () => {
     return getUserData()['username'];
+};
+
+export const getLocalType = () => {
+    return getUserData()['type'];
 };
 
 export const initPage = (pageAction) => {
@@ -343,6 +368,10 @@ export const restoreApplication = async (id) => {
 
 export const getMySessions = async () => {
     return callMethod(ACTION_GET_MY_SESSIONS, async () => await contractInstance.getSessions(getLocalUsernameHash()));
+};
+
+export const getTrezorAddresses = async () => {
+    return callMethod(ACTION_GET_TREZOR_ADDRESSES, async () => await signup.getTrezorAddresses());
 };
 
 export const test = async () => {

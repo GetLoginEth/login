@@ -13,13 +13,15 @@ import {
     isUsernameRegistered,
     LOGIN_TREZOR,
     LOGIN_WEB3,
-    sleep,
     validateInvite,
     validateMoreThanZero,
     validateUsername
 } from "./utils";
 import Logger from "./logger";
 import {IInviteRegistration} from "./interfaces";
+import TrezorConnect from 'trezor-connect';
+
+import HdKey from "ethereumjs-wallet/hdkey";
 
 export const LOG_SIGN_UP_CHECK_FUNDS = 'sign_up_check_funds';
 export const LOG_SIGN_UP_CHECK_USERNAME = 'sign_up_check_username';
@@ -52,35 +54,6 @@ export default class Signup extends Logger {
          */
         this.contract = contract;
     }
-
-    async isEnoughFundsRegistration(invite) {
-        // todo implement
-        return true;
-    }
-
-    /*async _createWallet(password) {
-        // todo implement
-        return {
-            some: 'wallet',
-            data: 'fwef23',
-            address: '0xaaaaa8a77aa67a',
-        }
-    }*/
-
-    async _createAccountFromWallet(username, fundedWallet, newWallet) {
-        // todo implement
-        return '0x23rgbwekfnwiugh3487weg3uhru';
-    }
-
-    /*async _createWalletFromInvite(invite) {
-        // todo implement
-        // create transaction data
-        // send transaction
-
-        return {
-            test: 'test'
-        };
-    }*/
 
     /**
      *
@@ -127,11 +100,52 @@ export default class Signup extends Logger {
             encryptedWallet.crypto.cipherparams.iv,
             encryptedWallet.crypto.kdfparams.salt,
             encryptedWallet.crypto.mac);
+        // todo check is needed this callback
         if (onTransactionMined) {
             onTransactionMined(info);
         }
 
         return new IInviteRegistration(encryptedWallet, decryptedWallet);
+    }
+
+    async _signUpTrezor(username, options) {
+        const {web3} = this.crypto;
+
+        if (!options || !options.address || isNaN(options.addressIndex)) {
+            throw new LoginError('Not selected Trezor address');
+        }
+
+        console.log(options);
+        const externalAddress = options.address;
+        const addressIndex = options.addressIndex;
+
+        username = filterUsername(username);
+        //console.log(username);
+
+        const usernameHash = getUsernameHash(web3, username);
+        validateUsername(username);
+
+        const path = `m/44'/60'/0'/0/${addressIndex}`;
+
+        this.log(LOG_SIGN_UP_CHECK_FUNDS);
+        const balanceEth = web3.utils.fromWei(await web3.eth.getBalance(externalAddress));
+        validateMoreThanZero(balanceEth);
+
+        this.contract.setExternalSign(async transaction => {
+            //console.log('External called');
+            //console.log(transaction);
+            const result = await TrezorConnect.ethereumSignTransaction({
+                path,
+                transaction
+            });
+            //console.log(result);
+            if (!result.success) {
+                throw new LoginError(result.payload.error);
+            }
+
+            return result.payload;
+        }, externalAddress);
+        return await this.contract.createUser(usernameHash);
     }
 
     /**
@@ -141,16 +155,18 @@ export default class Signup extends Logger {
      * @param password
      * @param invite
      * @param onTransactionMined
+     * @param options
      * @returns {Promise<IInviteRegistration>}
      */
-    async signUp(method, username, password = '', invite = '', onTransactionMined) {
+    async signUp(method, username, password = '', invite = '', onTransactionMined = null, options = {}) {
         let result = null;
 
         this.log(LOG_SIGN_UP_CHECK_USERNAME);
-        await sleep(1000);
         if (await isUsernameRegistered(this.contract, username)) {
             throw new LoginError(CODE_USERNAME_ALREADY_REGISTERED);
         }
+
+        // todo check is address registered (actual for trezor)
 
         switch (method) {
             case SIGN_UP_INVITE:
@@ -159,13 +175,34 @@ export default class Signup extends Logger {
             case LOGIN_WEB3:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
             case LOGIN_TREZOR:
-                throw new LoginError(CODE_NOT_IMPLEMENTED);
+                result = await this._signUpTrezor(username, options);
+                break;
             default:
                 throw new LoginError(CODE_UNKNOWN_METHOD);
         }
 
         if (!result) {
             throw new LoginError(CODE_EMPTY_RESULT);
+        }
+
+        return result;
+    }
+
+    async getTrezorAddresses() {
+        const pathPublicKey = `m/44'/60'/0'/0`;
+        const responsePublicKey = await TrezorConnect.getPublicKey({
+            path: pathPublicKey,
+            coin: "tRIN"
+        });
+        //console.log(responsePublicKey);
+        const extPubKey = responsePublicKey.payload.xpub;
+        const hdWallet = HdKey.fromExtendedKey(extPubKey);
+        let result = [];
+        for (let i = 0; i < 20; i++) {
+            result.push({
+                address: hdWallet.deriveChild(i).getWallet().getAddressString(),
+                index: i
+            });
         }
 
         return result;
