@@ -3,20 +3,18 @@ import './Signup.css';
 import Button from "react-bootstrap/Button";
 import {getTrezorAddresses, initPage, signUp} from "../reducers/actions";
 import Form from "react-bootstrap/Form";
-import Modal from "react-bootstrap/Modal";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
-import {LOGIN_TREZOR, LOGIN_WEB3, validateInvite} from "../Lib/get-login/utils";
+import {LOGIN_TREZOR, validateInvite} from "../Lib/get-login/utils";
 import {ACTION_SIGNUP} from "../reducers/mainReducer";
-import Spinner from "../Elements/Spinner";
 import WaitButton from "../Elements/WaitButton";
+import TrezorSelectWallet from "../Elements/TrezorSelectWallet";
 
 function Signup() {
     const {state: {signup}} = useStateValue();
-    const {state: {trezorAddresses}} = useStateValue();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [invite, setInvite] = useState('');
@@ -27,15 +25,7 @@ function Signup() {
         {key: LOGIN_TREZOR, title: 'Trezor'}
     ];
 
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    const [trezorAddress, setTrezorAddress] = useState(null);
-    const [trezorAddressIndex, setTrezorAddressIndex] = useState(null);
-    const changeTrezorAddress = changeEvent => {
-        setTrezorAddress(changeEvent.target.value);
-        setTrezorAddressIndex(changeEvent.target.dataset.index);
-    };
+    const [showModal, setShowModal] = useState(false);
 
     //console.log(errors);
 
@@ -57,11 +47,8 @@ function Signup() {
 
         if (method === LOGIN_TREZOR) {
             // todo check username before interact with trezor
-            handleShow();
-            getTrezorAddresses().then(data => {
-                setTrezorAddress(data[0].address);
-                setTrezorAddressIndex(data[0].index);
-            });
+            setShowModal(true);
+            getTrezorAddresses().then();
         } else {
             await signUp(method, username, password, invite);
         }
@@ -99,44 +86,15 @@ function Signup() {
 
     return (
         <div className="row justify-content-center align-items-center">
-            <Modal show={show} onHide={handleClose} animation={true}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Select Trezor address</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {trezorAddresses.inProcessReceiving && <Spinner/>}
-
-                    <div className="form-check">
-                        {!trezorAddresses.inProcessReceiving && trezorAddresses.addresses.slice(0, 5).map((item, i) => {
-                            return <div key={item.index}>
-                                <input className="form-check-input" type="radio" name="addresses"
-                                       onChange={changeTrezorAddress}
-                                       value={item.address}
-                                       data-index={item.index}
-                                       checked={trezorAddress === item.address}/>
-                                <label className="form-check-label">
-                                    {item.address}
-                                </label>
-                            </div>;
-                        })}
-                    </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Cancel
-                    </Button>
-                    <Button disabled={!trezorAddress} variant="primary" onClick={_ => {
-                        signUp(LOGIN_TREZOR, username, null, null, {
-                            address: trezorAddress,
-                            addressIndex: trezorAddressIndex
-                        });
-                        //alert(trezorAddress);
-                        handleClose();
-                    }}>
-                        Sign up
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <TrezorSelectWallet
+                isShow={showModal}
+                onClose={_ => {
+                    setShowModal(false);
+                }}
+                completeText="Sign up"
+                onComplete={(address, addressIndex) => {
+                    signUp(LOGIN_TREZOR, username, null, null, {address, addressIndex}).then();
+                }}/>
 
             <Form className="Signup col-md-4" onSubmit={onSubmit}>
                 <fieldset disabled={signup.inProcess}>

@@ -1,14 +1,9 @@
 import Logger from "./logger";
-import {
-    CODE_EMPTY_RESULT,
-    CODE_NOT_IMPLEMENTED,
-    CODE_UNKNOWN_METHOD,
-    CODE_USERNAME_NOT_FOUND,
-    LoginError
-} from "./login-error";
+import {CODE_EMPTY_RESULT, CODE_UNKNOWN_METHOD, CODE_USERNAME_NOT_FOUND, LoginError} from "./login-error";
 import {
     dataToV3Wallet,
-    decryptWallet, filterUsername,
+    decryptWallet,
+    filterUsername,
     getUsernameHash,
     isUsernameRegistered,
     LOGIN_TREZOR,
@@ -101,15 +96,35 @@ export default class Signin extends Logger {
         return true;
     }
 
+    async _signInTrezor(username, address) {
+        const {web3} = this.crypto;
+
+        console.log(username, address);
+        this.log(LOG_LOG_IN_CHECK_USERNAME);
+        username = filterUsername(username);
+        await validateUsername(username);
+        if (!await isUsernameRegistered(this.contract, username)) {
+            throw new LoginError(CODE_USERNAME_NOT_FOUND);
+        }
+
+        //this.log(LOG_LOG_IN_DECODE_WALLET);
+        // await decryptWallet(web3, wallet, password);
+        const usernameHash = getUsernameHash(web3, username);
+        await this.contract.getUserSession(usernameHash, address);
+
+        return true;
+    }
+
     /**
      *
      * @param method
      * @param username
      * @param password
      * @param wallet
+     * @param options
      * @returns {Promise<boolean>}
      */
-    async signIn(method, username, password, wallet) {
+    async signIn(method, username, password, wallet, options = {}) {
         let result = null;
 
         switch (method) {
@@ -120,7 +135,8 @@ export default class Signin extends Logger {
                 result = await this._signInWalletPassword(username, password, wallet);
                 break;
             case LOGIN_TREZOR:
-                throw new LoginError(CODE_NOT_IMPLEMENTED);
+                result = await this._signInTrezor(username, options.address);
+                break;
             default:
                 throw new LoginError(CODE_UNKNOWN_METHOD);
         }

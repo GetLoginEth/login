@@ -209,6 +209,9 @@ contract GetLogin {
         _createUser(usernameHash, msg.sender);
     }
 
+    // todo implement method createUserWithAddress, where I can pass created wallet with limited admin permissions
+    // (allow external apps etc)
+
     function createInvite(address payable inviteAddress) public payable {
         // todo only main session can create invite
         validateInviteAvailable(inviteAddress);
@@ -299,6 +302,10 @@ contract GetLogin {
 
     function getInvite(address wallet) public view returns (InviteInfo memory) {
         return Invites[wallet];
+    }
+
+    function getUserSessions(bytes32 usernameHash) public view returns (UserSession[] memory) {
+        return UserSessions[usernameHash];
     }
 
     /* End of view methods */

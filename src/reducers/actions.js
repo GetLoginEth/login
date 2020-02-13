@@ -104,11 +104,18 @@ export const checkLocalCredentials = async () => {
     return callMethod(ACTION_LOCAL_AUTH, async () => {
         const data = getUserData();
         await validateUserData(data);
-        contractInstance.setPrivateKey(data.wallet.privateKey);
-        cryptoInstance.setAccount(data.wallet.privateKey);
-        getWalletBalance(data.wallet.address).then();
+        let address;
+        if (data.type !== LOGIN_TREZOR) {
+            contractInstance.setPrivateKey(data.wallet.privateKey);
+            cryptoInstance.setAccount(data.wallet.privateKey);
+            address = data.wallet.address;
+        } else {
+            address = data.address;
+        }
+
+        getWalletBalance(address).then();
         setInterval(_ => {
-            getWalletBalance(data.wallet.address).then();
+            getWalletBalance(address).then();
         }, 30000);
         const redirectUrl = window.sessionStorage.getItem('redirect_url');
         if (redirectUrl) {
@@ -141,11 +148,11 @@ export const getDispatch = () => {
     return dispatch;
 };
 
-export const signIn = async (method, username, password, wallet) => {
+export const signIn = async (method, username, password, wallet, options = {}) => {
     // todo reset all state because new user
     return callMethod(ACTION_SIGNIN, async () => {
         const usernameHash = getUsernameHash(cryptoInstance.web3, username);
-        const receivedWallet = await signin.signIn(method, username, password, wallet);
+        const receivedWallet = await signin.signIn(method, username, password, wallet, options);
         /*if (method === LOGIN_DATA) {
             setUserData(username, wallet, LOGIN_DATA);
         } else */
@@ -153,6 +160,8 @@ export const signIn = async (method, username, password, wallet) => {
             setUserData(username, receivedWallet, LOGIN_USERNAME_PASSWORD);
         } else if (method === LOGIN_WEB3_PROVIDER) {
             setUserData(username, receivedWallet, LOGIN_WEB3_PROVIDER);
+        } else if (method === LOGIN_TREZOR) {
+            setUserData(username, null, LOGIN_TREZOR, options.address);
         } else {
             throw new Error('Not supported method for local storing');
         }
@@ -175,11 +184,13 @@ export const signUp = async (method, username, password = '', invite = '', optio
             method = LOGIN_DATA;
         }
 
-        setUserData(username, result.decryptedWallet);
-        await checkLocalCredentials();
+        setUserData(username, result.decryptedWallet, method);
     } else if (result && method === LOGIN_TREZOR) {
-
+        setUserData(username, null, LOGIN_TREZOR, options.address);
     }
+
+    await checkLocalCredentials();
+
 
     return result;
 };
@@ -191,7 +202,7 @@ export const logoutLocal = () => {
     });
 };
 
-export const setUserData = (username, wallet, type) => {
+export const setUserData = (username, wallet, type, address) => {
     if (username) {
         localStorage.setItem('username', username);
         localStorage.setItem('usernameHash', getUsernameHash(cryptoInstance.web3, username));
@@ -216,6 +227,12 @@ export const setUserData = (username, wallet, type) => {
         localStorage.removeItem('type');
     }
 
+    if (address) {
+        localStorage.setItem('address', address);
+    } else {
+        localStorage.removeItem('address');
+    }
+
     return true;
 };
 
@@ -223,8 +240,10 @@ export const getUserData = () => {
     const username = localStorage.getItem('username');
     const wallet = JSON.parse(localStorage.getItem('wallet'));
     const usernameHash = localStorage.getItem('usernameHash');
+    const type = localStorage.getItem('type');
+    const address = localStorage.getItem('address');
 
-    return {username, wallet, usernameHash};
+    return {username, wallet, usernameHash, type, address};
 };
 
 export const getLocalUsernameHash = () => {

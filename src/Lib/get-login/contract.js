@@ -1,7 +1,7 @@
 const ethereumjs = require('ethereumjs-tx').Transaction;
 
 export const defaultAddresses = {
-    "rinkeby": "0x107A572Cd04eB7F54a47EbDDB19633671DB11366",
+    "rinkeby": "0xae3836487fD6Dba1573EEA882B694385CcE84386",
     "mainnet": ""
 };
 
@@ -780,6 +780,47 @@ export const defaultAbi = [
     {
         "inputs": [
             {
+                "internalType": "bytes32",
+                "name": "usernameHash",
+                "type": "bytes32"
+            }
+        ],
+        "name": "getUserSessions",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "username",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "wallet",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "sessionType",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "appId",
+                        "type": "uint64"
+                    }
+                ],
+                "internalType": "struct GetLogin.UserSession[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address",
                 "name": "wallet",
                 "type": "address"
@@ -1333,5 +1374,24 @@ export default class contract {
             },
             fromBlock: 0
         });
+    }
+
+    async getUserSessions(usernameHash) {
+        return await this.callMethod('getUserSessions', usernameHash);
+    }
+
+    async getUserSession(usernameHash, wallet) {
+        wallet = wallet.toLowerCase();
+        const sessions = await this.getUserSessions(usernameHash);
+        if (sessions && sessions.length > 0) {
+            const result = sessions.find(item => item.wallet.toLowerCase() === wallet);
+            if (!result) {
+                throw new Error('Wallet not assigned for this user');
+            }
+
+            return result;
+        } else {
+            throw new Error('User has no sessions');
+        }
     }
 }
