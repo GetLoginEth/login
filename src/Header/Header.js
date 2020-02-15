@@ -28,7 +28,10 @@ function Header({isLoggedIn, isCheckingAuth, username, balance}) {
                     </Nav>
 
                     {!isCheckingAuth && <Nav className="ml-auto">
-                        {!isLoggedIn && <Link className="nav-link float-right" to="./login">Sign in</Link>}
+                        {!isLoggedIn && <>
+                            <Link className="nav-link float-right" to="./login">Sign in</Link>
+                            <Link className="nav-link " to="./xsignup">Sign up</Link>
+                        </>}
                         {isLoggedIn && <Link className="nav-link float-right" to="./logout">Logout ({username}) |
                             Balance: {!balance ? '...' : balance} ETH</Link>}
                     </Nav>}

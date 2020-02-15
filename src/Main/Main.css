@@ -2,3 +2,24 @@
 
 }
 
+.Main-call {
+    text-align: left;
+
+}
+
+.Main-call-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+}
+
+.Main-call-description {
+    color: #838393;
+    font-size: 1.3rem;
+}
+
+.Main-call-advantages {
+    padding-top: 3.5rem;
+    font-size: 1.6rem;
+    font-weight: 400;
+    text-align: left;
+}

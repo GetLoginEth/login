@@ -1,11 +1,3 @@
-.App {
-
-}
-
-.App-loading {
-    margin-top: 20px;
-}
-
 html {
     position: relative;
     min-height: 100%;
@@ -13,6 +5,15 @@ html {
 
 body {
     margin-bottom: 60px; /* Margin bottom by footer height */
+    font-family: Poppins, sans-serif !important;
+}
+
+.App {
+
+}
+
+.App-loading {
+    margin-top: 20px;
 }
 
 .container {
@@ -25,4 +26,8 @@ details p {
 
 .container {
     margin-bottom: 100px;
+}
+
+.container {
+    padding-bottom: 10rem;
 }

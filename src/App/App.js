@@ -1,6 +1,7 @@
 import React, {lazy, Suspense} from 'react';
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import './App.css';
+import 'typeface-poppins';
 import {StateContext, StateProvider} from '../reducers/state';
 import {initialState, reducer} from '../reducers/mainReducer';
 import Header from "../Header";

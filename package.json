@@ -4,6 +4,8 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
+    "@material-ui/core": "^4.9.2",
+    "@material-ui/icons": "^4.9.1",
     "bootstrap": "4.3.1",
     "eth-crypto": "^1.5.1",
     "ethereumjs-tx": "^2.1.2",
@@ -16,6 +18,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
     "trezor-connect": "^8.0.13",
+    "typeface-poppins": "^0.0.72",
     "web3": "^1.2.4"
   },
   "scripts": {
