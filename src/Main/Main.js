@@ -19,7 +19,8 @@ class Main extends Component {
                     <p className="Main-call-title">Let people use your dApp everywhere</p>
                     <p className="Main-call-description">At GetLogin, we build trusted ecosystem that let your
                         customers use Ethereum blockchain in the usual web2-way.</p>
-                    <Link className="btn btn-success btn-lg" to="./xsignup">Get Started <KeyboardArrowRightIcon/></Link>
+                    {state.user.isLoggedIn() ? <Link className="btn btn-success btn-lg" to="./xsettings">Open Settings</Link> :
+                        <Link className="btn btn-success btn-lg" to="./xsignup">Get Started <KeyboardArrowRightIcon/></Link>}
                 </div>
                 <div className="col-sm-7 Main-call-advantages">
                     <p><WebIcon fontSize={'large'}/> All modern browsers (Chrome, Safari and etc.)</p>
@@ -28,8 +29,6 @@ class Main extends Component {
                     <p><NotInterestedIcon fontSize={'large'}/> No plugins, no downloads</p>
                 </div>
             </div>
-            {/*{state.user.isLoggedIn() ? <Link className="btn btn-success btn-lg" to="./xsettings">Open Settings</Link> :
-                <Link className="btn btn-success btn-lg" to="./xsignup">Sign up</Link>}*/}
         </div>;
     }
 }

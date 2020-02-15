@@ -58,7 +58,11 @@ export default class crypto {
 
     setAccount(privateKey) {
         this.currentAccount = this.web3.eth.accounts.privateKeyToAccount(privateKey);
-        this.publicKey = privateToPublic(privateKey);
+        if (privateKey.indexOf('0x') < 0) {
+            privateKey = '0x' + privateKey;
+        }
+
+        this.publicKey = privateToPublic(privateKey).toString('hex');
     }
 
     setPublicKey(publicKey) {

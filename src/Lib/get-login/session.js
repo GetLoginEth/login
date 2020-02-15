@@ -30,6 +30,7 @@ export default class Session extends Logger {
         const wallet = createWallet(web3);
 
         this.log(SESSION_REGISTER_WALLET);
+        console.log('my public key', this.crypto.getPublicKey());
         const encrypted = await EthCrypto.encryptWithPublicKey(this.crypto.getPublicKey(), wallet.privateKey);
         const createdSession = await this.contract.createAppSession(appId, wallet.address, encrypted.iv, encrypted.ephemPublicKey, encrypted.ciphertext, encrypted.mac, sendBalance);
 
