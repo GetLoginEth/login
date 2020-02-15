@@ -19,11 +19,15 @@ function Signup() {
     const [password, setPassword] = useState('');
     const [invite, setInvite] = useState('');
     const [method, setMethod] = useState('');
+    const {state: {config}} = useStateValue();
+
     const dropDown = [
         {key: SIGN_UP_INVITE, title: 'Invite'},
         //{key: LOGIN_WEB3, title: 'Web3'},
-        {key: LOGIN_TREZOR, title: 'Trezor'}
     ];
+    if (config.isTrezorEnabled) {
+        dropDown.push({key: LOGIN_TREZOR, title: 'Trezor'});
+    }
 
     const [showModal, setShowModal] = useState(false);
 
@@ -33,11 +37,11 @@ function Signup() {
         initPage(ACTION_SIGNUP);
 
         const invite = window.location.hash.replace('#', '');
-        if (isCorrectInvite(invite)) {
+        if (config.isTrezorEnabled && !isCorrectInvite(invite)) {
+            setMethod(LOGIN_TREZOR);
+        } else {
             setInvite(invite);
             setMethod(SIGN_UP_INVITE);
-        } else {
-            setMethod(LOGIN_TREZOR);
         }
         //setMethod(SIGN_UP_INVITE);
     }, []);
@@ -135,19 +139,19 @@ function Signup() {
                         <WaitButton disabled={signup.inProcess}>
                             <Button variant="primary"
                                     type="submit"
-                                    className="col-md-10"
+                                    className={dropDown.length > 1 ? "col-md-10" : "col-md-12"}
                                     disabled={isDisabled()}
                             >Sign up with {getDropDownTitle(method)}</Button>
                         </WaitButton>
 
-                        <Dropdown.Toggle className="" split variant="primary"
-                                         id="dropdown-split-basic"/>
+                        {dropDown.length > 1 && <Dropdown.Toggle className="" split variant="primary"
+                                                                 id="dropdown-split-basic"/>}
 
-                        <Dropdown.Menu>
+                        {dropDown.length > 1 && <Dropdown.Menu>
                             {dropDown.map(item => <Dropdown.Item
                                 key={item.key}
                                 onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
-                        </Dropdown.Menu>
+                        </Dropdown.Menu>}
                     </Dropdown>
 
                     {signup.log.length > 0 && <details className="mt-2">

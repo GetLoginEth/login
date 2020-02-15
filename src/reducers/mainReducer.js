@@ -1,3 +1,5 @@
+import config from '../config';
+
 export const reducer = (state, action) => {
     console.log('dispatch', action);
     const merge = (field, data) => {
@@ -214,7 +216,7 @@ export const reducer = (state, action) => {
             data = {errorMessage: action.data.message};
             return merge('trezorAddresses', data);
         case getStatus(ACTION_GET_TREZOR_ADDRESSES, STATUS_SUCCESS):
-            data = {addresses: action.data};
+            data = {addresses: action.data.addresses, publicKey: action.data.publicKey};
             return merge('trezorAddresses', data);
         case getStatus(ACTION_GET_TREZOR_ADDRESSES, STATUS_COMPLETE):
             data = {inProcessReceiving: false,};
@@ -331,8 +333,10 @@ export const initialState = {
     trezorAddresses: {
         inProcessReceiving: false,
         errorMessage: '',
-        addresses: []
-    }
+        addresses: [],
+        publicKey: null
+    },
+    config: config
 };
 
 export const STATUS_INIT = 'init';

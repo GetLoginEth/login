@@ -188,18 +188,21 @@ export default class Signup extends Logger {
         return result;
     }
 
-    async getTrezorAddresses() {
+    async getTrezorInfo() {
         const pathPublicKey = `m/44'/60'/0'/0`;
         const responsePublicKey = await TrezorConnect.getPublicKey({
             path: pathPublicKey,
             coin: "tRIN"
         });
-        //console.log(responsePublicKey);
+        console.log(responsePublicKey);
         const extPubKey = responsePublicKey.payload.xpub;
         const hdWallet = HdKey.fromExtendedKey(extPubKey);
-        let result = [];
+        let result = {
+            publicKey: hdWallet.deriveChild(0).getWallet().getPublicKey().toString('hex'),
+            addresses: []
+        };
         for (let i = 0; i < 20; i++) {
-            result.push({
+            result.addresses.push({
                 address: hdWallet.deriveChild(i).getWallet().getAddressString(),
                 index: i
             });

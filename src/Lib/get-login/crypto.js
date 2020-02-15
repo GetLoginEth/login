@@ -1,5 +1,6 @@
 import defaultConfig from '../../config';
 import Web3 from 'web3';
+import {privateToPublic} from "ethereumjs-util";
 
 export default class crypto {
     /**
@@ -31,6 +32,7 @@ export default class crypto {
          * @type {Web3}
          */
         this.web3 = new Web3(this.provider);
+        this.publicKey = null;
     }
 
     /**
@@ -56,6 +58,15 @@ export default class crypto {
 
     setAccount(privateKey) {
         this.currentAccount = this.web3.eth.accounts.privateKeyToAccount(privateKey);
+        this.publicKey = privateToPublic(privateKey);
+    }
+
+    setPublicKey(publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    getPublicKey() {
+        return this.publicKey;
     }
 
     getAccount() {

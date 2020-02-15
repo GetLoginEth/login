@@ -8,6 +8,7 @@ function Settings() {
     const {state: {user}} = useStateValue();
     const {state: {app}} = useStateValue();
     const {state: {mySessions}} = useStateValue();
+    const {state: {config}} = useStateValue();
 
     useEffect(_ => {
         getMySessions().then();
@@ -20,7 +21,8 @@ function Settings() {
         <p>Balance: {user.balance.original}</p>
         <p>Smart contract address: {app.smartContractAddress}</p>
         <p>Network: {app.network}</p>
-        <p>Provider: {app.provider}</p>
+        <p>Provider: {config.websocketProviderUrl}</p>
+        <p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>
 
         {/*<button className="btn btn-primary" onClick={_ => {
             test();

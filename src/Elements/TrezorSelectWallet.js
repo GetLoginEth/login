@@ -3,6 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import Spinner from "./Spinner";
 import Button from "react-bootstrap/Button";
 import {useStateValue} from "../reducers/state";
+import {setAddressIndex} from "../reducers/actions";
 
 function TrezorSelectWallet({id, isShow, onClose, onComplete, completeText = 'Save'}) {
     const {state: {trezorAddresses}} = useStateValue();
@@ -10,8 +11,10 @@ function TrezorSelectWallet({id, isShow, onClose, onComplete, completeText = 'Sa
     const [trezorAddress, setTrezorAddress] = useState(null);
     const [trezorAddressIndex, setTrezorAddressIndex] = useState(null);
     const changeTrezorAddress = changeEvent => {
+        const index = changeEvent.target.dataset.index;
         setTrezorAddress(changeEvent.target.value);
-        setTrezorAddressIndex(changeEvent.target.dataset.index);
+        setTrezorAddressIndex(index);
+        setAddressIndex(index);
     };
 
     useEffect(_ => {
@@ -19,6 +22,7 @@ function TrezorSelectWallet({id, isShow, onClose, onComplete, completeText = 'Sa
             const address = trezorAddresses.addresses[0];
             setTrezorAddress(address.address);
             setTrezorAddressIndex(address.index);
+            setAddressIndex(address.index);
         }
     }, [trezorAddresses]);
 

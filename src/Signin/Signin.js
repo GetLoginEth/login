@@ -19,11 +19,15 @@ function Signin() {
     const [password, setPassword] = useState('');
     const [method, setMethod] = useState(LOGIN_USERNAME_PASSWORD);
     const [showModal, setShowModal] = useState(false);
+    const {state: {config}} = useStateValue();
 
     const dropDown = [
         {key: LOGIN_USERNAME_PASSWORD, title: 'Password'},
-        {key: LOGIN_TREZOR, title: 'Trezor'}
     ];
+
+    if (config.isTrezorEnabled) {
+        dropDown.push({key: LOGIN_TREZOR, title: 'Trezor'});
+    }
 
     useEffect(() => {
         initPage(ACTION_SIGNIN);
@@ -100,19 +104,19 @@ function Signin() {
                         <WaitButton disabled={signin.inProcess}>
                             <Button variant="primary"
                                     type="submit"
-                                    className="col-md-10"
+                                    className={dropDown.length > 1 ? "col-md-10" : "col-md-12"}
                                     disabled={isDisabled()}
                             >Sign in with {getDropDownTitle(method)}</Button>
                         </WaitButton>
 
-                        <Dropdown.Toggle className="" split variant="primary"
-                                         id="dropdown-split-basic"/>
+                        {dropDown.length > 1 && <Dropdown.Toggle className="" split variant="primary"
+                                                                 id="dropdown-split-basic"/>}
 
-                        <Dropdown.Menu>
+                        {dropDown.length > 1 && <Dropdown.Menu>
                             {dropDown.map(item => <Dropdown.Item
                                 key={item.key}
                                 onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
-                        </Dropdown.Menu>
+                        </Dropdown.Menu>}
                     </Dropdown>
 
                     {signin.log.length > 0 && <details className="mt-2">

@@ -105,12 +105,35 @@ export const checkLocalCredentials = async () => {
         const data = getUserData();
         await validateUserData(data);
         let address;
-        if (data.type !== LOGIN_TREZOR) {
+        if (data.type === LOGIN_TREZOR) {
+            const publicKey = localStorage.getItem('public_key');
+            const addressIndex = localStorage.getItem('address_index');
+            const path = `m/44'/60'/0'/0/${addressIndex}`;
+            if (publicKey) {
+                cryptoInstance.setPublicKey(publicKey);
+            } else {
+                throw new Error('Public key not found');
+            }
+
+            address = data.address;
+            contractInstance.setExternalSign(async transaction => {
+                //console.log('External called');
+                //console.log(transaction);
+                const result = await TrezorConnect.ethereumSignTransaction({
+                    path,
+                    transaction
+                });
+                //console.log(result);
+                if (!result.success) {
+                    throw new LoginError(result.payload.error);
+                }
+
+                return result.payload;
+            }, address);
+        } else {
             contractInstance.setPrivateKey(data.wallet.privateKey);
             cryptoInstance.setAccount(data.wallet.privateKey);
             address = data.wallet.address;
-        } else {
-            address = data.address;
         }
 
         getWalletBalance(address).then();
@@ -390,7 +413,18 @@ export const getMySessions = async () => {
 };
 
 export const getTrezorAddresses = async () => {
-    return callMethod(ACTION_GET_TREZOR_ADDRESSES, async () => await signup.getTrezorAddresses());
+    return callMethod(ACTION_GET_TREZOR_ADDRESSES, async () => {
+        const result = await signup.getTrezorInfo();
+        localStorage.setItem('public_key', result.publicKey);
+        /*console.log(result);
+        cryptoInstance.setPublicKey(result.publicKey);
+        console.log(cryptoInstance);*/
+        return result;
+    });
+};
+
+export const setAddressIndex = (index) => {
+    localStorage.setItem('address_index', index);
 };
 
 export const test = async () => {
