@@ -1,11 +1,24 @@
 pragma solidity ^0.6.1;
 pragma experimental ABIEncoderV2;
 
-contract GetLogin {
-    event EventStoreWallet(bytes32 indexed username, address indexed walletAddress, string ciphertext, string iv, string salt, string mac);
-    event EventInviteCreated(bytes32 indexed creatorUsername, address inviteAddress);
-    event EventAppSession(uint64 indexed appId, bytes32 indexed username, string iv, string ephemPublicKey, string ciphertext, string mac);
-    event EventAppCreated(bytes32 indexed creatorUsername, uint64 indexed appId);
+import './GetLoginStorage.sol';
+
+contract GetLoginLogic {
+    GetLoginStorage public getLoginStorage;
+    address public owner;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Caller is not the owner");
+        _;
+    }
+
+    function setOwner(address _address) onlyOwner public {
+        owner = _address;
+    }
+
+    function setStorageAddress(GetLoginStorage _address) onlyOwner public {
+        getLoginStorage = _address;
+    }
 
     uint8 sessionMain = 1;
     uint8 sessionApp = 2;
@@ -62,24 +75,35 @@ contract GetLogin {
     mapping(address => InviteInfo) public Invites;
     mapping(uint64 => Application) public Applications;
 
-    constructor() public {
-        bytes32 username = keccak256('admin');
-        _createUser(username, msg.sender);
-        string[] memory allowedUrls;
+    constructor(GetLoginStorage _getLoginStorage) public {
+        owner = msg.sender;
+        getLoginStorage = _getLoginStorage;
+
+        /*string[] memory allowedUrls;
         address[] memory allowedContracts;
         uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app', allowedUrls, allowedContracts);
         _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
         _addApplicationUrl(newAppId, 'https://localhost:3001/');
         _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
-        _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
+        _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);*/
+    }
+
+    function init() onlyOwner public{
+        bytes32 username = keccak256('admin');
+        GetLoginStorage.UserInfo memory info = getLoginStorage.getUser(username);
+        if (info.isActive != true) {
+            _createUser(username, msg.sender);
+        }
     }
 
     /* Private methods */
     function _createUser(bytes32 usernameHash, address ownerWallet) private {
         require(isUsernameExists(usernameHash) == false, "Username already used");
         require(isAddressRegistered(ownerWallet) == false, "Wallet already used");
-        Users[usernameHash] = UserInfo({username : usernameHash, isActive : true});
-        UsersAddressUsername[ownerWallet] = Username({username : usernameHash, isActive : true});
+        //Users[usernameHash] = UserInfo({username : usernameHash, isActive : true});
+        getLoginStorage.setUser(usernameHash, GetLoginStorage.UserInfo({username : usernameHash, isActive : true}));
+        //UsersAddressUsername[ownerWallet] = Username({username : usernameHash, isActive : true});
+        getLoginStorage.setUsersAddressUsername(ownerWallet, GetLoginStorage.Username({username : usernameHash, isActive : true}));
         _addSessionInit(usernameHash, ownerWallet, sessionMain, 0);
     }
 
@@ -87,7 +111,7 @@ contract GetLogin {
         uint64 appId = applicationId;
         Applications[appId] = Application({id : appId, usernameHash : usernameHash, title : title, description : description, allowedUrls : allowedUrls, allowedContracts : allowedContracts, isActive : true});
         applicationId++;
-        emit EventAppCreated(usernameHash, appId);
+        getLoginStorage.emitEventAppCreated(usernameHash, appId);
 
         return appId;
     }
@@ -219,7 +243,7 @@ contract GetLogin {
         bytes32 creatorUsername = getUsernameByAddress(msg.sender);
         Invites[inviteAddress] = InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsername, registeredUsername : '', isActive : true});
         inviteAddress.transfer(msg.value);
-        emit EventInviteCreated(creatorUsername, inviteAddress);
+        getLoginStorage.emitEventInviteCreated(creatorUsername, inviteAddress);
     }
 
     function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
@@ -230,7 +254,7 @@ contract GetLogin {
         invite.isActive = false;
         invite.registeredUsername = usernameHash;
         walletAddress.transfer(msg.value);
-        emit EventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
+        getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
     function createAppSession(uint64 appId, address payable wallet, string memory iv, string memory ephemPublicKey, string memory ciphertext, string memory mac) public payable {
@@ -242,7 +266,7 @@ contract GetLogin {
         //_addSession(wallet, sessionApp, appId);
         UsersAddressUsername[wallet] = Username({isActive : true, username : username});
         wallet.transfer(msg.value);
-        emit EventAppSession(appId, username, iv, ephemPublicKey, ciphertext, mac);
+        getLoginStorage.emitEventAppSession(appId, username, iv, ephemPublicKey, ciphertext, mac);
     }
 
     /*function addMainSession(address wallet) public payable {
@@ -263,8 +287,9 @@ contract GetLogin {
         return Applications[id];
     }
 
-    function getUserInfo(bytes32 usernameHash) public view returns (UserInfo memory) {
-        return Users[usernameHash];
+    function getUserInfo(bytes32 usernameHash) public view returns (GetLoginStorage.UserInfo memory) {
+        //return Users[usernameHash];
+        return getLoginStorage.getUser(usernameHash);
     }
 
     function isUsernameExists(bytes32 usernameHash) public view returns (bool) {
@@ -272,7 +297,7 @@ contract GetLogin {
     }
 
     function isAddressRegistered(address wallet) public view returns (bool) {
-        Username memory currentUser = UsersAddressUsername[wallet];
+        GetLoginStorage.Username memory currentUser = getLoginStorage.getUsersAddressUsername(wallet);
         if (currentUser.isActive != true) {
             return false;
         }
