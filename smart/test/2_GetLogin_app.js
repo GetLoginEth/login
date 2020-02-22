@@ -1,21 +1,28 @@
-const GetLogin = artifacts.require("./GetLogin.sol");
+const GetLoginLogic = artifacts.require("./GetLoginLogic.sol");
+const GetLoginStorage = artifacts.require("./GetLoginStorage.sol");
 const willFail = require("./exceptions.js").willFail;
-let getLogin;
+let getLoginLogic, getLoginStorage;
 
 contract("GetLogin", async accounts => {
     describe('App', async () => {
         before(async () => {
-            getLogin = await GetLogin.deployed();
+            getLoginLogic = await GetLoginLogic.deployed();
+            getLoginStorage = await GetLoginStorage.deployed();
+
+            await getLoginStorage.setLogicAddress(getLoginLogic.address);
+            await getLoginLogic.init();
+
             const usernameHash = web3.utils.keccak256('igor');
-            await getLogin.createUser(usernameHash, {from: accounts[1]});
+            await getLoginLogic.createUser(usernameHash, {from: accounts[1]});
         });
 
         beforeEach(async () => {
-            getLogin = await GetLogin.deployed();
+            /*getLoginLogic = await GetLoginLogic.deployed();
+            getLoginStorage = await GetLoginStorage.deployed();*/
         });
 
         it("Is first app created", async () => {
-            const app = await getLogin.getApplication(1);
+            const app = await getLoginLogic.getApplication(1);
 
             assert.equal(app.id, "1", "First app not created");
         });
@@ -25,8 +32,8 @@ contract("GetLogin", async accounts => {
 
             const title = "Truffle app";
             const description = "Simple truffle app";
-            await getLogin.createApplication(title, description, [], []);
-            const app = await getLogin.getApplication(appId);
+            await getLoginLogic.createApplication(title, description, [], []);
+            const app = await getLoginLogic.getApplication(appId);
 
             assert.equal(app.id, appId, "App not found");
             assert.equal(app.title, title, "Incorrect app title");
@@ -36,18 +43,18 @@ contract("GetLogin", async accounts => {
         it("Is possible to add urls to app", async () => {
             const appId = 2;
             const newUrls = ["https://hello.world", "https://hello.world/test/test/123", "https://ya.com/test/test/",];
-            let app = await getLogin.getApplication(appId);
+            let app = await getLoginLogic.getApplication(appId);
             assert.equal(app.allowedUrls.length, 0, "Urls list is not empty");
 
             let i = 1;
             for (let url of newUrls) {
-                await getLogin.addApplicationUrl(appId, url, {from: accounts[0]});
-                app = await getLogin.getApplication(appId);
+                await getLoginLogic.addApplicationUrl(appId, url, {from: accounts[0]});
+                app = await getLoginLogic.getApplication(appId);
                 assert.equal(app.allowedUrls.length, i, "Urls list size is not correct");
                 i++;
             }
 
-            app = await getLogin.getApplication(appId);
+            app = await getLoginLogic.getApplication(appId);
             for (let i = 0; i < app.allowedUrls.length; i++) {
                 assert.equal(app.allowedUrls[i], newUrls[i], "Incorrect url by index");
             }
@@ -60,8 +67,8 @@ contract("GetLogin", async accounts => {
             const allowedUrls = ['https://one.com/123', 'https://ya.com/321', 'https://google.com/777',];
             const allowedContracts = ['0xD66521103Cb882d6afEb051Ae3e986506Af56409', '0x25a7D3AD29dba10BE86496B1D6367224B06123D2', '0xbe171aa7da559a655e4b7a603ca335716864439d',];
 
-            await getLogin.editApplication(appId, title, description, allowedUrls, allowedContracts);
-            const app = await getLogin.getApplication(appId);
+            await getLoginLogic.editApplication(appId, title, description, allowedUrls, allowedContracts);
+            const app = await getLoginLogic.getApplication(appId);
             assert.equal(app.title, title, "Incorrect app title");
             assert.equal(app.description, description, "Incorrect app title");
             assert.equal(app.allowedUrls.length, allowedUrls.length, "Incorrect size of allowedUrls");
@@ -81,35 +88,36 @@ contract("GetLogin", async accounts => {
         });
 
         it("Can delete app urls and contracts", async () => {
-            const newAppIdExpected = 3;
+            const appId = 3;
             const title = "Third app";
             const description = "Yeah. New app";
             const newUrls = ["https://hello.world", "https://hello.world/test/test/123", "https://ya.com/test/test/",];
             const newContracts = ["0xD66521103Cb882d6afEb051Ae3e986506Af56409", "0xD66521103Cb882d6afEb051Ae3e986506Af56409",];
 
-            const newApp = await getLogin.createApplication(title, description, newUrls, newContracts);
-            const appId = newApp.logs[0].args.appId.toString();
-            assert.equal(appId, newAppIdExpected, "Incorrect app id");
+            const newApp = await getLoginLogic.createApplication(title, description, newUrls, newContracts);
+            /*console.log(newApp);*/
+            /*const appId = newApp.receipt.rawLogs[0].args.appId.toString();
+            assert.equal(appId, newAppIdExpected, "Incorrect app id");*/
 
-            let app = await getLogin.getApplication(appId);
+            let app = await getLoginLogic.getApplication(appId);
             assert.equal(app.allowedUrls.length, newUrls.length, "Incorrect urls length");
             assert.equal(app.allowedContracts.length, newContracts.length, "Incorrect contracts length");
 
             for (let i = 0; i < newUrls.length; i++) {
-                await getLogin.deleteApplicationUrl(appId, i);
+                await getLoginLogic.deleteApplicationUrl(appId, i);
             }
 
-            app = await getLogin.getApplication(appId);
+            app = await getLoginLogic.getApplication(appId);
             for (let url of app.allowedUrls) {
                 assert.equal(url, "", "Incorrect url");
             }
 
             // check contract deletion
             for (let i = 0; i < newContracts.length; i++) {
-                await getLogin.deleteApplicationContract(appId, i);
+                await getLoginLogic.deleteApplicationContract(appId, i);
             }
 
-            app = await getLogin.getApplication(appId);
+            app = await getLoginLogic.getApplication(appId);
             for (let contract of app.allowedContracts) {
                 assert.equal(contract, "0x0000000000000000000000000000000000000000", "Incorrect contract");
             }
@@ -119,34 +127,34 @@ contract("GetLogin", async accounts => {
             const appId = 2;
             const title = "Info from new user";
             const description = "Absolutely great description";
-            const app = await getLogin.getApplication(appId);
-            await willFail(getLogin.editApplication(appId, title, description, app.allowedUrls, app.allowedContracts, {from: accounts[1]}), 'You do not have access to this application');
+            const app = await getLoginLogic.getApplication(appId);
+            await willFail(getLoginLogic.editApplication(appId, title, description, app.allowedUrls, app.allowedContracts, {from: accounts[1]}), 'You do not have access to this application');
         });
 
         it("Add url from other account", async () => {
             const appId = 2;
-            await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'You do not have access to this application');
+            await willFail(getLoginLogic.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'You do not have access to this application');
         });
 
         it("Delete url from other account", async () => {
             const appId = 2;
-            await willFail(getLogin.deleteApplicationUrl(appId, 0, {from: accounts[1]}), 'You do not have access to this application');
+            await willFail(getLoginLogic.deleteApplicationUrl(appId, 0, {from: accounts[1]}), 'You do not have access to this application');
         });
 
         it("Delete application", async () => {
             const appId = 2;
-            await getLogin.deleteApplication(appId);
-            await willFail(getLogin.getApplication(appId), 'App not found');
-            await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world'), 'App not found');
-            await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'App not found');
+            await getLoginLogic.deleteApplication(appId);
+            await willFail(getLoginLogic.getApplication(appId), 'App not found');
+            await willFail(getLoginLogic.addApplicationUrl(appId, 'https://hello.world'), 'App not found');
+            await willFail(getLoginLogic.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'App not found');
         });
 
         it("Restore application", async () => {
             const appId = 2;
-            await getLogin.restoreApplication(appId);
-            await getLogin.getApplication(appId);
-            await getLogin.addApplicationUrl(appId, 'https://hello.world');
-            await willFail(getLogin.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'You do not have access to this application');
+            await getLoginLogic.restoreApplication(appId);
+            await getLoginLogic.getApplication(appId);
+            await getLoginLogic.addApplicationUrl(appId, 'https://hello.world');
+            await willFail(getLoginLogic.addApplicationUrl(appId, 'https://hello.world', {from: accounts[1]}), 'You do not have access to this application');
         });
     });
 });

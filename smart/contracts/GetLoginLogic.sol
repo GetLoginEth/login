@@ -7,6 +7,9 @@ contract GetLoginLogic {
     GetLoginStorage public getLoginStorage;
     address public owner;
 
+    uint8 sessionMain = 1;
+    uint8 sessionApp = 2;
+
     modifier onlyOwner() {
         require(msg.sender == owner, "Caller is not the owner");
         _;
@@ -20,79 +23,23 @@ contract GetLoginLogic {
         getLoginStorage = _address;
     }
 
-    uint8 sessionMain = 1;
-    uint8 sessionApp = 2;
-
-    struct Username
-    {
-        bool isActive;
-        // todo define a uniform variable name
-        bytes32 username;
-    }
-
-    struct UserInfo
-    {
-        // todo define a uniform variable name
-        bytes32 username;
-        bool isActive;
-    }
-
-    struct InviteInfo
-    {
-        address inviteAddress;
-        // todo define a uniform variable name
-        bytes32 creatorUsername;
-        bytes32 registeredUsername;
-        bool isActive;
-    }
-
-    struct UserSession
-    {
-        // todo define a uniform variable name
-        bytes32 username;
-        address wallet;
-        uint8 sessionType;
-        uint64 appId;
-    }
-
-    struct Application
-    {
-        uint64 id;
-        // todo define a uniform variable name (usernameHash or username)
-        bytes32 usernameHash;
-        string title;
-        string description;
-        string[] allowedUrls;
-        address[] allowedContracts;
-        bool isActive;
-    }
-
-    uint64 public applicationId = 1;
-
-    mapping(bytes32 => UserInfo) public Users;
-    mapping(address => Username) public UsersAddressUsername;
-    mapping(bytes32 => UserSession[]) public UserSessions;
-    mapping(address => InviteInfo) public Invites;
-    mapping(uint64 => Application) public Applications;
-
     constructor(GetLoginStorage _getLoginStorage) public {
         owner = msg.sender;
         getLoginStorage = _getLoginStorage;
-
-        /*string[] memory allowedUrls;
-        address[] memory allowedContracts;
-        uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app', allowedUrls, allowedContracts);
-        _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
-        _addApplicationUrl(newAppId, 'https://localhost:3001/');
-        _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
-        _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);*/
     }
 
-    function init() onlyOwner public{
+    function init() onlyOwner public {
         bytes32 username = keccak256('admin');
         GetLoginStorage.UserInfo memory info = getLoginStorage.getUser(username);
         if (info.isActive != true) {
             _createUser(username, msg.sender);
+            string[] memory allowedUrls;
+            address[] memory allowedContracts;
+            uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app', allowedUrls, allowedContracts);
+            _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
+            _addApplicationUrl(newAppId, 'https://localhost:3001/');
+            _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
+            _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
         }
     }
 
@@ -108,43 +55,48 @@ contract GetLoginLogic {
     }
 
     function _createApplication(bytes32 usernameHash, string memory title, string memory description, string[] memory allowedUrls, address[] memory allowedContracts) private returns (uint64) {
-        uint64 appId = applicationId;
-        Applications[appId] = Application({id : appId, usernameHash : usernameHash, title : title, description : description, allowedUrls : allowedUrls, allowedContracts : allowedContracts, isActive : true});
-        applicationId++;
+        uint64 appId = getLoginStorage.applicationId();
+        getLoginStorage.setApplication(appId, GetLoginStorage.Application({id : appId, usernameHash : usernameHash, title : title, description : description, allowedUrls : allowedUrls, allowedContracts : allowedContracts, isActive : true}));
+        getLoginStorage.incrementApplicationId();
         getLoginStorage.emitEventAppCreated(usernameHash, appId);
 
         return appId;
     }
 
     function _addApplicationUrl(uint64 appId, string memory url) private {
-        Applications[appId].allowedUrls.push(url);
+        getLoginStorage.pushApplicationUrl(appId, url);
     }
 
     function _addApplicationContract(uint64 appId, address wallet) private {
-        Applications[appId].allowedContracts.push(wallet);
+        getLoginStorage.pushApplicationContract(appId, wallet);
     }
 
     function _deleteApplicationUrl(uint64 appId, uint index) private {
-        delete Applications[appId].allowedUrls[index];
+        getLoginStorage.deleteApplicationUrl(appId, index);
     }
 
     function _deleteApplicationContract(uint64 appId, uint index) private {
-        delete Applications[appId].allowedContracts[index];
+        getLoginStorage.deleteApplicationContract(appId, index);
     }
 
     function _setApplicationActive(uint64 appId, bool isActive) private {
-        Applications[appId].isActive = isActive;
+        //Applications[appId].isActive = isActive;
+        // todo possibly not work because get and. try direct set
+        GetLoginStorage.Application memory app = getLoginStorage.getApplication(appId);
+        app.isActive = isActive;
+        getLoginStorage.setApplication(appId, app);
     }
 
     function _addSessionInit(bytes32 usernameHash, address wallet, uint8 sessionType, uint64 appId) private {
-        UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
+        getLoginStorage.pushUserSession(usernameHash, wallet, sessionType, appId);
     }
 
     function _addSession(address wallet, uint8 sessionType, uint64 appId) private {
         validateAppExists(appId);
         validateAddressRegistered(wallet);
         bytes32 usernameHash = getUsernameByAddress(wallet);
-        UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
+        //UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
+        getLoginStorage.pushUserSession(usernameHash, wallet, sessionType, appId);
     }
 
     /* End of private methods */
@@ -156,7 +108,7 @@ contract GetLoginLogic {
     }
 
     function validateAppExists(uint64 appId) public view {
-        Application memory app = Applications[appId];
+        GetLoginStorage.Application memory app = getLoginStorage.getApplication(appId);
         require(app.isActive == true, "App not found");
     }
 
@@ -184,11 +136,12 @@ contract GetLoginLogic {
     function editApplication(uint64 appId, string memory title, string memory description, string[] memory allowedUrls, address[] memory allowedContracts) public {
         validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
-        Application storage app = Applications[appId];
+        GetLoginStorage.Application memory app = getLoginStorage.getApplication(appId);
         app.title = title;
         app.description = description;
         app.allowedUrls = allowedUrls;
         app.allowedContracts = allowedContracts;
+        getLoginStorage.setApplication(appId, app);
     }
 
     function addApplicationUrl(uint64 appId, string memory url) public {
@@ -241,7 +194,7 @@ contract GetLoginLogic {
         validateInviteAvailable(inviteAddress);
         validateAddressRegistered(msg.sender);
         bytes32 creatorUsername = getUsernameByAddress(msg.sender);
-        Invites[inviteAddress] = InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsername, registeredUsername : '', isActive : true});
+        getLoginStorage.setInvite(inviteAddress, GetLoginStorage.InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsername, registeredUsername : '', isActive : true}));
         inviteAddress.transfer(msg.value);
         getLoginStorage.emitEventInviteCreated(creatorUsername, inviteAddress);
     }
@@ -249,10 +202,11 @@ contract GetLoginLogic {
     function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
         validateInviteActive(msg.sender);
         require(isAddressRegistered(walletAddress) == false, "Address already registered");
-        InviteInfo storage invite = Invites[msg.sender];
+        GetLoginStorage.InviteInfo memory invite = getLoginStorage.getInvite(msg.sender);
         _createUser(usernameHash, walletAddress);
         invite.isActive = false;
         invite.registeredUsername = usernameHash;
+        getLoginStorage.setInvite(msg.sender, invite);
         walletAddress.transfer(msg.value);
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
@@ -264,7 +218,8 @@ contract GetLoginLogic {
         // todo check only one main session possible
         // todo hide user apps ids?
         //_addSession(wallet, sessionApp, appId);
-        UsersAddressUsername[wallet] = Username({isActive : true, username : username});
+        //UsersAddressUsername[wallet] = Username({isActive : true, username : username});
+        getLoginStorage.setUsersAddressUsername(wallet, GetLoginStorage.Username({isActive : true, username : username}));
         wallet.transfer(msg.value);
         getLoginStorage.emitEventAppSession(appId, username, iv, ephemPublicKey, ciphertext, mac);
     }
@@ -277,15 +232,15 @@ contract GetLoginLogic {
     /* End of public methods */
 
     /* View methods */
-    function getApplication(uint64 id) public view returns (Application memory) {
+    function getApplication(uint64 id) public view returns (GetLoginStorage.Application memory) {
         validateAppExists(id);
 
-        return Applications[id];
+        return getLoginStorage.getApplication(id);
     }
 
-    function getAnyApplication(uint64 id) public view returns (Application memory) {
+    /*function getAnyApplication(uint64 id) public view returns (GetLoginStorage.Application memory) {
         return Applications[id];
-    }
+    }*/
 
     function getUserInfo(bytes32 usernameHash) public view returns (GetLoginStorage.UserInfo memory) {
         //return Users[usernameHash];
@@ -302,19 +257,21 @@ contract GetLoginLogic {
             return false;
         }
 
-        return Users[currentUser.username].isActive == true;
+        GetLoginStorage.UserInfo memory info = getLoginStorage.getUser(currentUser.username);
+
+        return info.isActive;
     }
 
-    function isAppOwner(uint64 appIp, address checkAddress) public view returns (bool) {
+    function isAppOwner(uint64 appId, address checkAddress) public view returns (bool) {
         bytes32 currentUsernameHash = getUsernameByAddress(checkAddress);
         //return getApplication(appIp).usernameHash == currentUsernameHash;
-        return Applications[appIp].usernameHash == currentUsernameHash;
+        return getLoginStorage.getApplication(appId).usernameHash == currentUsernameHash;
     }
 
-    function getUserByAddress(address wallet) public view returns (UserInfo memory) {
-        Username memory currentUser = UsersAddressUsername[wallet];
+    function getUserByAddress(address wallet) public view returns (GetLoginStorage.UserInfo memory) {
+        GetLoginStorage.Username memory currentUser = getLoginStorage.getUsersAddressUsername(wallet);
         require(currentUser.isActive == true, "User with this address not found");
-        return Users[currentUser.username];
+        return getLoginStorage.getUser(currentUser.username);
     }
 
     function getUsernameByAddress(address wallet) public view returns (bytes32) {
@@ -322,15 +279,16 @@ contract GetLoginLogic {
     }
 
     function isActiveInvite(address wallet) public view returns (bool) {
-        return Invites[wallet].isActive == true;
+        GetLoginStorage.InviteInfo memory info = getLoginStorage.getInvite(wallet);
+        return info.isActive == true;
     }
 
-    function getInvite(address wallet) public view returns (InviteInfo memory) {
-        return Invites[wallet];
+    function getInvite(address wallet) public view returns (GetLoginStorage.InviteInfo memory) {
+        return getLoginStorage.getInvite(wallet);
     }
 
-    function getUserSessions(bytes32 usernameHash) public view returns (UserSession[] memory) {
-        return UserSessions[usernameHash];
+    function getUserSessions(bytes32 usernameHash) public view returns (GetLoginStorage.UserSession[] memory) {
+        return getLoginStorage.getUserSessions(usernameHash);
     }
 
     /* End of view methods */

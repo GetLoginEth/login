@@ -24,9 +24,6 @@ contract GetLoginStorage {
     event EventAppSession(uint64 indexed appId, bytes32 indexed username, string iv, string ephemPublicKey, string ciphertext, string mac);
     event EventAppCreated(bytes32 indexed creatorUsername, uint64 indexed appId);
 
-    uint8 sessionMain = 1;
-    uint8 sessionApp = 2;
-
     struct Username
     {
         bool isActive;
@@ -114,4 +111,52 @@ contract GetLoginStorage {
     function setUsersAddressUsername(address _address, Username memory info) onlyLogicAddress public {
         UsersAddressUsername[_address] = info;
     }
+
+    function getApplication(uint64 id) public view returns (Application memory){
+        return Applications[id];
+    }
+
+    function setApplication(uint64 id, Application memory data) onlyLogicAddress public {
+        Applications[id] = data;
+    }
+
+    function incrementApplicationId() onlyLogicAddress public {
+        applicationId++;
+    }
+
+    function pushApplicationUrl(uint64 id, string memory url) onlyLogicAddress public {
+        Applications[id].allowedUrls.push(url);
+    }
+
+    function pushApplicationContract(uint64 id, address wallet) onlyLogicAddress public {
+        Applications[id].allowedContracts.push(wallet);
+    }
+
+    function deleteApplicationUrl(uint64 id, uint index) onlyLogicAddress public {
+        delete Applications[id].allowedUrls[index];
+    }
+
+    function deleteApplicationContract(uint64 id, uint index) onlyLogicAddress public {
+        delete Applications[id].allowedContracts[index];
+    }
+
+    function pushUserSession(bytes32 usernameHash, address wallet, uint8 sessionType, uint64 appId) onlyLogicAddress public {
+        UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
+    }
+
+    function getInvite(address _address) public view returns (InviteInfo memory){
+        return Invites[_address];
+    }
+
+    function setInvite(address _address, InviteInfo memory data) onlyLogicAddress public {
+        Invites[_address] = data;
+    }
+
+    function getUserSessions(bytes32 usernameHash) public view returns (UserSession[] memory){
+        return UserSessions[usernameHash];
+    }
+
+    /*function setUserSessions(bytes32 usernameHash, UserSession[] memory data) onlyLogicAddress public {
+        UserSessions[usernameHash] = data;
+    }*/
 }

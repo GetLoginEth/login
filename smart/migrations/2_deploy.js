@@ -1,8 +1,6 @@
 const GetLoginStorage = artifacts.require("GetLoginStorage");
 const GetLoginLogic = artifacts.require("GetLoginLogic");
-const AppStorage = artifacts.require("AppStorage");
-//const AppRegistry = artifacts.require("AppRegistry");
-const AppLogicOne = artifacts.require("AppLogicOne");
+const Empty = artifacts.require("Empty");
 
 module.exports = function (deployer) {
     deployer.deploy(GetLoginStorage).then(data => {
@@ -11,6 +9,6 @@ module.exports = function (deployer) {
                 //GetLoginStorage.setLogicAddress(data.address);
             });
     });
-    deployer.deploy(AppStorage);
-    deployer.deploy(AppLogicOne);
+
+    deployer.deploy(Empty);
 };
