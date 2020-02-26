@@ -1754,9 +1754,14 @@ export default class contract {
         await this.initContract();
     }
 
-    async callMethod(methodName, ...params) {
+    async callLogicMethod(methodName, ...params) {
         const logicContract = await this.getLogicContract();
         return logicContract.methods[methodName](...params).call();
+    }
+
+    async callStorageMethod(methodName, ...params) {
+        const storageContract = await this.getStorageContract();
+        return storageContract.methods[methodName](...params).call();
     }
 
     async sendTx(methodName, settings = null, ...params) {
@@ -1902,7 +1907,7 @@ export default class contract {
     }
 
     async getUserInfo(usernameHash) {
-        return this.callMethod('getUserInfo', usernameHash);
+        return this.callLogicMethod('getUserInfo', usernameHash);
     }
 
     async createUser(usernameHash) {
@@ -1951,7 +1956,7 @@ export default class contract {
             throw new Error('Incorrect appId');
         }
 
-        const info = await this.callMethod('getApplication', appId);
+        const info = await this.callStorageMethod('getApplication', appId);
         if (appId !== Number(info.id)) {
             throw new Error('App not found');
         }
@@ -1960,13 +1965,13 @@ export default class contract {
     }
 
     async isInviteExists(inviteAddress) {
-        const info = await this.callMethod('Invites', inviteAddress);
+        const info = await this.callStorageMethod('Invites', inviteAddress);
 
         return info && info.isActive;
     }
 
     async getInvite(inviteAddress) {
-        return await this.callMethod('Invites', inviteAddress);
+        return await this.callStorageMethod('Invites', inviteAddress);
     }
 
     async getInvites(usernameHash) {
@@ -2024,7 +2029,7 @@ export default class contract {
     }
 
     async getUserSessions(usernameHash) {
-        return await this.callMethod('getUserSessions', usernameHash);
+        return await this.callLogicMethod('getUserSessions', usernameHash);
     }
 
     async getUserSession(usernameHash, wallet) {
