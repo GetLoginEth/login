@@ -2,8 +2,8 @@ pragma solidity ^0.6.1;
 pragma experimental ABIEncoderV2;
 
 contract GetLoginStorage {
-    address owner;
-    address logicAddress;
+    address public owner;
+    address public logicAddress;
 
     constructor () public {
         owner = msg.sender;

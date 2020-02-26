@@ -1,5 +1,5 @@
 import {getAllowedApp, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
-import contract from "../Lib/get-login/contract";
+import sessionContract from "../Lib/get-login/sessionContract";
 
 export default class PluginReceiver {
     /**
@@ -70,20 +70,19 @@ export default class PluginReceiver {
     async sendTransaction(data) {
         const {abi, address, method, txParams, params} = data;
         const app = await getAllowedApp(this.appId);
-        //console.log('my app', app);
-        //console.log(this.web3.eth.accounts.privateKeyToAccount(app.privateKey));
         if (!app) {
             throw new Error('Access token not found');
         }
         /**
          *
-         * @type {contract}
+         * @type {sessionContract}
          */
             // todo move 'rinkeby' to global scope
-        const mainContract = new contract(this.web3, 'rinkeby', address, abi);
-        mainContract.setPrivateKey(app.privateKey);
+            // const mainContract = new contract(this.web3, 'rinkeby', address, abi);
+        const mainContract = new sessionContract({web3: this.web3, network: 'rinkeby', address, abi});
+        await mainContract.setPrivateKey(app.privateKey);
 
-        return await mainContract.sendTx(method, params, txParams);
+        return await mainContract.sendTx({method, params: txParams, settings: params});
     }
 
     async callContractMethod({abi, address, method, params}) {

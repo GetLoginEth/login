@@ -47,6 +47,7 @@ const currentNetwork = 'rinkeby';
 const smartContractAddress = defaultAddresses[currentNetwork];
 let cryptoInstance = crypto.getInstance();
 let contractInstance = new contract(cryptoInstance.web3, currentNetwork, smartContractAddress);
+/*contractInstance.init().then();*/
 let dispatch = null;
 /**
  *
@@ -131,7 +132,7 @@ export const checkLocalCredentials = async () => {
                 return result.payload;
             }, address);
         } else {
-            contractInstance.setPrivateKey(data.wallet.privateKey);
+            await contractInstance.setPrivateKey(data.wallet.privateKey);
             cryptoInstance.setAccount(data.wallet.privateKey);
             address = data.wallet.address;
         }
@@ -293,7 +294,7 @@ export const getAppsInfo = async (appIds) => {
     return callMethod(ACTION_GET_MY_APPS_INFO, async () => {
         let result = {};
         for (const appId of appIds) {
-            result[appId] = await contractInstance.getAnyApplication(appId);
+            result[appId] = await contractInstance.getApplication(appId);
         }
 
         return result;

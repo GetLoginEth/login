@@ -1,300 +1,11 @@
 const ethereumjs = require('ethereumjs-tx').Transaction;
 
 export const defaultAddresses = {
-    "rinkeby": "0xae3836487fD6Dba1573EEA882B694385CcE84386",
+    "rinkeby": "0x36ABeeC598Ed9D080dCbAB4c0F5dB764187d5956",
     "mainnet": ""
 };
 
-export const defaultAbi = [
-    {
-        "inputs": [],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "creatorUsername",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            }
-        ],
-        "name": "EventAppCreated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            },
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "iv",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "ephemPublicKey",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "ciphertext",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "mac",
-                "type": "string"
-            }
-        ],
-        "name": "EventAppSession",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "creatorUsername",
-                "type": "bytes32"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "inviteAddress",
-                "type": "address"
-            }
-        ],
-        "name": "EventInviteCreated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "walletAddress",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "ciphertext",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "iv",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "salt",
-                "type": "string"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "mac",
-                "type": "string"
-            }
-        ],
-        "name": "EventStoreWallet",
-        "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "",
-                "type": "uint64"
-            }
-        ],
-        "name": "Applications",
-        "outputs": [
-            {
-                "internalType": "uint64",
-                "name": "id",
-                "type": "uint64"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "usernameHash",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "string",
-                "name": "title",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
-            },
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "Invites",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "inviteAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "creatorUsername",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "registeredUsername",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "UserSessions",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            },
-            {
-                "internalType": "uint8",
-                "name": "sessionType",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "name": "Users",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "UsersAddressUsername",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "username",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
+export const defaultLogicAbi = [
     {
         "inputs": [
             {
@@ -332,8 +43,29 @@ export const defaultAbi = [
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "applicationId",
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "internalType": "string[]",
+                "name": "allowedUrls",
+                "type": "string[]"
+            },
+            {
+                "internalType": "address[]",
+                "name": "allowedContracts",
+                "type": "address[]"
+            }
+        ],
+        "name": "createApplication",
         "outputs": [
             {
                 "internalType": "uint64",
@@ -341,7 +73,7 @@ export const defaultAbi = [
                 "type": "uint64"
             }
         ],
-        "stateMutability": "view",
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -380,40 +112,6 @@ export const defaultAbi = [
         "name": "createAppSession",
         "outputs": [],
         "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "title",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
-            },
-            {
-                "internalType": "string[]",
-                "name": "allowedUrls",
-                "type": "string[]"
-            },
-            {
-                "internalType": "address[]",
-                "name": "allowedContracts",
-                "type": "address[]"
-            }
-        ],
-        "name": "createApplication",
-        "outputs": [
-            {
-                "internalType": "uint64",
-                "name": "",
-                "type": "uint64"
-            }
-        ],
-        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -563,60 +261,61 @@ export const defaultAbi = [
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "init",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint64",
-                "name": "id",
+                "name": "appId",
                 "type": "uint64"
             }
         ],
-        "name": "getAnyApplication",
-        "outputs": [
+        "name": "restoreApplication",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
             {
-                "components": [
-                    {
-                        "internalType": "uint64",
-                        "name": "id",
-                        "type": "uint64"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "usernameHash",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "title",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string",
-                        "name": "description",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "string[]",
-                        "name": "allowedUrls",
-                        "type": "string[]"
-                    },
-                    {
-                        "internalType": "address[]",
-                        "name": "allowedContracts",
-                        "type": "address[]"
-                    },
-                    {
-                        "internalType": "bool",
-                        "name": "isActive",
-                        "type": "bool"
-                    }
-                ],
-                "internalType": "struct GetLogin.Application",
-                "name": "",
-                "type": "tuple"
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
             }
         ],
-        "stateMutability": "view",
+        "name": "setOwner",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract GetLoginStorage",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "setStorageAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract GetLoginStorage",
+                "name": "_getLoginStorage",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
     },
     {
         "inputs": [
@@ -666,7 +365,7 @@ export const defaultAbi = [
                         "type": "bool"
                     }
                 ],
-                "internalType": "struct GetLogin.Application",
+                "internalType": "struct GetLoginStorage.Application",
                 "name": "",
                 "type": "tuple"
             }
@@ -707,9 +406,22 @@ export const defaultAbi = [
                         "type": "bool"
                     }
                 ],
-                "internalType": "struct GetLogin.InviteInfo",
+                "internalType": "struct GetLoginStorage.InviteInfo",
                 "name": "",
                 "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getLoginStorage",
+        "outputs": [
+            {
+                "internalType": "contract GetLoginStorage",
+                "name": "",
+                "type": "address"
             }
         ],
         "stateMutability": "view",
@@ -738,7 +450,7 @@ export const defaultAbi = [
                         "type": "bool"
                     }
                 ],
-                "internalType": "struct GetLogin.UserInfo",
+                "internalType": "struct GetLoginStorage.UserInfo",
                 "name": "",
                 "type": "tuple"
             }
@@ -769,9 +481,28 @@ export const defaultAbi = [
                         "type": "bool"
                     }
                 ],
-                "internalType": "struct GetLogin.UserInfo",
+                "internalType": "struct GetLoginStorage.UserInfo",
                 "name": "",
                 "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "getUsernameByAddress",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
             }
         ],
         "stateMutability": "view",
@@ -810,28 +541,9 @@ export const defaultAbi = [
                         "type": "uint64"
                     }
                 ],
-                "internalType": "struct GetLogin.UserSession[]",
+                "internalType": "struct GetLoginStorage.UserSession[]",
                 "name": "",
                 "type": "tuple[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            }
-        ],
-        "name": "getUsernameByAddress",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
             }
         ],
         "stateMutability": "view",
@@ -879,7 +591,7 @@ export const defaultAbi = [
         "inputs": [
             {
                 "internalType": "uint64",
-                "name": "appIp",
+                "name": "appId",
                 "type": "uint64"
             },
             {
@@ -919,16 +631,16 @@ export const defaultAbi = [
         "type": "function"
     },
     {
-        "inputs": [
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
             {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
+                "internalType": "address",
+                "name": "",
+                "type": "address"
             }
         ],
-        "name": "restoreApplication",
-        "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -1004,16 +716,16 @@ export const defaultAbi = [
 ];
 
 export default class contract {
-    constructor(web3, network = 'rinkeby', contractAddress, abi = defaultAbi) {
+    constructor(web3, network = 'rinkeby', storageContractAddress, abi = defaultLogicAbi) {
         /**
          *
          * @type {Web3}
          */
         this.web3 = web3;
         this.network = network;
-        this.contractAddress = contractAddress;
+        this.storageContractAddress = storageContractAddress;
+        this.logicContractAddress = null;
         this.abi = abi;
-        this.contract = null;
         this.privateKey = null;
         /**
          *
@@ -1024,7 +736,8 @@ export default class contract {
          *
          * @type {Contract}
          */
-        this.contract = null;
+        this.logicContract = null;
+        this.storageContract = null;
         this.sendTxDefault = {
             balanceEther: '0',
             isForceSend: false,
@@ -1051,6 +764,938 @@ export default class contract {
         // method for external sign (trezor, web3 and etc)
         this.externalSign = null;
         this.externalAddress = null;
+        this.storageAbi = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "id",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "index",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "deleteApplicationContract",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "id",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "index",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "deleteApplicationUrl",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "creatorUsername",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "appId",
+                        "type": "uint64"
+                    }
+                ],
+                "name": "emitEventAppCreated",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "appId",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "username",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "iv",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ephemPublicKey",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ciphertext",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "mac",
+                        "type": "string"
+                    }
+                ],
+                "name": "emitEventAppSession",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "creatorUsername",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "inviteAddress",
+                        "type": "address"
+                    }
+                ],
+                "name": "emitEventInviteCreated",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "username",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "walletAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ciphertext",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "iv",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "salt",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "mac",
+                        "type": "string"
+                    }
+                ],
+                "name": "emitEventStoreWallet",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "id",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "wallet",
+                        "type": "address"
+                    }
+                ],
+                "name": "pushApplicationContract",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "creatorUsername",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "uint64",
+                        "name": "appId",
+                        "type": "uint64"
+                    }
+                ],
+                "name": "EventAppCreated",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "uint64",
+                        "name": "appId",
+                        "type": "uint64"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "username",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "iv",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "ephemPublicKey",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "ciphertext",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "mac",
+                        "type": "string"
+                    }
+                ],
+                "name": "EventAppSession",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "creatorUsername",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "inviteAddress",
+                        "type": "address"
+                    }
+                ],
+                "name": "EventInviteCreated",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "bytes32",
+                        "name": "username",
+                        "type": "bytes32"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "walletAddress",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "ciphertext",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "iv",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "salt",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "string",
+                        "name": "mac",
+                        "type": "string"
+                    }
+                ],
+                "name": "EventStoreWallet",
+                "type": "event"
+            },
+            {
+                "inputs": [],
+                "name": "incrementApplicationId",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "id",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "url",
+                        "type": "string"
+                    }
+                ],
+                "name": "pushApplicationUrl",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "usernameHash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "wallet",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "sessionType",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "appId",
+                        "type": "uint64"
+                    }
+                ],
+                "name": "pushUserSession",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "id",
+                        "type": "uint64"
+                    },
+                    {
+                        "components": [
+                            {
+                                "internalType": "uint64",
+                                "name": "id",
+                                "type": "uint64"
+                            },
+                            {
+                                "internalType": "bytes32",
+                                "name": "usernameHash",
+                                "type": "bytes32"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "title",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "description",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string[]",
+                                "name": "allowedUrls",
+                                "type": "string[]"
+                            },
+                            {
+                                "internalType": "address[]",
+                                "name": "allowedContracts",
+                                "type": "address[]"
+                            },
+                            {
+                                "internalType": "bool",
+                                "name": "isActive",
+                                "type": "bool"
+                            }
+                        ],
+                        "internalType": "struct GetLoginStorage.Application",
+                        "name": "data",
+                        "type": "tuple"
+                    }
+                ],
+                "name": "setApplication",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_address",
+                        "type": "address"
+                    },
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "inviteAddress",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "bytes32",
+                                "name": "creatorUsername",
+                                "type": "bytes32"
+                            },
+                            {
+                                "internalType": "bytes32",
+                                "name": "registeredUsername",
+                                "type": "bytes32"
+                            },
+                            {
+                                "internalType": "bool",
+                                "name": "isActive",
+                                "type": "bool"
+                            }
+                        ],
+                        "internalType": "struct GetLoginStorage.InviteInfo",
+                        "name": "data",
+                        "type": "tuple"
+                    }
+                ],
+                "name": "setInvite",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_address",
+                        "type": "address"
+                    }
+                ],
+                "name": "setLogicAddress",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "usernameHash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "components": [
+                            {
+                                "internalType": "bytes32",
+                                "name": "username",
+                                "type": "bytes32"
+                            },
+                            {
+                                "internalType": "bool",
+                                "name": "isActive",
+                                "type": "bool"
+                            }
+                        ],
+                        "internalType": "struct GetLoginStorage.UserInfo",
+                        "name": "info",
+                        "type": "tuple"
+                    }
+                ],
+                "name": "setUser",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_address",
+                        "type": "address"
+                    },
+                    {
+                        "components": [
+                            {
+                                "internalType": "bool",
+                                "name": "isActive",
+                                "type": "bool"
+                            },
+                            {
+                                "internalType": "bytes32",
+                                "name": "username",
+                                "type": "bytes32"
+                            }
+                        ],
+                        "internalType": "struct GetLoginStorage.Username",
+                        "name": "info",
+                        "type": "tuple"
+                    }
+                ],
+                "name": "setUsersAddressUsername",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "applicationId",
+                "outputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "",
+                        "type": "uint64"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "",
+                        "type": "uint64"
+                    }
+                ],
+                "name": "Applications",
+                "outputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "id",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "usernameHash",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "title",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "id",
+                        "type": "uint64"
+                    }
+                ],
+                "name": "getApplication",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "uint64",
+                                "name": "id",
+                                "type": "uint64"
+                            },
+                            {
+                                "internalType": "bytes32",
+                                "name": "usernameHash",
+                                "type": "bytes32"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "title",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "description",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string[]",
+                                "name": "allowedUrls",
+                                "type": "string[]"
+                            },
+                            {
+                                "internalType": "address[]",
+                                "name": "allowedContracts",
+                                "type": "address[]"
+                            },
+                            {
+                                "internalType": "bool",
+                                "name": "isActive",
+                                "type": "bool"
+                            }
+                        ],
+                        "internalType": "struct GetLoginStorage.Application",
+                        "name": "",
+                        "type": "tuple"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_address",
+                        "type": "address"
+                    }
+                ],
+                "name": "getInvite",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "inviteAddress",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "bytes32",
+                                "name": "creatorUsername",
+                                "type": "bytes32"
+                            },
+                            {
+                                "internalType": "bytes32",
+                                "name": "registeredUsername",
+                                "type": "bytes32"
+                            },
+                            {
+                                "internalType": "bool",
+                                "name": "isActive",
+                                "type": "bool"
+                            }
+                        ],
+                        "internalType": "struct GetLoginStorage.InviteInfo",
+                        "name": "",
+                        "type": "tuple"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "usernameHash",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "getUser",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "bytes32",
+                                "name": "username",
+                                "type": "bytes32"
+                            },
+                            {
+                                "internalType": "bool",
+                                "name": "isActive",
+                                "type": "bool"
+                            }
+                        ],
+                        "internalType": "struct GetLoginStorage.UserInfo",
+                        "name": "",
+                        "type": "tuple"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_address",
+                        "type": "address"
+                    }
+                ],
+                "name": "getUsersAddressUsername",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "bool",
+                                "name": "isActive",
+                                "type": "bool"
+                            },
+                            {
+                                "internalType": "bytes32",
+                                "name": "username",
+                                "type": "bytes32"
+                            }
+                        ],
+                        "internalType": "struct GetLoginStorage.Username",
+                        "name": "",
+                        "type": "tuple"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "usernameHash",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "getUserSessions",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "bytes32",
+                                "name": "username",
+                                "type": "bytes32"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "wallet",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "uint8",
+                                "name": "sessionType",
+                                "type": "uint8"
+                            },
+                            {
+                                "internalType": "uint64",
+                                "name": "appId",
+                                "type": "uint64"
+                            }
+                        ],
+                        "internalType": "struct GetLoginStorage.UserSession[]",
+                        "name": "",
+                        "type": "tuple[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "Invites",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "inviteAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "creatorUsername",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "registeredUsername",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "logicAddress",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "owner",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "Users",
+                "outputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "username",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "UsersAddressUsername",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "username",
+                        "type": "bytes32"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "UserSessions",
+                "outputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "username",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "wallet",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "sessionType",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "appId",
+                        "type": "uint64"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+    }
+
+    async getLogicContractAddress() {
+        if (!this.logicContractAddress) {
+            const storageContract = new this.web3.eth.Contract(this.storageAbi, this.storageContractAddress);
+            const logicAddress = await storageContract.methods.logicAddress().call();
+            console.log('logicAddress', logicAddress);
+            if (!logicAddress) {
+                throw new Error("Logic contract not found");
+            }
+
+            this.logicContractAddress = logicAddress;
+        }
+
+        return this.logicContractAddress;
     }
 
     setExternalSign(func, address) {
@@ -1059,33 +1704,43 @@ export default class contract {
     }
 
     initContract() {
-        this.contract = new this.web3.eth.Contract(this.abi, this.contractAddress, {from: (this.account ? this.account.address : null)});
+        if (this.logicContract) {
+            return this.logicContract;
+        } else {
+            return this.getLogicContractAddress()
+                .then(logicContractAddress => {
+                    this.logicContract = new this.web3.eth.Contract(this.abi, logicContractAddress, {from: (this.account ? this.account.address : null)});
+                    return this.logicContract;
+                });
+        }
     }
 
-    getContract() {
-        if (!this.abi || !this.contractAddress) {
+    async getLogicContract() {
+        const logicContract = await this.getLogicContractAddress();
+        if (!this.abi || !logicContract) {
             throw new Error('Some params not filled');
         }
 
-        if (!this.contract || (!this.contract.options.from && this.account && this.account.address)) {
-            this.initContract();
+        if (!this.logicContract || (!this.logicContract.options.from && this.account && this.account.address)) {
+            await this.initContract();
         }
 
-        return this.contract;
+        return this.logicContract;
     }
 
-    /*async sendTransaction(transaction) {
-        const signedTx = await this.account.signTransaction(transaction);
-        const result = await this.web3.eth.sendSignedTransaction(signedTx);
+    getStorageContract() {
+        if (!this.storageContract) {
+            this.storageContract = new this.web3.eth.Contract(this.storageAbi, this.storageContractAddress);
 
-        return result;
-    }*/
+        }
+        return this.storageContract;
+    }
 
     /**
      *
      * @param privateKey
      */
-    setPrivateKey(privateKey) {
+    async setPrivateKey(privateKey) {
         if (!privateKey) {
             throw new Error('Incorrect private key');
         }
@@ -1096,14 +1751,16 @@ export default class contract {
 
         this.privateKey = privateKey;
         this.account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
-        this.initContract();
+        await this.initContract();
     }
 
     async callMethod(methodName, ...params) {
-        return this.getContract().methods[methodName](...params).call();
+        const logicContract = await this.getLogicContract();
+        return logicContract.methods[methodName](...params).call();
     }
 
     async sendTx(methodName, settings = null, ...params) {
+        const logicContractAddress = await this.getLogicContractAddress();
         const accountAddress = this.externalAddress ? this.externalAddress : this.account.address;
         if (settings) {
             settings = {...this.sendTxDefault, ...settings};
@@ -1121,19 +1778,18 @@ export default class contract {
             settings.isNormalizeSendEther = true;
         }
 
-        const data = this.getContract().methods[methodName](...params).encodeABI();
-        //console.log(data);
+        const logicContract = await this.getLogicContract();
+        const data = logicContract.methods[methodName](...params).encodeABI();
         /**
          *
          * @type {{data: string, from: string, to: *, value: BN}}
          */
         let result = {
             from: accountAddress,
-            to: this.contractAddress,
+            to: logicContractAddress,
             value: this.web3.utils.toWei(settings.balanceEther, 'ether'),
             data
         };
-        //console.log(result);
         const gasPrice = await this.web3.eth.getGasPrice();
         console.log('gasPrice', gasPrice);
         const gasPriceBN = this.web3.utils.toBN(gasPrice);
@@ -1278,7 +1934,8 @@ export default class contract {
     }
 
     async findWalletInLogs(usernameHash) {
-        const results = await this.getContract().getPastEvents('EventStoreWallet', {
+        const storageContract = await this.getStorageContract();
+        const results = await storageContract.getPastEvents('EventStoreWallet', {
             filter: {
                 username: usernameHash,
             },
@@ -1302,20 +1959,6 @@ export default class contract {
         return info;
     }
 
-    async getAnyApplication(appId) {
-        appId = Number(appId);
-        if (!appId || isNaN(appId) || appId <= 0) {
-            throw new Error('Incorrect appId');
-        }
-
-        const info = await this.callMethod('getAnyApplication', appId);
-        if (appId !== Number(info.id)) {
-            throw new Error('App not found');
-        }
-
-        return info;
-    }
-
     async isInviteExists(inviteAddress) {
         const info = await this.callMethod('Invites', inviteAddress);
 
@@ -1327,7 +1970,8 @@ export default class contract {
     }
 
     async getInvites(usernameHash) {
-        return await this.getContract().getPastEvents('EventInviteCreated', {
+        const storageContract = await this.getStorageContract();
+        return await storageContract.getPastEvents('EventInviteCreated', {
             filter: {
                 creatorUsername: usernameHash,
             },
@@ -1336,7 +1980,8 @@ export default class contract {
     }
 
     async getApps(usernameHash) {
-        return await this.getContract().getPastEvents('EventAppCreated', {
+        const storageContract = this.getStorageContract();
+        return await storageContract.getPastEvents('EventAppCreated', {
             filter: {
                 creatorUsername: usernameHash,
             },
@@ -1356,7 +2001,8 @@ export default class contract {
     }
 
     async getSession(appId, username) {
-        const results = await this.getContract().getPastEvents('EventAppSession', {
+        const storageContract = await this.getStorageContract();
+        const results = await storageContract.getPastEvents('EventAppSession', {
             filter: {
                 appId,
                 username,
@@ -1368,7 +2014,8 @@ export default class contract {
     }
 
     async getSessions(username) {
-        return await this.getContract().getPastEvents('EventAppSession', {
+        const storageContract = await this.getStorageContract();
+        return storageContract.getPastEvents('EventAppSession', {
             filter: {
                 username,
             },

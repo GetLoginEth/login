@@ -77,7 +77,7 @@ export default class Signup extends Logger {
         this.log(LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE);
         const inviteWallet = await this.crypto.getWalletFromInvite(invite);
         //console.log(inviteWallet);
-        this.contract.setPrivateKey(inviteWallet.privateKey);
+        await this.contract.setPrivateKey(inviteWallet.privateKey);
 
         if (!await this.contract.isInviteExists(inviteWallet.address)) {
             throw new Error('Invite is not active or already used');
