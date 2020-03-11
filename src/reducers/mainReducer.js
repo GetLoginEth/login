@@ -236,6 +236,10 @@ export const reducer = (state, action) => {
             data = {inProcessEditing: false,};
             return merge('myApps', data);
 
+        case getStatus(ACTION_GET_LOGIC_CONTRACT, STATUS_SUCCESS):
+            data = {smartContractLogicAddress: action.data,};
+            return merge('app', data);
+
         case getStatus(ACTION_ALLOW_APP, STATUS_FAIL):
             data = {errorMessage: action.data.message};
             return merge('authorizeApp', data);
@@ -288,7 +292,8 @@ export const initialState = {
     app: {
         network: '',
         provider: '',
-        smartContractAddress: ''
+        smartContractAddress: '',
+        smartContractLogicAddress: '',
     },
     authorizeApp: {
         id: null,
@@ -374,3 +379,4 @@ export const ACTION_DELETE_MY_APP = 'delete_my_app';
 export const ACTION_RESTORE_MY_APP = 'restore_my_app';
 export const ACTION_GET_MY_SESSIONS = 'get_my_sessions';
 export const ACTION_GET_TREZOR_ADDRESSES = 'get_trezor_addresses';
+export const ACTION_GET_LOGIC_CONTRACT = 'get_logic_contract';

@@ -1,7 +1,7 @@
 import React, {Fragment, useEffect} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
-import {getMySessions, test} from "../reducers/actions";
+import {getLogicContractAddress, getMySessions, test} from "../reducers/actions";
 import Spinner from "../Elements/Spinner";
 
 function Settings() {
@@ -12,24 +12,22 @@ function Settings() {
 
     useEffect(_ => {
         getMySessions().then();
+        getLogicContractAddress().then();
     }, []);
 
     return <Fragment>
         <h1>Settings</h1>
         <p>Username: {user.username}</p>
         <p>Username hash: {user.usernameHash}</p>
+        <p>Account address: {user.wallet.address}</p>
         <p>Balance: {user.balance.original}</p>
-        <p>Smart contract address: {app.smartContractAddress}</p>
-        <p>Network: {app.network}</p>
-        <p>Provider: {config.websocketProviderUrl}</p>
-        <p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>
 
         {/*<button className="btn btn-primary" onClick={_ => {
             test();
         }}>Test
         </button>*/}
 
-        <h1>My apps sessions</h1>
+        <h1>My sessions</h1>
 
         {mySessions.inProcessReceiving && <Spinner/>}
 
@@ -39,6 +37,17 @@ function Settings() {
             App ID: {item.returnValues.appId} / Tx hash: <a target="_blank"
                                                             href={`https://rinkeby.etherscan.io/tx/${item.transactionHash}`}>{item.transactionHash}</a>
         </p>)}
+
+        <details>
+            <summary>App info</summary>
+
+            <p>Smart contract address (data): {app.smartContractAddress}</p>
+            <p>Smart contract address (logic): {app.smartContractLogicAddress}</p>
+            <p>Network: {app.network}</p>
+            <p>Provider: {config.websocketProviderUrl}</p>
+            <p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>
+        </details>
+
     </Fragment>;
 }
 

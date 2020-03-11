@@ -7,7 +7,7 @@ import {
     ACTION_GET_ALLOWED_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
-    ACTION_GET_INVITES,
+    ACTION_GET_INVITES, ACTION_GET_LOGIC_CONTRACT,
     ACTION_GET_MY_APPS,
     ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS, ACTION_GET_TREZOR_ADDRESSES,
     ACTION_INVITE,
@@ -426,6 +426,12 @@ export const getTrezorAddresses = async () => {
 
 export const setAddressIndex = (index) => {
     localStorage.setItem('address_index', index);
+};
+
+export const getLogicContractAddress = async () => {
+    return callMethod(ACTION_GET_LOGIC_CONTRACT, async () => {
+        return await contractInstance.getLogicContractAddress();
+    });
 };
 
 export const test = async () => {
