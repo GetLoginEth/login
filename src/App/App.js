@@ -41,7 +41,7 @@ function PrivateRoute({children, state, computedMatch, ...rest}) {
                     if (state.user.isLoggedIn()) {
                         return newChildren;
                     } else {
-                        if (!window.location.href.indexOf('/logout')) {
+                        if (window.location.href.indexOf('/logout') < 0) {
                             window.sessionStorage.setItem('redirect_url', window.location.href);
                         }
 
