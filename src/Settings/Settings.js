@@ -16,7 +16,7 @@ function Settings() {
     }, []);
 
     return <Fragment>
-        <h1>Settings</h1>
+        <h1 className="mt-3">Settings</h1>
         <p>Username: {user.username}</p>
         <p>Username hash: {user.usernameHash}</p>
         <p>Account address: {user.wallet.address}</p>
@@ -46,6 +46,32 @@ function Settings() {
             <p>Network: {app.network}</p>
             <p>Provider: {config.websocketProviderUrl}</p>
             <p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>
+        </details>
+
+        <details>
+            <summary>Change password</summary>
+
+            <form onSubmit={e => {
+                e.preventDefault();
+                alert('Not implemented');
+            }}>
+                <div className="form-group">
+                    <label>Old password</label>
+                    <input type="password" className="form-control"/>
+                </div>
+
+                <div className="form-group">
+                    <label>New password</label>
+                    <input type="password" className="form-control"/>
+                </div>
+
+                <div className="form-group">
+                    <label>Repeat new password</label>
+                    <input type="password" className="form-control"/>
+                </div>
+
+                <button type="submit" className="btn btn-primary">Save</button>
+            </form>
         </details>
 
     </Fragment>;
