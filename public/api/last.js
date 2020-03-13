@@ -15,6 +15,7 @@ class GetLoginApi {
          * @type {number}
          */
         this.sendMessageTimeout = 60;
+        this.onLogout = null;
     }
 
     isReady() {
@@ -95,7 +96,7 @@ class GetLoginApi {
         return `${this.authUrl}?client_id=${appId}&response_type=id_token&redirect_uri=${redirectUrl}`;
     }
 
-    async init(appId, baseApiUrl, redirectUrl) {
+    async init(appId, baseApiUrl, redirectUrl, accessToken = null) {
         [appId, baseApiUrl, redirectUrl].forEach(item => {
             if (!item) {
                 throw new Error('Incorrect params');
@@ -112,7 +113,7 @@ class GetLoginApi {
 
         this.appId = appId;
         this.baseUrl = baseApiUrl;
-        this.pluginUrl = `${baseApiUrl}xplugin?client_id=${appId}`;
+        this.pluginUrl = `${baseApiUrl}xplugin?client_id=${appId}&access_token=${accessToken}`;
         this.authUrl = `${baseApiUrl}xauthorize`;
         this.redirectUrl = redirectUrl;
         let isFrameLoaded = false;
@@ -167,6 +168,15 @@ class GetLoginApi {
         return this._sendMessage(this.accessToken, 'getUserInfo');
     }
 
+    async logout() {
+        await this._sendMessage(this.accessToken, 'logout');
+        if (this.onLogout) {
+            this.onLogout();
+        }
+
+        return true;
+    }
+
     async callContractMethod(address, method, params) {
         const abi = this.getClientAbi();
         if (!abi) {
@@ -194,6 +204,10 @@ class GetLoginApi {
             txParams,
             params
         });
+    }
+
+    async setOnLogout(func) {
+        this.onLogout = func;
     }
 }
 

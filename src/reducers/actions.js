@@ -226,6 +226,16 @@ export const logoutLocal = () => {
     });
 };
 
+export const appLogoutLocal = (appId) => {
+    return callMethod(ACTION_LOGOUT, async () => {
+        //localStorage.clear();
+        const data = getAllAccessTokens();
+        delete data[appId];
+        saveAllAccessTokens(data);
+        return true;
+    }, {appId});
+};
+
 export const setUserData = (username, wallet, type, address) => {
     if (username) {
         localStorage.setItem('username', username);

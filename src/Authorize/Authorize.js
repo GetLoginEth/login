@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import './Authorize.css';
 import {allowApp, getAllowedApp, getAppInfo, getLocalUsernameHash} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
@@ -6,6 +6,8 @@ import WaitButton from "../Elements/WaitButton";
 import Spinner from "../Elements/Spinner";
 
 function Authorize() {
+    //const [isShowForm, setIsShowForm] = useState(false);
+
     const setRedirectUrl = (url) => {
         //console.log(url);
         if (isValidRedirectURI(url)) {
@@ -66,11 +68,14 @@ function Authorize() {
 
     useEffect(_ => {
         const check = async () => {
+            //setIsShowForm(false);
             if (!authorizeApp.id) {
                 return;
             }
 
             const info = await getAllowedApp(clientId);
+            //console.log(info);
+
             if (!info) {
                 return;
             }
@@ -78,8 +83,9 @@ function Authorize() {
             const usernameHash = getLocalUsernameHash();
             if (Array.isArray(authorizeApp.allowedUrls) && authorizeApp.allowedUrls.includes(redirectUri.href)) {
                 successReturn(info.transactionHash, usernameHash);
+            } else {
+                //setIsShowForm(true);
             }
-
         };
         check().then();
     }, [clientId, authorizeApp, redirectUri]);

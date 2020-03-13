@@ -1,4 +1,4 @@
-import {getAllowedApp, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
+import {appLogoutLocal, getAllowedApp, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
 import sessionContract from "../Lib/get-login/sessionContract";
 
 export default class PluginReceiver {
@@ -15,7 +15,8 @@ export default class PluginReceiver {
         this.allowedMethods = [
             'getUserInfo',
             'callContractMethod',
-            'sendTransaction'
+            'sendTransaction',
+            'logout',
         ];
     }
 
@@ -91,9 +92,10 @@ export default class PluginReceiver {
         return contract.methods[method](params).call();
     }
 
-    init(clientId = null) {
+    init(clientId = null, accessToken = null) {
+        const params = new URLSearchParams(window.location.search);
+
         if (!clientId) {
-            const params = new URLSearchParams(window.location.search);
             clientId = params.get('client_id');
         }
 
@@ -101,21 +103,36 @@ export default class PluginReceiver {
             throw new Error('Incorrect client_id');
         }
 
+        if (!accessToken) {
+            accessToken = params.get('access_token');
+        }
+
+        if (!accessToken) {
+            throw new Error('Incorrect accessToken');
+        }
+
         window.addEventListener('message', this._listener);
         getAllowedApp(clientId)
             .then(info => {
                 console.log(info);
-                const is_client_allowed = !!info;
+                let is_client_allowed = false;
                 let result = {
                     type: 'get_login_init',
                     client_id: clientId,
-                    is_client_allowed
                 };
-                if (info) {
+
+                if (info && info.transactionHash === accessToken) {
                     result.access_token = info.transactionHash;
+                    is_client_allowed = true;
                 }
+
+                result.is_client_allowed = is_client_allowed;
 
                 window.parent.postMessage(result, '*');
             });
+    }
+
+    async logout() {
+        return await appLogoutLocal(this.appId)
     }
 }

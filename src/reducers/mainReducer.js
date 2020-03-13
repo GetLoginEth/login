@@ -360,6 +360,7 @@ export const getStatus = (action, status) => {
 export const ACTION_LOCAL_AUTH = 'local_auth';
 export const ACTION_SIGNIN = 'signin';
 export const ACTION_LOGOUT = 'logout';
+export const ACTION_LOGOUT_APP = 'logout_app';
 export const ACTION_SIGNUP = 'signup';
 export const ACTION_INVITE = 'invite';
 export const ACTION_SESSION = 'session';
