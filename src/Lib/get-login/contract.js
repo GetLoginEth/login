@@ -2006,6 +2006,7 @@ export default class contract {
     }
 
     async getSession(appId, username) {
+        // todo use getSessions ?
         const storageContract = await this.getStorageContract();
         const results = await storageContract.getPastEvents('EventAppSession', {
             filter: {

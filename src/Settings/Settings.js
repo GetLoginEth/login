@@ -1,14 +1,30 @@
-import React, {Fragment, useEffect} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
-import {getLogicContractAddress, getMySessions, test} from "../reducers/actions";
+import {getLocalType, getLogicContractAddress, getMySessions, test} from "../reducers/actions";
 import Spinner from "../Elements/Spinner";
+import {LOGIN_DATA} from "../Lib/get-login/signin";
+import Form from "react-bootstrap/Form";
+import WaitButton from "../Elements/WaitButton";
 
 function Settings() {
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [newPasswordRepeat, setNewPasswordRepeat] = useState('');
+    const [inProcess, setInProcess] = useState(false);
+
     const {state: {user}} = useStateValue();
     const {state: {app}} = useStateValue();
     const {state: {mySessions}} = useStateValue();
     const {state: {config}} = useStateValue();
+
+    const isPasswordsValid = () => {
+        if (oldPassword.length < 3 || newPassword.length < 3 || newPasswordRepeat.length < 3) {
+            return false;
+        }
+
+        return oldPassword !== newPassword && newPassword === newPasswordRepeat;
+    };
 
     useEffect(_ => {
         getMySessions().then();
@@ -48,31 +64,46 @@ function Settings() {
             <p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>
         </details>
 
-        <details>
+        {getLocalType() === LOGIN_DATA && <details>
             <summary>Change password</summary>
 
             <form onSubmit={e => {
                 e.preventDefault();
-                alert('Not implemented');
+                if (isPasswordsValid()) {
+                    setInProcess(true);
+                    //alert('Valid');
+                } else {
+                    //alert('Not valid');
+                }
             }}>
-                <div className="form-group">
-                    <label>Old password</label>
-                    <input type="password" className="form-control"/>
-                </div>
+                <fieldset disabled={inProcess}>
+                    <div className="form-group">
+                        <label>Old password</label>
+                        <input type="password" className="form-control" value={oldPassword} onChange={e => {
+                            setOldPassword(e.target.value);
+                        }}/>
+                    </div>
 
-                <div className="form-group">
-                    <label>New password</label>
-                    <input type="password" className="form-control"/>
-                </div>
+                    <div className="form-group">
+                        <label>New password</label>
+                        <input type="password" className="form-control" value={newPassword} onChange={e => {
+                            setNewPassword(e.target.value);
+                        }}/>
+                    </div>
 
-                <div className="form-group">
-                    <label>Repeat new password</label>
-                    <input type="password" className="form-control"/>
-                </div>
+                    <div className="form-group">
+                        <label>Repeat new password</label>
+                        <input type="password" className="form-control" value={newPasswordRepeat} onChange={e => {
+                            setNewPasswordRepeat(e.target.value);
+                        }}/>
+                    </div>
 
-                <button type="submit" className="btn btn-primary">Save</button>
+                    <WaitButton disabled={true}>
+                        <button type="submit" className="btn btn-primary" disabled={!isPasswordsValid()}>Save</button>
+                    </WaitButton>
+                </fieldset>
             </form>
-        </details>
+        </details>}
 
     </Fragment>;
 }

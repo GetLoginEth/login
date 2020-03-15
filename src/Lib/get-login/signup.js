@@ -68,7 +68,7 @@ export default class Signup extends Logger {
         const {web3} = this.crypto;
 
         username = filterUsername(username);
-        console.log(username);
+        //console.log(username);
 
         const usernameHash = getUsernameHash(web3, username);
         validateInvite(invite);
@@ -86,12 +86,12 @@ export default class Signup extends Logger {
         this.log(LOG_SIGN_UP_CHECK_FUNDS);
         const balanceEth = web3.utils.fromWei(await web3.eth.getBalance(inviteWallet.address));
         validateMoreThanZero(balanceEth);
-        console.log('Invite balance', balanceEth);
+        //console.log('Invite balance', balanceEth);
 
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
         const decryptedWallet = createWallet(web3);
         const encryptedWallet = encryptWallet(decryptedWallet, password);
-        //console.log(encryptedWallet);
+        console.log(encryptedWallet);
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
         const info = await this.contract.createUserFromInvite(
             usernameHash,
