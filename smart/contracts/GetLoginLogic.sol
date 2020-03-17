@@ -103,6 +103,7 @@ contract GetLoginLogic {
 
     /* Validators */
     function validateAppOwner(uint64 appId, address wallet) public view {
+        // todo check is user address is not session
         validateAddressRegistered(wallet);
         require(isAppOwner(appId, wallet), "You do not have access to this application");
     }
@@ -117,7 +118,11 @@ contract GetLoginLogic {
     }
 
     function validateAddressRegistered(address wallet) public view {
-        require(isAddressRegistered(wallet), "Address already used");
+        require(isAddressRegistered(wallet), "Address not registered");
+    }
+
+    function validateAddressAvailable(address wallet) public view {
+        require(isAddressRegistered(wallet) == false, "Address already registered");
     }
 
     function validateInviteAvailable(address wallet) public view {
@@ -146,14 +151,12 @@ contract GetLoginLogic {
     }
 
     function addApplicationUrl(uint64 appId, string memory url) public {
-        // todo check is user address is not session
         validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         _addApplicationUrl(appId, url);
     }
 
     function addApplicationContract(uint64 appId, address wallet) public {
-        // todo check is user address is not session
         validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         _addApplicationContract(appId, wallet);
@@ -212,11 +215,15 @@ contract GetLoginLogic {
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
-    function changePassword(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
-        // todo check is sender address - valid user
-        require(isAddressRegistered(walletAddress) == false, "Address already registered");
-        // todo get old wallet info and delete it
+    function changePassword(address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
+        validateAddressRegistered(msg.sender);
+        validateAddressAvailable(walletAddress);
+        bytes32 usernameHash = getUsernameByAddress(msg.sender);
         getLoginStorage.setUsersAddressUsername(walletAddress, GetLoginStorage.Username({username : usernameHash, isActive : true}));
+        // deactivate old user
+        getLoginStorage.setUsersAddressUsername(msg.sender, GetLoginStorage.Username({username : usernameHash, isActive : false}));
+        getLoginStorage.setUser(usernameHash, GetLoginStorage.UserInfo({username : usernameHash, isActive : false}));
+        // todo check _addSessionInit is needed
         _addSessionInit(usernameHash, walletAddress, sessionMain, 0);
         walletAddress.transfer(msg.value);
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
@@ -275,7 +282,6 @@ contract GetLoginLogic {
 
     function isAppOwner(uint64 appId, address checkAddress) public view returns (bool) {
         bytes32 currentUsernameHash = getUsernameByAddress(checkAddress);
-        //return getApplication(appIp).usernameHash == currentUsernameHash;
         return getLoginStorage.getApplication(appId).usernameHash == currentUsernameHash;
     }
 

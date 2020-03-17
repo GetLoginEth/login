@@ -91,7 +91,8 @@ export default class Signup extends Logger {
         this.log(LOG_SIGN_UP_CREATE_NEW_WALLET);
         const decryptedWallet = createWallet(web3);
         const encryptedWallet = encryptWallet(decryptedWallet, password);
-        console.log(encryptedWallet);
+        /*console.log(decryptedWallet);
+        console.log(encryptedWallet);*/
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
         const info = await this.contract.createUserFromInvite(
             usernameHash,

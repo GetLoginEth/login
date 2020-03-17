@@ -1947,7 +1947,7 @@ export default class contract {
             fromBlock: 0
         });
 
-        return results && results.length ? results[0] : null;
+        return results && results.length ? results[results.length - 1] : null;
     }
 
     async getApplication(appId) {
