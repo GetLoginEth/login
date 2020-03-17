@@ -1,11 +1,12 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
-import {getLocalType, getLogicContractAddress, getMySessions, test} from "../reducers/actions";
+import {changePassword, getLocalType, getLogicContractAddress, getMySessions, test} from "../reducers/actions";
 import Spinner from "../Elements/Spinner";
 import {LOGIN_DATA} from "../Lib/get-login/signin";
 import Form from "react-bootstrap/Form";
 import WaitButton from "../Elements/WaitButton";
+import {LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/changePassword";
 
 function Settings() {
     const [oldPassword, setOldPassword] = useState('');
@@ -64,13 +65,14 @@ function Settings() {
             <p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>
         </details>
 
-        {getLocalType() === LOGIN_DATA && <details>
+        {(getLocalType() === LOGIN_DATA || getLocalType() === LOGIN_USERNAME_PASSWORD) && <details>
             <summary>Change password</summary>
 
             <form onSubmit={e => {
                 e.preventDefault();
                 if (isPasswordsValid()) {
                     setInProcess(true);
+                    changePassword(user.username, oldPassword, newPassword).then();
                     //alert('Valid');
                 } else {
                     //alert('Not valid');
@@ -98,7 +100,7 @@ function Settings() {
                         }}/>
                     </div>
 
-                    <WaitButton disabled={true}>
+                    <WaitButton disabled={false}>
                         <button type="submit" className="btn btn-primary" disabled={!isPasswordsValid()}>Save</button>
                     </WaitButton>
                 </fieldset>

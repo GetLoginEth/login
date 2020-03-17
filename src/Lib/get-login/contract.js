@@ -2047,4 +2047,8 @@ export default class contract {
             throw new Error('User has no sessions');
         }
     }
+
+    async changePassword(balanceEther, walletAddress, ciphertext, iv, salt, mac) {
+        return this.sendTx('changePassword', {...this.sendTxDefault, balanceEther}, walletAddress, ciphertext, iv, salt, mac);
+    }
 }

@@ -371,6 +371,7 @@ export const ACTION_GET_ALLOWED_APP = 'allowed_app';
 export const ACTION_GET_INVITES = 'get_invites';
 export const ACTION_GET_INVITE = 'get_invite';
 export const ACTION_CREATE_INVITE = 'create_invite';
+export const ACTION_CHANGE_PASSWORD = 'change_password';
 export const ACTION_GET_BALANCE = 'get_balance';
 export const ACTION_GET_MY_APPS = 'get_my_apps';
 export const ACTION_GET_MY_APPS_INFO = 'get_my_apps_info';

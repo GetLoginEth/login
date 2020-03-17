@@ -1,6 +1,6 @@
 import {
     ACTION_ALLOW_APP,
-    ACTION_APP_INFO,
+    ACTION_APP_INFO, ACTION_CHANGE_PASSWORD,
     ACTION_CREATE_INVITE,
     ACTION_CREATE_MY_APP,
     ACTION_DELETE_MY_APP, ACTION_EDIT_MY_APP,
@@ -37,6 +37,7 @@ import contract, {defaultAddresses} from "../Lib/get-login/contract";
 import Invite from "../Lib/get-login/invite";
 import Session from "../Lib/get-login/session";
 import TrezorConnect from 'trezor-connect';
+import ChangePassword from "../Lib/get-login/changePassword";
 
 TrezorConnect.manifest({
     email: 'igor.shadurin@gmail.com',
@@ -54,7 +55,16 @@ let dispatch = null;
  * @type Signup
  */
 let signup = null;
+/**
+ *
+ * @type {Signin}
+ */
 let signin = null;
+/**
+ *
+ * @type {ChangePassword}
+ */
+let password = null;
 /**
  *
  * @type Session
@@ -89,10 +99,12 @@ export const init = (dispatch) => {
     signin = new Signin(cryptoInstance, contractInstance);
     invite = new Invite(cryptoInstance, contractInstance);
     session = new Session(cryptoInstance, contractInstance);
+    password = new ChangePassword(cryptoInstance, contractInstance);
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
     invite.setLogger(getLogger(ACTION_INVITE));
     session.setLogger(getLogger(ACTION_SESSION));
+    password.setLogger(getLogger(ACTION_CHANGE_PASSWORD));
     checkLocalCredentials().then();
     doDispatch(getStatus(ACTION_SELF_APP_INFO, STATUS_INIT), {
         network: currentNetwork,
@@ -393,6 +405,10 @@ export const getInvite = async (address) => {
 
 export const createInvite = async () => {
     return callMethod(ACTION_CREATE_INVITE, async () => await invite.createInvite());
+};
+
+export const changePassword = async (username, oldPassword, newPassword) => {
+    return callMethod(ACTION_CHANGE_PASSWORD, async () => await password.changePassword(username, oldPassword, newPassword));
 };
 
 /*export const getApps = async (usernameHash) => {
