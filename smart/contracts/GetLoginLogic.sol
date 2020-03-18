@@ -220,9 +220,9 @@ contract GetLoginLogic {
         validateAddressAvailable(walletAddress);
         bytes32 usernameHash = getUsernameByAddress(msg.sender);
         getLoginStorage.setUsersAddressUsername(walletAddress, GetLoginStorage.Username({username : usernameHash, isActive : true}));
-        // deactivate old user
+        // deactivate old wallet
         getLoginStorage.setUsersAddressUsername(msg.sender, GetLoginStorage.Username({username : usernameHash, isActive : false}));
-        getLoginStorage.setUser(usernameHash, GetLoginStorage.UserInfo({username : usernameHash, isActive : false}));
+        //getLoginStorage.setUser(usernameHash, GetLoginStorage.UserInfo({username : usernameHash, isActive : false}));
         // todo check _addSessionInit is needed
         _addSessionInit(usernameHash, walletAddress, sessionMain, 0);
         walletAddress.transfer(msg.value);

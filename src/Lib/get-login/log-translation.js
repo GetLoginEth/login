@@ -13,6 +13,7 @@ import {
     LOG_LOG_IN_RECEIVE_WALLET
 } from "./signin";
 import {SESSION_CREATE_WALLET, SESSION_REGISTER_WALLET} from "./session";
+import {LOG_CHANGE_PASSWORD, LOG_CREATE_NEW_WALLET} from "./changePassword";
 
 export const translation = {
     [LOG_SIGN_UP_CHECK_FUNDS]: 'Check funds',
@@ -27,6 +28,8 @@ export const translation = {
     [LOG_LOG_IN_CHECK_PASSWORD]: 'Check password',
     [SESSION_CREATE_WALLET]: 'Generating new session',
     [SESSION_REGISTER_WALLET]: 'Storing session in blockchain',
+    [LOG_CHANGE_PASSWORD]: 'Change password',
+    [LOG_CREATE_NEW_WALLET]: 'Create new wallet',
 };
 
 export const translate = (message) => {

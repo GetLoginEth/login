@@ -1,10 +1,9 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
-import {changePassword, getLocalType, getLogicContractAddress, getMySessions, test} from "../reducers/actions";
+import {changePassword, getLocalType, getLogicContractAddress, getMySessions} from "../reducers/actions";
 import Spinner from "../Elements/Spinner";
 import {LOGIN_DATA} from "../Lib/get-login/signin";
-import Form from "react-bootstrap/Form";
 import WaitButton from "../Elements/WaitButton";
 import {LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/changePassword";
 
@@ -12,12 +11,12 @@ function Settings() {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [newPasswordRepeat, setNewPasswordRepeat] = useState('');
-    const [inProcess, setInProcess] = useState(false);
 
     const {state: {user}} = useStateValue();
     const {state: {app}} = useStateValue();
     const {state: {mySessions}} = useStateValue();
     const {state: {config}} = useStateValue();
+    const {state: {password}} = useStateValue();
 
     const isPasswordsValid = () => {
         if (oldPassword.length < 3 || newPassword.length < 3 || newPasswordRepeat.length < 3) {
@@ -71,14 +70,17 @@ function Settings() {
             <form onSubmit={e => {
                 e.preventDefault();
                 if (isPasswordsValid()) {
-                    setInProcess(true);
-                    changePassword(user.username, oldPassword, newPassword).then();
-                    //alert('Valid');
-                } else {
-                    //alert('Not valid');
+                    changePassword(user.username, oldPassword, newPassword)
+                        .then(data => {
+                            if (data) {
+                                setOldPassword('');
+                                setNewPassword('');
+                                setNewPasswordRepeat('');
+                            }
+                        });
                 }
             }}>
-                <fieldset disabled={inProcess}>
+                <fieldset disabled={password.inProcess}>
                     <div className="form-group">
                         <label>Old password</label>
                         <input type="password" className="form-control" value={oldPassword} onChange={e => {
@@ -100,9 +102,12 @@ function Settings() {
                         }}/>
                     </div>
 
-                    <WaitButton disabled={false}>
+                    <WaitButton disabled={password.inProcess}>
                         <button type="submit" className="btn btn-primary" disabled={!isPasswordsValid()}>Save</button>
                     </WaitButton>
+
+                    <p>{password.status}</p>
+                    {password.errorMessage && <p className="text-danger">{password.errorMessage}</p>}
                 </fieldset>
             </form>
         </details>}
