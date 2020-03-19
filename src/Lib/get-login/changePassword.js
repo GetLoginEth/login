@@ -64,12 +64,14 @@ export default class ChangePassword extends Logger {
         const newDecryptedWallet = createWallet(web3);
         const newEncryptedWallet = encryptWallet(newDecryptedWallet, newPassword);
         this.log(LOG_CHANGE_PASSWORD);
-        return await this.contract.changePassword('all',
+        const txHash = await this.contract.changePassword('all',
             '0x' + newEncryptedWallet.address,
             newEncryptedWallet.crypto.ciphertext,
             newEncryptedWallet.crypto.cipherparams.iv,
             newEncryptedWallet.crypto.kdfparams.salt,
             newEncryptedWallet.crypto.mac);
+
+        return {txHash, wallet: newDecryptedWallet};
     }
 
     async changePassword(username, oldPassword, newPassword) {

@@ -19,7 +19,8 @@ import {
 } from "./utils";
 import Logger from "./logger";
 import {IInviteRegistration} from "./interfaces";
-import TrezorConnect from 'trezor-connect';
+/*import TrezorConnect from 'trezor-connect';*/
+import TrezorConnect from "../../Lib/get-login/crypto";
 
 import HdKey from "ethereumjs-wallet/hdkey";
 

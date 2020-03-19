@@ -36,19 +36,19 @@ import crypto from "../Lib/get-login/crypto";
 import contract, {defaultAddresses} from "../Lib/get-login/contract";
 import Invite from "../Lib/get-login/invite";
 import Session from "../Lib/get-login/session";
-import TrezorConnect from 'trezor-connect';
+/*import TrezorConnect from 'trezor-connect';*/
+import TrezorConnect from "../Lib/get-login/crypto";
 import ChangePassword from "../Lib/get-login/changePassword";
 
-TrezorConnect.manifest({
+/*TrezorConnect.manifest({
     email: 'igor.shadurin@gmail.com',
     appUrl: 'https//swarm-gateways.net/bzz:/getlogin.eth'
-});
+});*/
 
 const currentNetwork = 'rinkeby';
 const smartContractAddress = defaultAddresses[currentNetwork];
 let cryptoInstance = crypto.getInstance();
 let contractInstance = new contract(cryptoInstance.web3, currentNetwork, smartContractAddress);
-/*contractInstance.init().then();*/
 let dispatch = null;
 /**
  *
@@ -151,7 +151,7 @@ export const checkLocalCredentials = async () => {
 
         getWalletBalance(address).then();
         setInterval(_ => {
-            getWalletBalance(address).then();
+            getWalletBalance(getLocalAddress()).then();
         }, 30000);
         const redirectUrl = window.sessionStorage.getItem('redirect_url');
         if (redirectUrl) {
@@ -227,7 +227,6 @@ export const signUp = async (method, username, password = '', invite = '', optio
 
     await checkLocalCredentials();
 
-
     return result;
 };
 
@@ -248,6 +247,14 @@ export const appLogoutLocal = (appId) => {
     }, {appId});
 };
 
+/**
+ *
+ * @param username
+ * @param wallet
+ * @param type
+ * @param address - for Hard wallets
+ * @returns {boolean}
+ */
 export const setUserData = (username, wallet, type, address) => {
     if (username) {
         localStorage.setItem('username', username);
@@ -298,6 +305,10 @@ export const getLocalUsernameHash = () => {
 
 export const getLocalUsername = () => {
     return getUserData()['username'];
+};
+
+export const getLocalAddress = () => {
+    return getUserData().wallet.address;
 };
 
 export const getLocalType = () => {
@@ -408,7 +419,13 @@ export const createInvite = async () => {
 };
 
 export const changePassword = async (username, oldPassword, newPassword) => {
-    return callMethod(ACTION_CHANGE_PASSWORD, async () => await password.changePassword(username, oldPassword, newPassword));
+    return callMethod(ACTION_CHANGE_PASSWORD, async () => {
+        const data = await password.changePassword(username, oldPassword, newPassword);
+        setUserData(getLocalUsername(), data.wallet, LOGIN_DATA);
+        await callMethod(ACTION_LOCAL_AUTH, async () => getUserData());
+
+        return data;
+    });
 };
 
 /*export const getApps = async (usernameHash) => {

@@ -11,6 +11,7 @@ function Settings() {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [newPasswordRepeat, setNewPasswordRepeat] = useState('');
+    const [isPasswordChanged, setIsPasswordChanged] = useState(null);
 
     const {state: {user}} = useStateValue();
     const {state: {app}} = useStateValue();
@@ -67,18 +68,31 @@ function Settings() {
         {(getLocalType() === LOGIN_DATA || getLocalType() === LOGIN_USERNAME_PASSWORD) && <details>
             <summary>Change password</summary>
 
+            {password.errorMessage && <div className="alert alert-danger" role="alert">
+                {password.errorMessage}
+            </div>}
+
+            {isPasswordChanged === true && <div className="alert alert-success" role="alert">
+                Password changed
+            </div>}
+
             <form onSubmit={e => {
                 e.preventDefault();
-                if (isPasswordsValid()) {
-                    changePassword(user.username, oldPassword, newPassword)
-                        .then(data => {
-                            if (data) {
-                                setOldPassword('');
-                                setNewPassword('');
-                                setNewPasswordRepeat('');
-                            }
-                        });
+                setIsPasswordChanged(null);
+                if (!isPasswordsValid()) {
+                    return;
                 }
+
+                changePassword(user.username, oldPassword, newPassword)
+                    .then(data => {
+                        if (data) {
+                            console.log(data);
+                            setIsPasswordChanged(true);
+                            setOldPassword('');
+                            setNewPassword('');
+                            setNewPasswordRepeat('');
+                        }
+                    });
             }}>
                 <fieldset disabled={password.inProcess}>
                     <div className="form-group">
@@ -107,7 +121,6 @@ function Settings() {
                     </WaitButton>
 
                     <p>{password.status}</p>
-                    {password.errorMessage && <p className="text-danger">{password.errorMessage}</p>}
                 </fieldset>
             </form>
         </details>}
