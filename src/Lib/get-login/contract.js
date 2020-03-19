@@ -2071,7 +2071,6 @@ export default class contract {
     }
 
     async getSession(appId, username) {
-        // todo use getSessions ?
         const storageContract = await this.getStorageContract();
         const results = await storageContract.getPastEvents('EventAppSession', {
             filter: {
@@ -2081,7 +2080,7 @@ export default class contract {
             fromBlock: 0
         });
 
-        return results && results.length ? results[0] : null;
+        return results && results.length ? results[results.length - 1] : null;
     }
 
     async getSessions(username) {
@@ -2114,6 +2113,9 @@ export default class contract {
     }
 
     async changePassword(balanceEther, walletAddress, ciphertext, iv, salt, mac) {
-        return this.sendTx('changePassword', {...this.sendTxDefault, balanceEther}, walletAddress, ciphertext, iv, salt, mac);
+        return this.sendTx('changePassword', {
+            ...this.sendTxDefault,
+            balanceEther
+        }, walletAddress, ciphertext, iv, salt, mac);
     }
 }
