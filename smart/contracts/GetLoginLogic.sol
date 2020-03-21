@@ -7,6 +7,15 @@ contract GetLoginLogic {
     GetLoginStorage public getLoginStorage;
     address public owner;
 
+    struct SessionData
+    {
+        uint64 appId;
+        string iv;
+        string ephemPublicKey;
+        string ciphertext;
+        string mac;
+    }
+
     uint8 sessionMain = 1;
     uint8 sessionApp = 2;
 
@@ -215,7 +224,7 @@ contract GetLoginLogic {
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
-    function changePassword(address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
+    function changePassword(address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, SessionData[] memory sessions) public payable {
         validateAddressRegistered(msg.sender);
         validateAddressAvailable(walletAddress);
         bytes32 usernameHash = getUsernameByAddress(msg.sender);
@@ -227,6 +236,11 @@ contract GetLoginLogic {
         _addSessionInit(usernameHash, walletAddress, sessionMain, 0);
         walletAddress.transfer(msg.value);
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
+
+        for (uint i = 0; i < sessions.length; i++) {
+            SessionData memory session = sessions[i];
+            getLoginStorage.emitEventAppSession(session.appId, usernameHash, session.iv, session.ephemPublicKey, session.ciphertext, session.mac);
+        }
     }
 
     function createAppSession(uint64 appId, address payable wallet, string memory iv, string memory ephemPublicKey, string memory ciphertext, string memory mac) public payable {

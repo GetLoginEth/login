@@ -21,12 +21,12 @@ export const LOG_CHANGE_PASSWORD = 'log_change_password';
 export const LOGIN_USERNAME_PASSWORD = 'login_username_password';
 
 export default class ChangePassword extends Logger {
-    constructor(crypto, contract) {
+    constructor(crypto, contract, session) {
         super();
 
         /**
          *
-         * @type {crypto}
+         * @type {Crypto}
          */
         this.crypto = crypto;
 
@@ -35,6 +35,12 @@ export default class ChangePassword extends Logger {
          * @type {contract}
          */
         this.contract = contract;
+
+        /**
+         *
+         * @type {Session}
+         */
+        this.session = session;
     }
 
     async _changePassword(username, oldPassword, newPassword) {
@@ -63,13 +69,37 @@ export default class ChangePassword extends Logger {
         this.log(LOG_CREATE_NEW_WALLET);
         const newDecryptedWallet = createWallet(web3);
         const newEncryptedWallet = encryptWallet(newDecryptedWallet, newPassword);
+        const sessions = await this.contract.getActiveSessions(usernameHash);
+        const newSessions = [];
+        for (let item of sessions) {
+            try {
+                //console.log(item);
+                const decrypted = await this.session.decryptWithPrivateKey(this.crypto.getAccount().privateKey, item.returnValues);
+                //console.log(decrypted);
+                const publicKey = await this.session.getPublicKeyFromPrivateKey(newDecryptedWallet.privateKey);
+                //console.log(publicKey);
+                const encrypted = await this.session.encryptWithPublicKey(publicKey, decrypted);
+                //console.log(encrypted);
+                encrypted.appId = item.returnValues.appId;
+                // encrypted: iv, ephemPublicKey, ciphertext, mac
+                // item.returnValues
+                // appId, username, iv, ephemPublicKey, ciphertext, mac
+                newSessions.push(encrypted);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        // todo decode and encode sessions with new public key, send back to blockchain
+        // todo send all sessions in one tx with password changing?
         this.log(LOG_CHANGE_PASSWORD);
         const txHash = await this.contract.changePassword('all',
             '0x' + newEncryptedWallet.address,
             newEncryptedWallet.crypto.ciphertext,
             newEncryptedWallet.crypto.cipherparams.iv,
             newEncryptedWallet.crypto.kdfparams.salt,
-            newEncryptedWallet.crypto.mac);
+            newEncryptedWallet.crypto.mac,
+            newSessions);
 
         return {txHash, wallet: newDecryptedWallet};
     }

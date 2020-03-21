@@ -9,17 +9,6 @@ export const defaultLogicAbi = [
     {
         "inputs": [
             {
-                "internalType": "contract GetLoginStorage",
-                "name": "_getLoginStorage",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "uint64",
                 "name": "appId",
                 "type": "uint64"
@@ -79,11 +68,77 @@ export const defaultLogicAbi = [
                 "internalType": "string",
                 "name": "mac",
                 "type": "string"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "uint64",
+                        "name": "appId",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "iv",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ephemPublicKey",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ciphertext",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "mac",
+                        "type": "string"
+                    }
+                ],
+                "internalType": "struct GetLoginLogic.SessionData[]",
+                "name": "sessions",
+                "type": "tuple[]"
             }
         ],
         "name": "changePassword",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "internalType": "string[]",
+                "name": "allowedUrls",
+                "type": "string[]"
+            },
+            {
+                "internalType": "address[]",
+                "name": "allowedContracts",
+                "type": "address[]"
+            }
+        ],
+        "name": "createApplication",
+        "outputs": [
+            {
+                "internalType": "uint64",
+                "name": "",
+                "type": "uint64"
+            }
+        ],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -122,40 +177,6 @@ export const defaultLogicAbi = [
         "name": "createAppSession",
         "outputs": [],
         "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "title",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
-            },
-            {
-                "internalType": "string[]",
-                "name": "allowedUrls",
-                "type": "string[]"
-            },
-            {
-                "internalType": "address[]",
-                "name": "allowedContracts",
-                "type": "address[]"
-            }
-        ],
-        "name": "createApplication",
-        "outputs": [
-            {
-                "internalType": "uint64",
-                "name": "",
-                "type": "uint64"
-            }
-        ],
-        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -303,6 +324,63 @@ export const defaultLogicAbi = [
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "init",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            }
+        ],
+        "name": "restoreApplication",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "setOwner",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract GetLoginStorage",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "setStorageAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract GetLoginStorage",
+                "name": "_getLoginStorage",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
     },
     {
         "inputs": [
@@ -479,6 +557,25 @@ export const defaultLogicAbi = [
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "getUsernameByAddress",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "bytes32",
                 "name": "usernameHash",
                 "type": "bytes32"
@@ -515,32 +612,6 @@ export const defaultLogicAbi = [
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            }
-        ],
-        "name": "getUsernameByAddress",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "init",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -654,45 +725,6 @@ export const defaultLogicAbi = [
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            }
-        ],
-        "name": "restoreApplication",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_address",
-                "type": "address"
-            }
-        ],
-        "name": "setOwner",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "contract GetLoginStorage",
-                "name": "_address",
-                "type": "address"
-            }
-        ],
-        "name": "setStorageAddress",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -2083,14 +2115,24 @@ export default class contract {
         return results && results.length ? results[results.length - 1] : null;
     }
 
-    async getSessions(username) {
+    async getAllSessions(usernameHash) {
         const storageContract = await this.getStorageContract();
         return storageContract.getPastEvents('EventAppSession', {
             filter: {
-                username,
+                username: usernameHash,
             },
             fromBlock: 0
         });
+    }
+
+    async getActiveSessions(usernameHash) {
+        const sessions = await this.getAllSessions(usernameHash);
+        const result = {};
+        sessions.forEach(item => {
+            result[item.returnValues.appId] = item;
+        });
+
+        return Object.values(result);
     }
 
     async getUserSessions(usernameHash) {
@@ -2112,10 +2154,10 @@ export default class contract {
         }
     }
 
-    async changePassword(balanceEther, walletAddress, ciphertext, iv, salt, mac) {
+    async changePassword(balanceEther, walletAddress, ciphertext, iv, salt, mac, sessions = []) {
         return this.sendTx('changePassword', {
             ...this.sendTxDefault,
             balanceEther
-        }, walletAddress, ciphertext, iv, salt, mac);
+        }, walletAddress, ciphertext, iv, salt, mac, sessions);
     }
 }

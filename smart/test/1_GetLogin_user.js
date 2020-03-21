@@ -137,7 +137,7 @@ contract("GetLogin", async accounts => {
             const usernameHash = web3.utils.keccak256('test_invite');
             const account = demoAccounts.changePassword;
 
-            await getLoginLogic.changePassword(account.address, account.ciphertext, account.iv, account.salt, account.mac, {
+            await getLoginLogic.changePassword(account.address, account.ciphertext, account.iv, account.salt, account.mac, [], {
                 from: demoAccounts.createdWithInvite.address,
                 value: web3.utils.toWei(account.balance, "ether")
             });
