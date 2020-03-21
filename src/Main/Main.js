@@ -12,7 +12,7 @@ class Main extends Component {
     render() {
         const {state} = this.context;
 
-        return <div className="text-center">
+        return <div className="text-center Main">
             {/*<h1>Web3 Auth plugin</h1>*/}
             <div className="row">
                 <div className="col-lg-5 Main-call">

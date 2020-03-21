@@ -7,6 +7,15 @@ contract GetLoginLogic {
     GetLoginStorage public getLoginStorage;
     address public owner;
 
+    struct SessionData
+    {
+        uint64 appId;
+        string iv;
+        string ephemPublicKey;
+        string ciphertext;
+        string mac;
+    }
+
     uint8 sessionMain = 1;
     uint8 sessionApp = 2;
 
@@ -103,25 +112,31 @@ contract GetLoginLogic {
 
     /* Validators */
     function validateAppOwner(uint64 appId, address wallet) public view {
+        // todo check is user address is not session
         validateAddressRegistered(wallet);
-        require(isAppOwner(appId, wallet) == true, "You do not have access to this application");
+        require(isAppOwner(appId, wallet), "You do not have access to this application");
     }
 
     function validateAppExists(uint64 appId) public view {
         GetLoginStorage.Application memory app = getLoginStorage.getApplication(appId);
-        require(app.isActive == true, "App not found");
+        require(app.isActive, "App not found");
     }
 
     function validateInviteActive(address wallet) public view {
-        require(isActiveInvite(wallet) == true, "Invite not active");
+        require(isActiveInvite(wallet), "Invite not active");
     }
 
     function validateAddressRegistered(address wallet) public view {
-        require(isAddressRegistered(wallet) == true, "Address already used");
+        require(isAddressRegistered(wallet), "Address not registered");
+    }
+
+    function validateAddressAvailable(address wallet) public view {
+        require(isAddressRegistered(wallet) == false, "Address already registered");
     }
 
     function validateInviteAvailable(address wallet) public view {
-        require(isActiveInvite(wallet) == false, "This address already used for invite");
+        //require(isActiveInvite(wallet) == false, "This address already used for invite");
+        require(isInviteAddressUsed(wallet) == false, "This address already used for invite");
     }
     /* End validators */
 
@@ -145,14 +160,12 @@ contract GetLoginLogic {
     }
 
     function addApplicationUrl(uint64 appId, string memory url) public {
-        // todo check is user address is not session
         validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         _addApplicationUrl(appId, url);
     }
 
     function addApplicationContract(uint64 appId, address wallet) public {
-        // todo check is user address is not session
         validateAppExists(appId);
         validateAppOwner(appId, msg.sender);
         _addApplicationContract(appId, wallet);
@@ -211,6 +224,25 @@ contract GetLoginLogic {
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
+    function changePassword(address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, SessionData[] memory sessions) public payable {
+        validateAddressRegistered(msg.sender);
+        validateAddressAvailable(walletAddress);
+        bytes32 usernameHash = getUsernameByAddress(msg.sender);
+        getLoginStorage.setUsersAddressUsername(walletAddress, GetLoginStorage.Username({username : usernameHash, isActive : true}));
+        // deactivate old wallet
+        getLoginStorage.setUsersAddressUsername(msg.sender, GetLoginStorage.Username({username : usernameHash, isActive : false}));
+        //getLoginStorage.setUser(usernameHash, GetLoginStorage.UserInfo({username : usernameHash, isActive : false}));
+        // todo check _addSessionInit is needed
+        _addSessionInit(usernameHash, walletAddress, sessionMain, 0);
+        walletAddress.transfer(msg.value);
+        getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
+
+        for (uint i = 0; i < sessions.length; i++) {
+            SessionData memory session = sessions[i];
+            getLoginStorage.emitEventAppSession(session.appId, usernameHash, session.iv, session.ephemPublicKey, session.ciphertext, session.mac);
+        }
+    }
+
     function createAppSession(uint64 appId, address payable wallet, string memory iv, string memory ephemPublicKey, string memory ciphertext, string memory mac) public payable {
         validateAddressRegistered(msg.sender);
         validateAppExists(appId);
@@ -248,7 +280,7 @@ contract GetLoginLogic {
     }
 
     function isUsernameExists(bytes32 usernameHash) public view returns (bool) {
-        return getUserInfo(usernameHash).isActive == true;
+        return getUserInfo(usernameHash).isActive;
     }
 
     function isAddressRegistered(address wallet) public view returns (bool) {
@@ -264,13 +296,12 @@ contract GetLoginLogic {
 
     function isAppOwner(uint64 appId, address checkAddress) public view returns (bool) {
         bytes32 currentUsernameHash = getUsernameByAddress(checkAddress);
-        //return getApplication(appIp).usernameHash == currentUsernameHash;
         return getLoginStorage.getApplication(appId).usernameHash == currentUsernameHash;
     }
 
     function getUserByAddress(address wallet) public view returns (GetLoginStorage.UserInfo memory) {
         GetLoginStorage.Username memory currentUser = getLoginStorage.getUsersAddressUsername(wallet);
-        require(currentUser.isActive == true, "User with this address not found");
+        require(currentUser.isActive, "User with this address not found");
         return getLoginStorage.getUser(currentUser.username);
     }
 
@@ -280,7 +311,12 @@ contract GetLoginLogic {
 
     function isActiveInvite(address wallet) public view returns (bool) {
         GetLoginStorage.InviteInfo memory info = getLoginStorage.getInvite(wallet);
-        return info.isActive == true;
+        return info.isActive;
+    }
+
+    function isInviteAddressUsed(address wallet) public view returns (bool) {
+        GetLoginStorage.InviteInfo memory info = getLoginStorage.getInvite(wallet);
+        return info.creatorUsername != '';
     }
 
     function getInvite(address wallet) public view returns (GetLoginStorage.InviteInfo memory) {

@@ -61,6 +61,22 @@ export const reducer = (state, action) => {
             data = {log: [...state.signup.log, action.data], status: action.data, inProcess: true};
             return merge('signup', data);
 
+        case getStatus(ACTION_CHANGE_PASSWORD, STATUS_INIT):
+            data = {log: [], status: '', inProcess: false, errorMessage: ''};
+            return merge('password', data);
+        case getStatus(ACTION_CHANGE_PASSWORD, STATUS_START):
+            data = {log: [], status: '', inProcess: true, errorMessage: ''};
+            return merge('password', data);
+        case getStatus(ACTION_CHANGE_PASSWORD, STATUS_FAIL):
+            data = {inProcess: false, errorMessage: action.data.message};
+            return merge('password', data);
+        case getStatus(ACTION_CHANGE_PASSWORD, STATUS_COMPLETE):
+            data = {inProcess: false};
+            return merge('password', data);
+        case getStatus(ACTION_CHANGE_PASSWORD, STATUS_LOG):
+            data = {log: [...state.password.log, action.data], status: action.data, inProcess: true};
+            return merge('password', data);
+
         case getStatus(ACTION_CREATE_INVITE, STATUS_START):
             data = {inProcessCreation: true};
             return merge('invite', data);
@@ -341,6 +357,12 @@ export const initialState = {
         addresses: [],
         publicKey: null
     },
+    password: {
+        inProcess: false,
+        status: '',
+        errorMessage: '',
+        log: [],
+    },
     config: config
 };
 
@@ -371,6 +393,7 @@ export const ACTION_GET_ALLOWED_APP = 'allowed_app';
 export const ACTION_GET_INVITES = 'get_invites';
 export const ACTION_GET_INVITE = 'get_invite';
 export const ACTION_CREATE_INVITE = 'create_invite';
+export const ACTION_CHANGE_PASSWORD = 'change_password';
 export const ACTION_GET_BALANCE = 'get_balance';
 export const ACTION_GET_MY_APPS = 'get_my_apps';
 export const ACTION_GET_MY_APPS_INFO = 'get_my_apps_info';

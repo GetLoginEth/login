@@ -45,6 +45,71 @@ export const defaultLogicAbi = [
     {
         "inputs": [
             {
+                "internalType": "address payable",
+                "name": "walletAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "ciphertext",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "iv",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "salt",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "mac",
+                "type": "string"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "uint64",
+                        "name": "appId",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "iv",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ephemPublicKey",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ciphertext",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "mac",
+                        "type": "string"
+                    }
+                ],
+                "internalType": "struct GetLoginLogic.SessionData[]",
+                "name": "sessions",
+                "type": "tuple[]"
+            }
+        ],
+        "name": "changePassword",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "string",
                 "name": "title",
                 "type": "string"
@@ -614,6 +679,25 @@ export const defaultLogicAbi = [
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "isInviteAddressUsed",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "bytes32",
                 "name": "usernameHash",
                 "type": "bytes32"
@@ -640,6 +724,19 @@ export const defaultLogicAbi = [
                 "type": "address"
             }
         ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "validateAddressAvailable",
+        "outputs": [],
         "stateMutability": "view",
         "type": "function"
     },
@@ -1947,7 +2044,7 @@ export default class contract {
             fromBlock: 0
         });
 
-        return results && results.length ? results[0] : null;
+        return results && results.length ? results[results.length - 1] : null;
     }
 
     async getApplication(appId) {
@@ -2015,17 +2112,27 @@ export default class contract {
             fromBlock: 0
         });
 
-        return results && results.length ? results[0] : null;
+        return results && results.length ? results[results.length - 1] : null;
     }
 
-    async getSessions(username) {
+    async getAllSessions(usernameHash) {
         const storageContract = await this.getStorageContract();
         return storageContract.getPastEvents('EventAppSession', {
             filter: {
-                username,
+                username: usernameHash,
             },
             fromBlock: 0
         });
+    }
+
+    async getActiveSessions(usernameHash) {
+        const sessions = await this.getAllSessions(usernameHash);
+        const result = {};
+        sessions.forEach(item => {
+            result[item.returnValues.appId] = item;
+        });
+
+        return Object.values(result);
     }
 
     async getUserSessions(usernameHash) {
@@ -2045,5 +2152,12 @@ export default class contract {
         } else {
             throw new Error('User has no sessions');
         }
+    }
+
+    async changePassword(balanceEther, walletAddress, ciphertext, iv, salt, mac, sessions = []) {
+        return this.sendTx('changePassword', {
+            ...this.sendTxDefault,
+            balanceEther
+        }, walletAddress, ciphertext, iv, salt, mac, sessions);
     }
 }

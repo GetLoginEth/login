@@ -45,6 +45,13 @@ export const encryptWallet = (wallet, password) => {
     return wallet.encrypt(password);
 };
 
+/**
+ *
+ * @param web3
+ * @param walletV3Json
+ * @param password
+ * @returns {Promise<Account>}
+ */
 export const decryptWallet = async (web3, walletV3Json, password) => {
     await validateWallet(walletV3Json);
     validatePassword(password);
