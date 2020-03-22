@@ -6,6 +6,7 @@ import './GetLoginStorage.sol';
 contract GetLoginLogic {
     GetLoginStorage public getLoginStorage;
     address public owner;
+    string settingsInviteReset = "invite_reset";
 
     struct SessionData
     {
@@ -106,6 +107,13 @@ contract GetLoginLogic {
         bytes32 usernameHash = getUsernameByAddress(wallet);
         //UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
         getLoginStorage.pushUserSession(usernameHash, wallet, sessionType, appId);
+    }
+
+    function _setSettings(address wallet, string memory key, string memory value) private {
+        bytes32 usernameHash = getUsernameByAddress(wallet);
+        // todo inspect is correct way
+        bytes32 keyHash = keccak256(abi.encode(usernameHash, "_", key));
+        getLoginStorage.setSettings(keyHash, value);
     }
 
     /* End of private methods */
@@ -212,7 +220,7 @@ contract GetLoginLogic {
         getLoginStorage.emitEventInviteCreated(creatorUsername, inviteAddress);
     }
 
-    function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
+    function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, bool allowReset) public payable {
         validateInviteActive(msg.sender);
         require(isAddressRegistered(walletAddress) == false, "Address already registered");
         GetLoginStorage.InviteInfo memory invite = getLoginStorage.getInvite(msg.sender);
@@ -221,6 +229,7 @@ contract GetLoginLogic {
         invite.registeredUsername = usernameHash;
         getLoginStorage.setInvite(msg.sender, invite);
         walletAddress.transfer(msg.value);
+        settingsInviteReset(allowReset);
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
@@ -260,6 +269,10 @@ contract GetLoginLogic {
         validateAddressRegistered(msg.sender);
         _addSession(wallet, sessionApp, 0);
     }*/
+
+    function setInviteReset(string memory value) public {
+        _setSettings(msg.sender, settingsInviteReset, value);
+    }
 
     /* End of public methods */
 
@@ -325,6 +338,17 @@ contract GetLoginLogic {
 
     function getUserSessions(bytes32 usernameHash) public view returns (GetLoginStorage.UserSession[] memory) {
         return getLoginStorage.getUserSessions(usernameHash);
+    }
+
+    function getSettings(address wallet, string memory key) public view returns (string memory) {
+        bytes32 usernameHash = getUsernameByAddress(wallet);
+        // todo inspect is correct way / collisions possible
+        bytes32 keyHash = keccak256(abi.encode(usernameHash, "_", key));
+        return getLoginStorage.getSettings(keyHash);
+    }
+
+    function getInviteReset(address _address) public view returns (string memory) {
+        return getSettings(_address, settingsInviteReset);
     }
 
     /* End of view methods */

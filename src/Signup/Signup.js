@@ -12,6 +12,7 @@ import {LOGIN_TREZOR, validateInvite} from "../Lib/get-login/utils";
 import {ACTION_SIGNUP} from "../reducers/mainReducer";
 import WaitButton from "../Elements/WaitButton";
 import TrezorSelectWallet from "../Elements/TrezorSelectWallet";
+import Modal from "react-bootstrap/Modal";
 
 function Signup() {
     const {state: {signup}} = useStateValue();
@@ -29,7 +30,9 @@ function Signup() {
         dropDown.push({key: LOGIN_TREZOR, title: 'Trezor'});
     }
 
-    const [showModal, setShowModal] = useState(false);
+    const [showTrezorModal, setShowTrezorModal] = useState(false);
+    const [showSettingsModal, setShowSettingsModal] = useState(false);
+    const [allowResetPassword, setAllowResetPassword] = useState(true);
 
     //console.log(errors);
 
@@ -51,10 +54,11 @@ function Signup() {
 
         if (method === LOGIN_TREZOR) {
             // todo check username before interact with trezor
-            setShowModal(true);
+            setShowTrezorModal(true);
             getTrezorAddresses().then();
         } else {
-            await signUp(method, username, password, invite);
+            setShowSettingsModal(true);
+            //await signUp(method, username, password, invite);
         }
     };
 
@@ -91,14 +95,52 @@ function Signup() {
     return (
         <div className="row justify-content-center align-items-center">
             <TrezorSelectWallet
-                isShow={showModal}
+                isShow={showTrezorModal}
                 onClose={_ => {
-                    setShowModal(false);
+                    setShowTrezorModal(false);
                 }}
                 completeText="Sign up"
                 onComplete={(address, addressIndex) => {
                     signUp(LOGIN_TREZOR, username, null, null, {address, addressIndex}).then();
                 }}/>
+
+            <Modal id="signupSettings"
+                   backdrop={signup.inProcess ? '' : 'static'}
+                   show={showSettingsModal}
+                   onHide={_ => {
+                       setShowSettingsModal(false);
+                   }} animation={true}>
+                <Modal.Header closeButton={!signup.inProcess}>
+                    <Modal.Title>Sign up settings</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Please, check settings before sign up</p>
+
+                    <div className="form-group form-check">
+                        <input id="allowReset" type="checkbox" className="form-check-input"
+                               checked={allowResetPassword}
+                               onChange={e => setAllowResetPassword(e.target.checked)}/>
+                        <label className="form-check-label" htmlFor="allowReset">
+                            Allow password reset with this invite
+                            <br/>
+                            <small>Anyone who has your invite will be able to reset your password. You can change this
+                                setting at any time.</small>
+                        </label>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button disabled={signup.inProcess} variant="secondary" onClick={_ => {
+                        setShowSettingsModal(false);
+                    }}>
+                        Cancel
+                    </Button>
+                    <Button disabled={signup.inProcess} variant="primary" onClick={_ => {
+                        signUp(method, username, password, invite, {allowReset: allowResetPassword}).then();
+                    }}>
+                        Sign up
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
             <Form className="Signup col-md-4" onSubmit={onSubmit}>
                 <fieldset disabled={signup.inProcess}>

@@ -61,11 +61,12 @@ export default class Signup extends Logger {
      * @param username
      * @param password
      * @param invite
+     * @param allowReset
      * @param onTransactionMined
      * @returns {Promise<IInviteRegistration>}
      * @private
      */
-    async _signUpInvite(username, password, invite, onTransactionMined) {
+    async _signUpInvite(username, password, invite, allowReset, onTransactionMined) {
         const {web3} = this.crypto;
 
         username = filterUsername(username);
@@ -101,7 +102,8 @@ export default class Signup extends Logger {
             encryptedWallet.crypto.ciphertext,
             encryptedWallet.crypto.cipherparams.iv,
             encryptedWallet.crypto.kdfparams.salt,
-            encryptedWallet.crypto.mac);
+            encryptedWallet.crypto.mac,
+            allowReset);
         // todo check is needed this callback
         if (onTransactionMined) {
             onTransactionMined(info);
@@ -172,7 +174,7 @@ export default class Signup extends Logger {
 
         switch (method) {
             case SIGN_UP_INVITE:
-                result = await this._signUpInvite(username, password, invite, onTransactionMined);
+                result = await this._signUpInvite(username, password, invite, options.allowReset, onTransactionMined);
                 break;
             case LOGIN_WEB3:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);

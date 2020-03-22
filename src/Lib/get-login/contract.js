@@ -2027,12 +2027,11 @@ export default class contract {
         return this.sendTx('restoreApplication', this.sendTxDefault, id);
     }
 
-    async createUserFromInvite(usernameHash, walletAddress, ciphertext, iv, salt, mac) {
-        // todo check send tx only from invited address
+    async createUserFromInvite(usernameHash, walletAddress, ciphertext, iv, salt, mac, allowReset) {
         let params = {...this.sendTxDefault};
         params.balanceEther = 'all';
 
-        return this.sendTx('createUserFromInvite', params, usernameHash, walletAddress, ciphertext, iv, salt, mac);
+        return this.sendTx('createUserFromInvite', params, usernameHash, walletAddress, ciphertext, iv, salt, mac, allowReset.toString().toLowerCase());
     }
 
     async findWalletInLogs(usernameHash) {

@@ -35,6 +35,8 @@ contract("GetLogin", async accounts => {
             await testLogic.renameApp(1);
             app = await getLoginStorage.getApplication(1);
             assert.equal(app.title, "Renamed", "Incorrect title");
+
+            await getLoginStorage.setLogicAddress(getLoginLogic.address);
         });
 
     });

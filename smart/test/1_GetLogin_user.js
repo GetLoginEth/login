@@ -97,7 +97,7 @@ contract("GetLogin", async accounts => {
         it("Create user from invite", async () => {
             const usernameHash = web3.utils.keccak256('test_invite');
             const account = demoAccounts.createdWithInvite;
-            await getLoginLogic.createUserFromInvite(usernameHash, account.address, account.ciphertext, account.iv, account.salt, account.mac, {
+            await getLoginLogic.createUserFromInvite(usernameHash, account.address, account.ciphertext, account.iv, account.salt, account.mac, true, {
                 from: demoAccounts.invite.address,
                 value: web3.utils.toWei(account.balance, "ether")
             });
@@ -176,5 +176,14 @@ contract("GetLogin", async accounts => {
             // todo check address not available for registration and as invite
 
         });*/
+
+        it("Check settings set", async () => {
+            const testString = "we5htw56hw45h45h4 q345 24q5 hw4 hw4 5h q45h 45";
+            await getLoginLogic.setInviteReset(testString, {from: accounts[0]});
+            const data = await getLoginLogic.getSettings(accounts[0], "invite_reset");
+            assert.equal(data, testString, "Incorrect data");
+        });
+
+        // todo check reset by invite
     });
 });

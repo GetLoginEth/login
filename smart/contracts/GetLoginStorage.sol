@@ -71,6 +71,7 @@ contract GetLoginStorage {
     uint64 public applicationId = 1;
 
     mapping(bytes32 => UserInfo) public Users;
+    mapping(bytes32 => string) public UsersSettings;
     mapping(address => Username) public UsersAddressUsername;
     mapping(bytes32 => UserSession[]) public UserSessions;
     mapping(address => InviteInfo) public Invites;
@@ -102,6 +103,14 @@ contract GetLoginStorage {
 
     function setUser(bytes32 usernameHash, UserInfo memory info) onlyLogicAddress public {
         Users[usernameHash] = info;
+    }
+
+    function getSettings(bytes32 key) public view returns (string memory){
+        return UsersSettings[key];
+    }
+
+    function setSettings(bytes32 key, string memory value) onlyLogicAddress public {
+        UsersSettings[key] = value;
     }
 
     function getUsersAddressUsername(address _address) public view returns (Username memory){
