@@ -174,16 +174,28 @@ contract("GetLogin", async accounts => {
 
         /*it("Address is not available for registration and as invite", async () => {
             // todo check address not available for registration and as invite
-
         });*/
 
         it("Check settings set", async () => {
+            const usernameHash = web3.utils.keccak256('admin');
             const testString = "we5htw56hw45h45h4 q345 24q5 hw4 hw4 5h q45h 45";
             await getLoginLogic.setInviteReset(testString, {from: accounts[0]});
-            const data = await getLoginLogic.getSettings(accounts[0], "invite_reset");
+            const data = await getLoginLogic.getSettings(usernameHash, "invite_reset");
             assert.equal(data, testString, "Incorrect data");
         });
 
-        // todo check reset by invite
+        it("Reset with invite", async () => {
+            // todo reset with new wallet data
+            // todo check when settings off user can't reset password
+            const account = demoAccounts.changePassword;
+            await getLoginLogic.setInviteReset("false");
+            await getLoginLogic.resetPassword(account.address, account.ciphertext, account.iv, account.salt, account.mac, {
+                from: demoAccounts.invite.address
+            });
+            /*const inviteInfo = await getLoginLogic.getInvite(demoAccounts.invite.address);
+            assert.equal(inviteInfo.isActive, false, "Incorrect isActive");
+            assert.equal(inviteInfo.inviteAddress, demoAccounts.invite.address, "Incorrect inviteAddress");
+            assert.equal(inviteInfo.registeredUsername, usernameHash, "Incorrect registeredUsername");*/
+        });
     });
 });
