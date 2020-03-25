@@ -105,7 +105,7 @@ function Signup() {
                 }}/>
 
             <Modal id="signupSettings"
-                   backdrop={signup.inProcess ? '' : 'static'}
+                   //backdrop={signup.inProcess ? false : 'static'}
                    show={showSettingsModal}
                    onHide={_ => {
                        setShowSettingsModal(false);
@@ -136,6 +136,7 @@ function Signup() {
                     </Button>
                     <Button disabled={signup.inProcess} variant="primary" onClick={_ => {
                         signUp(method, username, password, invite, {allowReset: allowResetPassword}).then();
+                        setShowSettingsModal(false);
                     }}>
                         Sign up
                     </Button>
