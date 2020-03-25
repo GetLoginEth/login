@@ -151,8 +151,12 @@ export const checkLocalCredentials = async () => {
 
         getWalletBalance(address).then();
         setInterval(_ => {
-            getWalletBalance(getLocalAddress()).then();
-        }, 30000);
+            try {
+                getWalletBalance(getLocalAddress()).then();
+            } catch (e) {
+
+            }
+        }, 10000);
         const redirectUrl = window.sessionStorage.getItem('redirect_url');
         if (redirectUrl) {
             window.location.replace(redirectUrl);
