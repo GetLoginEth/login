@@ -7,7 +7,7 @@ const demoAccounts = {
     invite: {
         address: '0x957D6F9a75c89982c7ab6cb9D5425Bf050eFe7A2',
         privateKey: '0x266a5ee9cd3452d17f71664b21243b22e073250d2283f278b2ca50691dd3081e',
-        balance: '3'
+        balance: '4'
     },
     createdWithInvite: {
         address: "0xe2b28AF05777125db26CEBB8EDB4844889675938",
@@ -16,7 +16,7 @@ const demoAccounts = {
         iv: "8ff7f0b9a85dcd391596067fd518ed71",
         salt: "b1027ab58816c2ed83ff6248234e0aabf10a8f6f631e0cfc477c4d5311e57f70",
         mac: "4c4b94429e6920ac0e9677d4d10c744ab1f1f287247ae3546704f7ec6a8ddd61",
-        balance: '2'
+        balance: '3'
     },
     changePassword: {
         address: "0xbA29b40E0BC3F5166C265795AbA58BF5d7962c52",
@@ -25,6 +25,15 @@ const demoAccounts = {
         iv: "4ac2b96f257131ef74a9aeea45836e9d",
         salt: "4e54660f3062d56610dcf0871e8fd45356cc8da7ab14eb9f54eb9396fe83c869",
         mac: "ed110af146ef9f9ed8081ef4861e37dccefb2ce319f272176030ba48cd262e9d",
+        balance: '2'
+    },
+    resetPassword: {
+        address: "0x4152737c73239d579187FE3F0E6a9627E9b98B03",
+        privateKey: "0xc92305caebf147e929ea1f5e96ab56b8754b8b32a7cf78bbfff961a4b350d890",
+        ciphertext: "83a05c62c1db4fda30d1705e26a2fc5cf94151fded7854717f2e607144fff48a",
+        iv: "25f4c1915a249fdc7e39218ba66da4eb",
+        salt: "ced30ffc12299adfc4840edc8e115ca5c64ca3a94188f90f44a28c289d52a7df",
+        mac: "cc9605f348a03229f851ca4f8675833872d53751d862340f80e06923d9698096",
         balance: '1'
     }
 };
@@ -97,7 +106,7 @@ contract("GetLogin", async accounts => {
         it("Create user from invite", async () => {
             const usernameHash = web3.utils.keccak256('test_invite');
             const account = demoAccounts.createdWithInvite;
-            await getLoginLogic.createUserFromInvite(usernameHash, account.address, account.ciphertext, account.iv, account.salt, account.mac, true, {
+            await getLoginLogic.createUserFromInvite(usernameHash, account.address, account.ciphertext, account.iv, account.salt, account.mac, false, {
                 from: demoAccounts.invite.address,
                 value: web3.utils.toWei(account.balance, "ether")
             });
@@ -185,17 +194,16 @@ contract("GetLogin", async accounts => {
         });
 
         it("Reset with invite", async () => {
-            // todo reset with new wallet data
-            // todo check when settings off user can't reset password
-            const account = demoAccounts.changePassword;
-            await getLoginLogic.setInviteReset("false");
+            const account = demoAccounts.resetPassword;
+            await willFail(getLoginLogic.resetPassword(account.address, account.ciphertext, account.iv, account.salt, account.mac, {
+                from: demoAccounts.invite.address
+            }), "Settings not allow reset password");
+            await getLoginLogic.setInviteReset("true", {
+                from: demoAccounts.changePassword.address
+            });
             await getLoginLogic.resetPassword(account.address, account.ciphertext, account.iv, account.salt, account.mac, {
                 from: demoAccounts.invite.address
             });
-            /*const inviteInfo = await getLoginLogic.getInvite(demoAccounts.invite.address);
-            assert.equal(inviteInfo.isActive, false, "Incorrect isActive");
-            assert.equal(inviteInfo.inviteAddress, demoAccounts.invite.address, "Incorrect inviteAddress");
-            assert.equal(inviteInfo.registeredUsername, usernameHash, "Incorrect registeredUsername");*/
         });
     });
 });
