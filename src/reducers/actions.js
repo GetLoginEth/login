@@ -9,13 +9,13 @@ import {
     ACTION_GET_INVITE,
     ACTION_GET_INVITES, ACTION_GET_LOGIC_CONTRACT,
     ACTION_GET_MY_APPS,
-    ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS, ACTION_GET_TREZOR_ADDRESSES,
+    ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS, ACTION_GET_SETTINGS, ACTION_GET_TREZOR_ADDRESSES,
     ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
     ACTION_RESTORE_MY_APP,
     ACTION_SELF_APP_INFO,
-    ACTION_SESSION,
+    ACTION_SESSION, ACTION_SET_INVITE_RESET,
     ACTION_SIGNIN,
     ACTION_SIGNUP,
     getStatus,
@@ -478,6 +478,20 @@ export const setAddressIndex = (index) => {
 export const getLogicContractAddress = async () => {
     return callMethod(ACTION_GET_LOGIC_CONTRACT, async () => {
         return await contractInstance.getLogicContractAddress();
+    });
+};
+
+export const getAllSettings = async (usernameHash) => {
+    return callMethod(ACTION_GET_SETTINGS, async () => {
+        return await contractInstance.getAllSettings(usernameHash);
+    });
+};
+
+export const setInviteReset = async (allow) => {
+    return callMethod(ACTION_SET_INVITE_RESET, async () => {
+        await contractInstance.setInviteReset(allow);
+
+        return allow;
     });
 };
 

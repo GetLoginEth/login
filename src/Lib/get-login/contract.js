@@ -9,6 +9,17 @@ export const defaultLogicAbi = [
     {
         "inputs": [
             {
+                "internalType": "contract GetLoginStorage",
+                "name": "_getLoginStorage",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "uint64",
                 "name": "appId",
                 "type": "uint64"
@@ -110,40 +121,6 @@ export const defaultLogicAbi = [
     {
         "inputs": [
             {
-                "internalType": "string",
-                "name": "title",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
-            },
-            {
-                "internalType": "string[]",
-                "name": "allowedUrls",
-                "type": "string[]"
-            },
-            {
-                "internalType": "address[]",
-                "name": "allowedContracts",
-                "type": "address[]"
-            }
-        ],
-        "name": "createApplication",
-        "outputs": [
-            {
-                "internalType": "uint64",
-                "name": "",
-                "type": "uint64"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "uint64",
                 "name": "appId",
                 "type": "uint64"
@@ -177,6 +154,40 @@ export const defaultLogicAbi = [
         "name": "createAppSession",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
+            },
+            {
+                "internalType": "string[]",
+                "name": "allowedUrls",
+                "type": "string[]"
+            },
+            {
+                "internalType": "address[]",
+                "name": "allowedContracts",
+                "type": "address[]"
+            }
+        ],
+        "name": "createApplication",
+        "outputs": [
+            {
+                "internalType": "uint64",
+                "name": "",
+                "type": "uint64"
+            }
+        ],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -331,107 +342,30 @@ export const defaultLogicAbi = [
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "init",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
         "inputs": [
             {
-                "internalType": "address payable",
-                "name": "walletAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "ciphertext",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "iv",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "salt",
-                "type": "string"
-            },
-            {
-                "internalType": "string",
-                "name": "mac",
-                "type": "string"
+                "internalType": "bytes32",
+                "name": "usernameHash",
+                "type": "bytes32"
             }
         ],
-        "name": "resetPassword",
-        "outputs": [],
-        "stateMutability": "payable",
+        "name": "getAllSettings",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "string",
+                        "name": "inviteReset",
+                        "type": "string"
+                    }
+                ],
+                "internalType": "struct GetLoginLogic.SettingsData",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint64",
-                "name": "appId",
-                "type": "uint64"
-            }
-        ],
-        "name": "restoreApplication",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "string",
-                "name": "value",
-                "type": "string"
-            }
-        ],
-        "name": "setInviteReset",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_address",
-                "type": "address"
-            }
-        ],
-        "name": "setOwner",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "contract GetLoginStorage",
-                "name": "_address",
-                "type": "address"
-            }
-        ],
-        "name": "setStorageAddress",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "contract GetLoginStorage",
-                "name": "_getLoginStorage",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
     },
     {
         "inputs": [
@@ -651,25 +585,6 @@ export const defaultLogicAbi = [
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "wallet",
-                "type": "address"
-            }
-        ],
-        "name": "getUsernameByAddress",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "bytes32",
                 "name": "usernameHash",
                 "type": "bytes32"
@@ -706,6 +621,32 @@ export const defaultLogicAbi = [
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "wallet",
+                "type": "address"
+            }
+        ],
+        "name": "getUsernameByAddress",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "init",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -819,6 +760,91 @@ export const defaultLogicAbi = [
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address payable",
+                "name": "walletAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "ciphertext",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "iv",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "salt",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "mac",
+                "type": "string"
+            }
+        ],
+        "name": "resetPassword",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint64",
+                "name": "appId",
+                "type": "uint64"
+            }
+        ],
+        "name": "restoreApplication",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "value",
+                "type": "string"
+            }
+        ],
+        "name": "setInviteReset",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "setOwner",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "contract GetLoginStorage",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "setStorageAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -2181,7 +2207,7 @@ export default class contract {
         let params = {...this.sendTxDefault};
         params.balanceEther = 'all';
 
-        return this.sendTx('createUserFromInvite', params, usernameHash, walletAddress, ciphertext, iv, salt, mac, allowReset.toString().toLowerCase());
+        return this.sendTx('createUserFromInvite', params, usernameHash, walletAddress, ciphertext, iv, salt, mac, allowReset);
     }
 
     async findWalletInLogs(usernameHash) {
@@ -2308,5 +2334,17 @@ export default class contract {
             ...this.sendTxDefault,
             balanceEther
         }, walletAddress, ciphertext, iv, salt, mac, sessions);
+    }
+
+    async getAllSettings(usernameHash) {
+        return await this.callLogicMethod('getAllSettings', usernameHash);
+    }
+
+    async getInviteReset(usernameHash) {
+        return await this.callLogicMethod('getInviteReset', usernameHash);
+    }
+
+    async setInviteReset(allow) {
+        return await this.sendTx('setInviteReset', this.sendTxDefault, allow.toString());
     }
 }

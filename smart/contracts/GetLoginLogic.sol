@@ -17,6 +17,11 @@ contract GetLoginLogic {
         string mac;
     }
 
+    struct SettingsData
+    {
+        string inviteReset;
+    }
+
     uint8 sessionMain = 1;
     uint8 sessionApp = 2;
 
@@ -349,6 +354,10 @@ contract GetLoginLogic {
 
     function getUserSessions(bytes32 usernameHash) public view returns (GetLoginStorage.UserSession[] memory) {
         return getLoginStorage.getUserSessions(usernameHash);
+    }
+
+    function getAllSettings(bytes32 usernameHash) public view returns (SettingsData memory) {
+        return SettingsData({inviteReset : getInviteReset(usernameHash)});
     }
 
     function getSettings(bytes32 usernameHash, string memory key) public view returns (string memory) {

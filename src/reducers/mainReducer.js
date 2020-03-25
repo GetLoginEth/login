@@ -252,6 +252,25 @@ export const reducer = (state, action) => {
             data = {inProcessEditing: false,};
             return merge('myApps', data);
 
+        case getStatus(ACTION_SET_INVITE_RESET, STATUS_START):
+            data = {inProcess: true};
+            return merge('settings', data);
+        case getStatus(ACTION_SET_INVITE_RESET, STATUS_SUCCESS):
+            data = {inviteReset: action.data};
+            return merge('settings', data);
+        case getStatus(ACTION_SET_INVITE_RESET, STATUS_COMPLETE):
+            data = {inProcess: false};
+            return merge('settings', data);
+
+        case getStatus(ACTION_GET_SETTINGS, STATUS_START):
+            data = {inProcess: true};
+            return merge('settings', data);
+        case getStatus(ACTION_GET_SETTINGS, STATUS_SUCCESS):
+            return merge('settings', action.data);
+        case getStatus(ACTION_GET_SETTINGS, STATUS_COMPLETE):
+            data = {inProcess: false};
+            return merge('settings', data);
+
         case getStatus(ACTION_GET_LOGIC_CONTRACT, STATUS_SUCCESS):
             data = {smartContractLogicAddress: action.data,};
             return merge('app', data);
@@ -290,6 +309,10 @@ export const initialState = {
             address: '',
             privateKey: '',
         }
+    },
+    settings: {
+        inProcess: false,
+        inviteReset: null
     },
     signup: {
         inProcess: false,
@@ -404,3 +427,5 @@ export const ACTION_RESTORE_MY_APP = 'restore_my_app';
 export const ACTION_GET_MY_SESSIONS = 'get_my_sessions';
 export const ACTION_GET_TREZOR_ADDRESSES = 'get_trezor_addresses';
 export const ACTION_GET_LOGIC_CONTRACT = 'get_logic_contract';
+export const ACTION_GET_SETTINGS = 'get_settings';
+export const ACTION_SET_INVITE_RESET = 'set_invite_reset';

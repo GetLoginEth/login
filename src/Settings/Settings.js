@@ -1,7 +1,13 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
-import {changePassword, getLocalType, getLogicContractAddress, getMySessions} from "../reducers/actions";
+import {
+    changePassword,
+    getAllSettings,
+    getLocalType, getLocalUsernameHash,
+    getLogicContractAddress,
+    getMySessions, setInviteReset
+} from "../reducers/actions";
 import Spinner from "../Elements/Spinner";
 import {LOGIN_DATA} from "../Lib/get-login/signin";
 import WaitButton from "../Elements/WaitButton";
@@ -18,6 +24,7 @@ function Settings() {
     const {state: {mySessions}} = useStateValue();
     const {state: {config}} = useStateValue();
     const {state: {password}} = useStateValue();
+    const {state: {settings}} = useStateValue();
 
     const isPasswordsValid = () => {
         if (oldPassword.length < 3 || newPassword.length < 3 || newPasswordRepeat.length < 3) {
@@ -30,6 +37,7 @@ function Settings() {
     useEffect(_ => {
         getMySessions().then();
         getLogicContractAddress().then();
+        getAllSettings(getLocalUsernameHash()).then();
     }, []);
 
     return <Fragment>
@@ -38,6 +46,21 @@ function Settings() {
         <p>Username hash: {user.usernameHash}</p>
         <p>Account address: {user.wallet.address}</p>
         <p>Balance: {user.balance.original}</p>
+
+        <fieldset disabled={settings.inProcess}>
+            <div className="form-group form-check">
+                <input id="allowReset" type="checkbox" className="form-check-input"
+                       checked={settings.inviteReset === "true"}
+                       onChange={e => {
+                           setInviteReset(e.target.checked).then();
+                       }}/>
+                <label className="form-check-label" htmlFor="allowReset">
+                    Allow password reset
+                    <br/>
+                    <small>Anyone who has your invite will be able to reset your password</small>
+                </label>
+            </div>
+        </fieldset>
 
         {/*<button className="btn btn-primary" onClick={_ => {
             test();
