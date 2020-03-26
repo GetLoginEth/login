@@ -52,7 +52,9 @@ function Settings() {
                 <input id="allowReset" type="checkbox" className="form-check-input"
                        checked={settings.inviteReset === "true"}
                        onChange={e => {
-                           setInviteReset(e.target.checked).then();
+                           if (window.confirm('This action send transaction to network. Confirm?')) {
+                               setInviteReset(e.target.checked).then();
+                           }
                        }}/>
                 <label className="form-check-label" htmlFor="allowReset">
                     Allow password reset
