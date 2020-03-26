@@ -429,3 +429,4 @@ export const ACTION_GET_TREZOR_ADDRESSES = 'get_trezor_addresses';
 export const ACTION_GET_LOGIC_CONTRACT = 'get_logic_contract';
 export const ACTION_GET_SETTINGS = 'get_settings';
 export const ACTION_SET_INVITE_RESET = 'set_invite_reset';
+export const ACTION_GET_INVITE_INFO = 'get_invite_info';

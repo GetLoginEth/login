@@ -10,7 +10,7 @@ import {
     ACTION_GET_INVITES, ACTION_GET_LOGIC_CONTRACT,
     ACTION_GET_MY_APPS,
     ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS, ACTION_GET_SETTINGS, ACTION_GET_TREZOR_ADDRESSES,
-    ACTION_INVITE,
+    ACTION_INVITE, ACTION_GET_INVITE_INFO,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
     ACTION_RESTORE_MY_APP,
@@ -492,6 +492,12 @@ export const setInviteReset = async (allow) => {
         await contractInstance.setInviteReset(allow);
 
         return allow;
+    });
+};
+
+export const getInviteInfo = async (invitePrivateKey) => {
+    return callMethod(ACTION_GET_INVITE_INFO, async () => {
+        return await invite.getInviteInfo(invitePrivateKey);
     });
 };
 

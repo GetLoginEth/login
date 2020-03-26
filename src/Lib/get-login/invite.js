@@ -22,6 +22,15 @@ export default class Invite extends Logger {
         this.contract = contract;
     }
 
+    async getInviteInfo(invitePrivateKey) {
+        const {web3} = this.crypto;
+        const account = web3.eth.accounts.privateKeyToAccount(invitePrivateKey);
+        //console.log(account);
+        const inviteInfo = await this.contract.getInvite(account.address);
+        //console.log(inviteInfo);
+        return inviteInfo;
+    }
+
     /**
      *
      * @param sendBalance

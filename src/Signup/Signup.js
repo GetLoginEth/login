@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './Signup.css';
 import Button from "react-bootstrap/Button";
-import {getTrezorAddresses, initPage, signUp} from "../reducers/actions";
+import {getTrezorAddresses, initPage, getInviteInfo, signUp} from "../reducers/actions";
 import Form from "react-bootstrap/Form";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -45,6 +45,9 @@ function Signup() {
         } else {
             setInvite(invite);
             setMethod(SIGN_UP_INVITE);
+            if (isCorrectInvite(invite)) {
+                getInviteInfo(invite).then();
+            }
         }
         //setMethod(SIGN_UP_INVITE);
     }, []);
@@ -105,7 +108,7 @@ function Signup() {
                 }}/>
 
             <Modal id="signupSettings"
-                   //backdrop={signup.inProcess ? false : 'static'}
+                //backdrop={signup.inProcess ? false : 'static'}
                    show={showSettingsModal}
                    onHide={_ => {
                        setShowSettingsModal(false);
