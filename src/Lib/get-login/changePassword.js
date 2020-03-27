@@ -113,4 +113,22 @@ export default class ChangePassword extends Logger {
 
         return result;
     }
+
+    async resetPasswordByInvite(invite, username, newPassword) {
+        const {web3} = this.crypto;
+
+        // todo check invite, get wallet info, check balance, check is balance available
+        // todo send tx from invite account
+        const newDecryptedWallet = createWallet(web3);
+        const newEncryptedWallet = encryptWallet(newDecryptedWallet, newPassword);
+        this.log(LOG_CHANGE_PASSWORD);
+        const txHash = await this.contract.resetPassword('all',
+            '0x' + newEncryptedWallet.address,
+            newEncryptedWallet.crypto.ciphertext,
+            newEncryptedWallet.crypto.cipherparams.iv,
+            newEncryptedWallet.crypto.kdfparams.salt,
+            newEncryptedWallet.crypto.mac);
+
+        return {txHash, wallet: newDecryptedWallet};
+    }
 }

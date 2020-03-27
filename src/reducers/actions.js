@@ -25,7 +25,7 @@ import {
     STATUS_LOG,
     STATUS_MINED,
     STATUS_START,
-    STATUS_SUCCESS
+    STATUS_SUCCESS, ACTION_RESET_PASSWORD
 } from "./mainReducer";
 import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD, LOGIN_WEB3_PROVIDER} from "../Lib/get-login/signin";
@@ -498,6 +498,12 @@ export const setInviteReset = async (allow) => {
 export const getInviteInfo = async (invitePrivateKey) => {
     return callMethod(ACTION_GET_INVITE_INFO, async () => {
         return await invite.getInviteInfo(invitePrivateKey);
+    });
+};
+
+export const resetPassword = async (invite, username, newPassword) => {
+    return callMethod(ACTION_RESET_PASSWORD, async () => {
+        return await password.resetPasswordByInvite(invite, username, newPassword);
     });
 };
 

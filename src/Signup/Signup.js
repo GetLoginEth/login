@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './Signup.css';
 import Button from "react-bootstrap/Button";
-import {getTrezorAddresses, initPage, getInviteInfo, signUp} from "../reducers/actions";
+import {getTrezorAddresses, initPage, getInviteInfo, signUp, resetPassword} from "../reducers/actions";
 import Form from "react-bootstrap/Form";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -16,9 +16,10 @@ import Modal from "react-bootstrap/Modal";
 
 function Signup() {
     const {state: {signup}} = useStateValue();
+    const {state: {invite}} = useStateValue();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [invite, setInvite] = useState('');
+    const [inviteData, setInviteData] = useState('');
     const [method, setMethod] = useState('');
     const {state: {config}} = useStateValue();
 
@@ -32,6 +33,7 @@ function Signup() {
 
     const [showTrezorModal, setShowTrezorModal] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
+    const [showRecoverModal, setShowRecoverModal] = useState(false);
     const [allowResetPassword, setAllowResetPassword] = useState(true);
 
     //console.log(errors);
@@ -43,7 +45,7 @@ function Signup() {
         if (config.isTrezorEnabled && !isCorrectInvite(invite)) {
             setMethod(LOGIN_TREZOR);
         } else {
-            setInvite(invite);
+            setInviteData(invite);
             setMethod(SIGN_UP_INVITE);
             if (isCorrectInvite(invite)) {
                 getInviteInfo(invite).then();
@@ -80,7 +82,7 @@ function Signup() {
             return username.length < 3;
         } else {
             // todo copy username password validation from sign in
-            return username.length < 3 || password.length < 3 || (invite.length > 0 && !isCorrectInvite(invite)) || signup.inProcess || (method === SIGN_UP_INVITE && !invite);
+            return username.length < 3 || password.length < 3 || (inviteData.length > 0 && !isCorrectInvite(inviteData)) || signup.inProcess || (method === SIGN_UP_INVITE && !inviteData);
         }
     };
     const onDropDownChange = (item) => {
@@ -108,7 +110,6 @@ function Signup() {
                 }}/>
 
             <Modal id="signupSettings"
-                //backdrop={signup.inProcess ? false : 'static'}
                    show={showSettingsModal}
                    onHide={_ => {
                        setShowSettingsModal(false);
@@ -138,10 +139,37 @@ function Signup() {
                         Cancel
                     </Button>
                     <Button disabled={signup.inProcess} variant="primary" onClick={_ => {
-                        signUp(method, username, password, invite, {allowReset: allowResetPassword}).then();
+                        signUp(method, username, password, inviteData, {allowReset: allowResetPassword}).then();
                         setShowSettingsModal(false);
                     }}>
                         Sign up
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal id="recoveryModal"
+                   show={showRecoverModal}
+                   onHide={_ => {
+                       setShowRecoverModal(false);
+                   }} animation={true}>
+                <Modal.Header closeButton={!signup.inProcess}>
+                    <Modal.Title>Recover account</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Here, some info about recovery</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button disabled={signup.inProcess} variant="secondary" onClick={_ => {
+                        setShowRecoverModal(false);
+                    }}>
+                        Cancel
+                    </Button>
+                    <Button disabled={signup.inProcess} variant="primary" onClick={_ => {
+                        resetPassword(inviteData).then();
+                        //signUp(method, username, password, inviteData, {allowReset: allowResetPassword}).then();
+                        setShowRecoverModal(false);
+                    }}>
+                        Recover
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -176,8 +204,8 @@ function Signup() {
                         <Form.Control type="text"
                                       name="invite"
                                       placeholder="Invite"
-                                      onChange={e => setInvite(e.target.value)}
-                                      value={invite}
+                                      onChange={e => setInviteData(e.target.value)}
+                                      value={inviteData}
                         />
                     </Form.Group>
 
@@ -199,6 +227,15 @@ function Signup() {
                                 onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
                         </Dropdown.Menu>}
                     </Dropdown>
+
+                    <button
+                        type="button"
+                        disabled={!(invite.info.isActive === false && invite.info.registeredUsername !== '"0x0000000000000000000000000000000000000000000000000000000000000000"')}
+                        className="btn btn-link"
+                        onClick={_ => {
+                            setShowRecoverModal(true);
+                        }}>Recover account
+                    </button>
 
                     {signup.log.length > 0 && <details className="mt-2">
                         <summary>{signup.status}</summary>

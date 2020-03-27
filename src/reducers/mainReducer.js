@@ -262,6 +262,13 @@ export const reducer = (state, action) => {
             data = {inProcess: false};
             return merge('settings', data);
 
+        case getStatus(ACTION_GET_INVITE_INFO, STATUS_START):
+            data = {info: {}};
+            return merge('invite', data);
+        case getStatus(ACTION_GET_INVITE_INFO, STATUS_SUCCESS):
+            data = {info: action.data};
+            return merge('invite', data);
+
         case getStatus(ACTION_GET_SETTINGS, STATUS_START):
             data = {inProcess: true};
             return merge('settings', data);
@@ -354,7 +361,8 @@ export const initialState = {
         invites: [],
         inviteInfo: {},
         errorMessage: '',
-        createdInvites: []
+        createdInvites: [],
+        info: {}
     },
     myApps: {
         inProcessCreation: false,
@@ -430,3 +438,4 @@ export const ACTION_GET_LOGIC_CONTRACT = 'get_logic_contract';
 export const ACTION_GET_SETTINGS = 'get_settings';
 export const ACTION_SET_INVITE_RESET = 'set_invite_reset';
 export const ACTION_GET_INVITE_INFO = 'get_invite_info';
+export const ACTION_RESET_PASSWORD = 'reset_password';

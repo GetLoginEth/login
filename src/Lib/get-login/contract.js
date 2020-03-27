@@ -2336,6 +2336,13 @@ export default class contract {
         }, walletAddress, ciphertext, iv, salt, mac, sessions);
     }
 
+    async resetPassword(balanceEther, walletAddress, ciphertext, iv, salt, mac) {
+        return this.sendTx('resetPassword', {
+            ...this.sendTxDefault,
+            balanceEther
+        }, walletAddress, ciphertext, iv, salt, mac);
+    }
+
     async getAllSettings(usernameHash) {
         return await this.callLogicMethod('getAllSettings', usernameHash);
     }
