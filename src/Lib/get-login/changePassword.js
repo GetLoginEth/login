@@ -21,7 +21,7 @@ export const LOG_CHANGE_PASSWORD = 'log_change_password';
 export const LOGIN_USERNAME_PASSWORD = 'login_username_password';
 
 export default class ChangePassword extends Logger {
-    constructor(crypto, contract, session) {
+    constructor(crypto, contract, session, invite) {
         super();
 
         /**
@@ -41,6 +41,12 @@ export default class ChangePassword extends Logger {
          * @type {Session}
          */
         this.session = session;
+
+        /**
+         *
+         * @type {Invite}
+         */
+        this.invite = invite;
     }
 
     async _changePassword(username, oldPassword, newPassword) {
@@ -117,11 +123,19 @@ export default class ChangePassword extends Logger {
     async resetPasswordByInvite(invite, username, newPassword) {
         const {web3} = this.crypto;
 
+        const account = await this.crypto.getAccountFromInvite(invite);
+        const inviteInfo = await this.invite.getInviteInfo(invite);
+        if (!inviteInfo.isPossibleToRecover) {
+            throw new Error('Forbidden to recover');
+        }
+
+        const balance = await web3.eth.getBalance(account.address);
         // todo check invite, get wallet info, check balance, check is balance available
         // todo send tx from invite account
         const newDecryptedWallet = createWallet(web3);
         const newEncryptedWallet = encryptWallet(newDecryptedWallet, newPassword);
         this.log(LOG_CHANGE_PASSWORD);
+        await this.contract.setPrivateKey(invite);
         const txHash = await this.contract.resetPassword('all',
             '0x' + newEncryptedWallet.address,
             newEncryptedWallet.crypto.ciphertext,

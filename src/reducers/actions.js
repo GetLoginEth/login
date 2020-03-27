@@ -99,7 +99,7 @@ export const init = (dispatch) => {
     signin = new Signin(cryptoInstance, contractInstance);
     invite = new Invite(cryptoInstance, contractInstance);
     session = new Session(cryptoInstance, contractInstance);
-    password = new ChangePassword(cryptoInstance, contractInstance, session);
+    password = new ChangePassword(cryptoInstance, contractInstance, session, invite);
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
     invite.setLogger(getLogger(ACTION_INVITE));

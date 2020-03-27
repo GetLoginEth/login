@@ -77,7 +77,7 @@ export default class Signup extends Logger {
         validateUsername(username);
 
         this.log(LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE);
-        const inviteWallet = await this.crypto.getWalletFromInvite(invite);
+        const inviteWallet = await this.crypto.getAccountFromInvite(invite);
         //console.log(inviteWallet);
         await this.contract.setPrivateKey(inviteWallet.privateKey);
 

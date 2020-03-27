@@ -48,7 +48,7 @@ export default class crypto {
         return crypto.instance;
     }
 
-    async getWalletFromInvite(invite) {
+    async getAccountFromInvite(invite) {
         if (invite.indexOf('0x') === -1) {
             invite = '0x' + invite;
         }

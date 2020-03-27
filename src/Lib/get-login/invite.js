@@ -23,14 +23,15 @@ export default class Invite extends Logger {
     }
 
     async getInviteInfo(invitePrivateKey) {
-        if (!invitePrivateKey.startsWith('0x')) {
-            invitePrivateKey = '0x' + invitePrivateKey;
+        const account = await this.crypto.getAccountFromInvite(invitePrivateKey);
+        const data = await this.contract.getInvite(account.address);
+        const isInviteReset = await this.contract.getInviteReset(data.registeredUsername);
+        data.isPossibleToRecover = false;
+        if (isInviteReset) {
+            data.isPossibleToRecover = !data.isActive && data.registeredUsername !== '0x0000000000000000000000000000000000000000000000000000000000000000';
         }
 
-        const {web3} = this.crypto;
-        const account = web3.eth.accounts.privateKeyToAccount(invitePrivateKey);
-        //console.log(account);
-        return await this.contract.getInvite(account.address);
+        return data;
     }
 
     /**

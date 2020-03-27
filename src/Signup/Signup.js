@@ -230,7 +230,7 @@ function Signup() {
 
                     <button
                         type="button"
-                        disabled={!(invite.info.isActive === false && invite.info.registeredUsername !== '"0x0000000000000000000000000000000000000000000000000000000000000000"')}
+                        disabled={!invite.info.isPossibleToRecover}
                         className="btn btn-link"
                         onClick={_ => {
                             setShowRecoverModal(true);
