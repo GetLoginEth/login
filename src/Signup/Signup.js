@@ -157,14 +157,17 @@ function Signup() {
                 </Modal.Header>
                 <Modal.Body>
                     <p>Here, some info about recovery</p>
+                    <p>Invite balance: {invite.info.balanceEth} ETH</p>
+                    <p>To recover your account you must have at least N eth.</p>
+                    <p>Send at least N eth to your address: {invite.info.inviteAddress}</p>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button disabled={signup.inProcess} variant="secondary" onClick={_ => {
+                    <Button variant="secondary" onClick={_ => {
                         setShowRecoverModal(false);
                     }}>
                         Cancel
                     </Button>
-                    <Button disabled={signup.inProcess} variant="primary" onClick={_ => {
+                    <Button disabled={!invite.info.isPossibleToRecover} variant="primary" onClick={_ => {
                         resetPassword(inviteData).then();
                         //signUp(method, username, password, inviteData, {allowReset: allowResetPassword}).then();
                         setShowRecoverModal(false);
