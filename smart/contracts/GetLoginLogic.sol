@@ -54,7 +54,7 @@ contract GetLoginLogic {
             _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
             _addApplicationUrl(newAppId, 'https://localhost:3001/');
             _addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
-            _addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
+            //_addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
         }
     }
 
