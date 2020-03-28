@@ -53,8 +53,8 @@ contract GetLoginLogic {
             uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app', allowedUrls, allowedContracts);
             _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
             _addApplicationUrl(newAppId, 'https://localhost:3001/');
-            _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
-            _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
+            _addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
+            _addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
         }
     }
 
