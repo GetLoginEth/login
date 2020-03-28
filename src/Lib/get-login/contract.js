@@ -958,7 +958,6 @@ export default class contract {
         this.sendTxDefault = {
             balanceEther: '0',
             isForceSend: false,
-            isNormalizeSendEther: false,
             resolveMethod: 'transactionHash',
             // when validated and sent (fast)
             onTransactionHash: _ => {
@@ -2037,7 +2036,7 @@ export default class contract {
         return storageContract.methods[methodName](...params).call();
     }
 
-    async sendTx(methodName, settings = null, ...params) {
+    async prepareTx(methodName, settings = null, ...params) {
         const logicContractAddress = await this.getLogicContractAddress();
         const accountAddress = this.externalAddress ? this.externalAddress : this.account.address;
         if (settings) {
@@ -2053,7 +2052,6 @@ export default class contract {
         if (settings.balanceEther === 'all') {
             settings.balanceEther = await this.web3.eth.getBalance(accountAddress);
             settings.balanceEther = this.web3.utils.fromWei(settings.balanceEther);
-            settings.isNormalizeSendEther = true;
         }
 
         const logicContract = await this.getLogicContract();
@@ -2069,8 +2067,14 @@ export default class contract {
             data
         };
         const gasPrice = await this.web3.eth.getGasPrice();
+        result.gasPrice = gasPrice;
         console.log('gasPrice', gasPrice);
-        const gasPriceBN = this.web3.utils.toBN(gasPrice);
+
+        return result;
+    }
+
+    async calculateEstimateGas(result, settings) {
+        const gasPriceBN = this.web3.utils.toBN(result.gasPrice);
         let estimateGas;
         if (settings.isForceSend) {
             try {
@@ -2084,7 +2088,7 @@ export default class contract {
 
         // additional gas +20%
         //estimateGas = Math.round(estimateGas + estimateGas * 0.2);
-        estimateGas = Math.round(estimateGas + estimateGas);
+        //estimateGas = Math.round(estimateGas + estimateGas);
         console.log('estimateGas', estimateGas);
         /**
          *
@@ -2092,7 +2096,7 @@ export default class contract {
          */
         const estimateGasBN = this.web3.utils.toBN(estimateGas);
         const totalGasBN = gasPriceBN.mul(estimateGasBN);
-        if (settings.isNormalizeSendEther) {
+        if (settings.balanceEther === 'all') {
             /**
              * @type {BN}
              */
@@ -2104,9 +2108,14 @@ export default class contract {
             result.value = resultValue;
         }
 
+        // or you can use just "gas". Differences?
         result.gasLimit = estimateGas;
-        result.gasPrice = gasPrice;
-        result.nonce = await this.web3.eth.getTransactionCount(accountAddress);
+
+        return result;
+    }
+
+    async signAndSendTx(result, settings) {
+        result.nonce = await this.web3.eth.getTransactionCount(result.from);
         /**
          *
          * @type {SignedTransaction}
@@ -2177,6 +2186,13 @@ export default class contract {
                     }
                 });
         }));
+    }
+
+    async sendTx(methodName, settings = null, ...params) {
+        let result = await this.prepareTx(methodName, settings, ...params);
+        await this.calculateEstimateGas(result, settings);
+
+        return this.signAndSendTx(result, settings);
     }
 
     async getUserInfo(usernameHash) {
@@ -2355,3 +2371,4 @@ export default class contract {
         return await this.sendTx('setInviteReset', this.sendTxDefault, allow.toString());
     }
 }
+
