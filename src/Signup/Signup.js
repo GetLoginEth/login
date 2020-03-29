@@ -153,13 +153,21 @@ function Signup() {
                        setShowRecoverModal(false);
                    }} animation={true}>
                 <Modal.Header closeButton={!signup.inProcess}>
-                    <Modal.Title>Recover account</Modal.Title>
+                    <Modal.Title>Recovery account information</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>Here, some info about recovery</p>
-                    <p>Invite balance: {invite.info.balanceEth} ETH</p>
-                    <p>To recover your account you must have at least N eth.</p>
-                    <p>Send at least N eth to your address: {invite.info.inviteAddress}</p>
+                    <p>Invite actual balance: {invite.info.balanceEth} ETH</p>
+                    <p>Invite address: {invite.info.inviteAddress}</p>
+
+                    {invite.info.balanceEth >= invite.info.recoveryPriceEth && <>
+                        <p className="text-success">You can recover your account</p>
+                    </>}
+
+                    {invite.info.balanceEth < invite.info.recoveryPriceEth &&
+                    <>
+                        <p className="text-danger">Not enough balance to recover</p>
+                        <p>To recover your account you must have at least {invite.info.recoveryPriceEth} ETH.</p>
+                    </>}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={_ => {
@@ -167,7 +175,9 @@ function Signup() {
                     }}>
                         Cancel
                     </Button>
-                    <Button disabled={!invite.info.isPossibleToRecover} variant="primary" onClick={_ => {
+                    <Button
+                        disabled={!(invite.info.isPossibleToRecover && invite.info.balanceEth >= invite.info.recoveryPriceEth)}
+                        variant="primary" onClick={_ => {
                         resetPassword(inviteData).then();
                         //signUp(method, username, password, inviteData, {allowReset: allowResetPassword}).then();
                         setShowRecoverModal(false);

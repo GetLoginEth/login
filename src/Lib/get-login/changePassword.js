@@ -120,6 +120,24 @@ export default class ChangePassword extends Logger {
         return result;
     }
 
+    async getEstimatePriceResetPassword(invite) {
+        const {web3} = this.crypto;
+
+        const newDecryptedWallet = createWallet(web3);
+        const newEncryptedWallet = encryptWallet(newDecryptedWallet, 'hello');
+        await this.contract.setPrivateKey(invite);
+        let data = await this.contract.prepareTx('resetPassword',
+            {...this.contract.sendTxDefault, balanceEther: 'all'},
+            '0x' + newEncryptedWallet.address,
+            newEncryptedWallet.crypto.ciphertext,
+            newEncryptedWallet.crypto.cipherparams.iv,
+            newEncryptedWallet.crypto.kdfparams.salt,
+            newEncryptedWallet.crypto.mac);
+        const r = await this.contract.calculateEstimateGas(data);
+
+        return web3.utils.fromWei(r);
+    }
+
     async resetPasswordByInvite(invite, username, newPassword) {
         const {web3} = this.crypto;
 

@@ -2073,7 +2073,7 @@ export default class contract {
         return result;
     }
 
-    async calculateEstimateGas(result, settings) {
+    async calculateEstimateGas(result, settings = {}) {
         const gasPriceBN = this.web3.utils.toBN(result.gasPrice);
         let estimateGas;
         if (settings.isForceSend) {
@@ -2111,7 +2111,8 @@ export default class contract {
         // or you can use just "gas". Differences?
         result.gasLimit = estimateGas;
 
-        return result;
+        //return result;
+        return this.web3.utils.toBN(result.gasPrice).mul(estimateGasBN);
     }
 
     async signAndSendTx(result, settings) {

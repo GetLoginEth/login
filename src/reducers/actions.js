@@ -497,7 +497,7 @@ export const setInviteReset = async (allow) => {
 
 export const getInviteInfo = async (invitePrivateKey) => {
     return callMethod(ACTION_GET_INVITE_INFO, async () => {
-        return await invite.getInviteInfo(invitePrivateKey);
+        return await invite.getInviteInfo(invitePrivateKey, password);
     });
 };
 
