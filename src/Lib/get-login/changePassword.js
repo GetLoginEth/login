@@ -141,10 +141,25 @@ export default class ChangePassword extends Logger {
     async resetPasswordByInvite(invite, username, newPassword) {
         const {web3} = this.crypto;
 
+        this.log(LOG_LOG_IN_CHECK_PASSWORD);
+        await validatePassword(newPassword);
+        this.log(LOG_LOG_IN_CHECK_USERNAME);
+        username = filterUsername(username);
+        await validateUsername(username);
+        if (!await isUsernameRegistered(this.contract, username)) {
+            throw new LoginError(CODE_USERNAME_NOT_FOUND);
+        }
+
+        const usernameHash = getUsernameHash(web3, username);
+
         const account = await this.crypto.getAccountFromInvite(invite);
         const inviteInfo = await this.invite.getInviteInfo(invite);
         if (!inviteInfo.isPossibleToRecover) {
             throw new Error('Forbidden to recover');
+        }
+
+        if (inviteInfo.registeredUsername.toLowerCase() !== usernameHash.toLowerCase()) {
+            throw new Error('Incorrect username for this invite');
         }
 
         const balance = await web3.eth.getBalance(account.address);

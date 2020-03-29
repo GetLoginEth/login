@@ -252,6 +252,18 @@ export const reducer = (state, action) => {
             data = {inProcessEditing: false,};
             return merge('myApps', data);
 
+        case getStatus(ACTION_RESET_PASSWORD, STATUS_START):
+            data = {inProcess: true, errorMessage: ''};
+            return merge('resetPasswordData', data);
+        case getStatus(ACTION_RESET_PASSWORD, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('resetPasswordData', data);
+        /*case getStatus(ACTION_RESET_PASSWORD, STATUS_SUCCESS):
+            return state;*/
+        case getStatus(ACTION_RESET_PASSWORD, STATUS_COMPLETE):
+            data = {inProcess: false,};
+            return merge('resetPasswordData', data);
+
         case getStatus(ACTION_SET_INVITE_RESET, STATUS_START):
             data = {inProcess: true};
             return merge('settings', data);
@@ -316,6 +328,10 @@ export const initialState = {
             address: '',
             privateKey: '',
         }
+    },
+    resetPasswordData: {
+        inProcess: false,
+        errorMessage: ''
     },
     settings: {
         inProcess: false,

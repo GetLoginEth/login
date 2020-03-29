@@ -17,6 +17,7 @@ import Modal from "react-bootstrap/Modal";
 function Signup() {
     const {state: {signup}} = useStateValue();
     const {state: {invite}} = useStateValue();
+    const {state: {resetPasswordData}} = useStateValue();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [inviteData, setInviteData] = useState('');
@@ -82,7 +83,7 @@ function Signup() {
             return username.length < 3;
         } else {
             // todo copy username password validation from sign in
-            return username.length < 3 || password.length < 3 || (inviteData.length > 0 && !isCorrectInvite(inviteData)) || signup.inProcess || (method === SIGN_UP_INVITE && !inviteData);
+            return username.length < 3 || password.length < 3 || (inviteData.length > 0 && !isCorrectInvite(inviteData)) || signup.inProcess || resetPasswordData.inProcess || (method === SIGN_UP_INVITE && !inviteData);
         }
     };
     const onDropDownChange = (item) => {
@@ -152,7 +153,7 @@ function Signup() {
                    onHide={_ => {
                        setShowRecoverModal(false);
                    }} animation={true}>
-                <Modal.Header closeButton={!signup.inProcess}>
+                <Modal.Header closeButton={true}>
                     <Modal.Title>Recovery account information</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -160,7 +161,30 @@ function Signup() {
                     <p>Invite address: {invite.info.inviteAddress}</p>
 
                     {invite.info.balanceEth >= invite.info.recoveryPriceEth && <>
-                        <p className="text-success">You can recover your account</p>
+                        <p className="text-success">You can recover account</p>
+                        <fieldset disabled={resetPasswordData.inProcess}>
+                            {resetPasswordData.errorMessage && <div className="alert alert-danger" role="alert">
+                                {resetPasswordData.errorMessage}
+                            </div>}
+
+                            <Form.Group controlId="recoveryEmail">
+                                <Form.Control type="text"
+                                              name="username"
+                                              placeholder="Username"
+                                              onChange={e => setUsername(e.target.value)}
+                                              value={username}
+                                />
+                            </Form.Group>
+
+                            <Form.Group controlId="recoveryPassword">
+                                <Form.Control type="password"
+                                              name="password"
+                                              placeholder="New Password"
+                                              onChange={e => setPassword(e.target.value)}
+                                              value={password}
+                                />
+                            </Form.Group>
+                        </fieldset>
                     </>}
 
                     {invite.info.balanceEth < invite.info.recoveryPriceEth &&
@@ -176,11 +200,10 @@ function Signup() {
                         Cancel
                     </Button>
                     <Button
-                        disabled={!(invite.info.isPossibleToRecover && invite.info.balanceEth >= invite.info.recoveryPriceEth)}
+                        disabled={!(invite.info.isPossibleToRecover && invite.info.balanceEth >= invite.info.recoveryPriceEth) || isDisabled()}
                         variant="primary" onClick={_ => {
-                        resetPassword(inviteData).then();
-                        //signUp(method, username, password, inviteData, {allowReset: allowResetPassword}).then();
-                        setShowRecoverModal(false);
+                        resetPassword(inviteData, username, password).then();
+                        //setShowRecoverModal(false);
                     }}>
                         Recover
                     </Button>
