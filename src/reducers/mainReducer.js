@@ -275,10 +275,13 @@ export const reducer = (state, action) => {
             return merge('settings', data);
 
         case getStatus(ACTION_GET_INVITE_INFO, STATUS_START):
-            data = {info: {}};
+            data = {info: {inProcess: true, errorMessage: ''}};
             return merge('invite', data);
         case getStatus(ACTION_GET_INVITE_INFO, STATUS_SUCCESS):
             data = {info: action.data};
+            return merge('invite', data);
+        case getStatus(ACTION_GET_INVITE_INFO, STATUS_COMPLETE):
+            data = {info: {...state.invite.info, inProcess: false}};
             return merge('invite', data);
 
         case getStatus(ACTION_GET_SETTINGS, STATUS_START):

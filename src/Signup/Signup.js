@@ -156,58 +156,63 @@ function Signup() {
                 <Modal.Header closeButton={true}>
                     <Modal.Title>Recovery account information</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    <p>Invite actual balance: {invite.info.balanceEth} ETH</p>
-                    <p>Invite address: {invite.info.inviteAddress}</p>
+                <Form onSubmit={_ => {
+                    resetPassword(inviteData, username, password).then();
+                }}>
+                    <Modal.Body>
+                        <p>Invite actual balance: {invite.info.balanceEth} ETH</p>
+                        <p>Invite address: {invite.info.inviteAddress}</p>
 
-                    {invite.info.balanceEth >= invite.info.recoveryPriceEth && <>
-                        <p className="text-success">You can recover account</p>
-                        <fieldset disabled={resetPasswordData.inProcess}>
-                            {resetPasswordData.errorMessage && <div className="alert alert-danger" role="alert">
-                                {resetPasswordData.errorMessage}
-                            </div>}
+                        {invite.info.balanceEth >= invite.info.recoveryPriceEth && <>
+                            <p className="text-success">You can recover account</p>
+                            <fieldset disabled={resetPasswordData.inProcess}>
+                                {resetPasswordData.errorMessage && <div className="alert alert-danger" role="alert">
+                                    {resetPasswordData.errorMessage}
+                                </div>}
 
-                            <Form.Group controlId="recoveryEmail">
-                                <Form.Control type="text"
-                                              name="username"
-                                              placeholder="Username"
-                                              onChange={e => setUsername(e.target.value)}
-                                              value={username}
-                                />
-                            </Form.Group>
+                                <Form.Group controlId="recoveryEmail">
+                                    <Form.Control type="text"
+                                                  name="username"
+                                                  placeholder="Username"
+                                                  onChange={e => setUsername(e.target.value)}
+                                                  value={username}
+                                    />
+                                </Form.Group>
 
-                            <Form.Group controlId="recoveryPassword">
-                                <Form.Control type="password"
-                                              name="password"
-                                              placeholder="New Password"
-                                              onChange={e => setPassword(e.target.value)}
-                                              value={password}
-                                />
-                            </Form.Group>
-                        </fieldset>
-                    </>}
+                                <Form.Group controlId="recoveryPassword">
+                                    <Form.Control type="password"
+                                                  name="password"
+                                                  placeholder="New Password"
+                                                  onChange={e => setPassword(e.target.value)}
+                                                  value={password}
+                                    />
+                                </Form.Group>
+                            </fieldset>
+                        </>}
 
-                    {invite.info.balanceEth < invite.info.recoveryPriceEth &&
-                    <>
-                        <p className="text-danger">Not enough balance to recover</p>
-                        <p>To recover your account you must have at least {invite.info.recoveryPriceEth} ETH.</p>
-                    </>}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={_ => {
-                        setShowRecoverModal(false);
-                    }}>
-                        Cancel
-                    </Button>
-                    <Button
-                        disabled={!(invite.info.isPossibleToRecover && invite.info.balanceEth >= invite.info.recoveryPriceEth) || isDisabled()}
-                        variant="primary" onClick={_ => {
-                        resetPassword(inviteData, username, password).then();
-                        //setShowRecoverModal(false);
-                    }}>
-                        Recover
-                    </Button>
-                </Modal.Footer>
+                        {invite.info.balanceEth < invite.info.recoveryPriceEth &&
+                        <>
+                            <p className="text-danger">Not enough balance to recover</p>
+                            <p>To recover your account you must have at least {invite.info.recoveryPriceEth} ETH.</p>
+                        </>}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={_ => {
+                            setShowRecoverModal(false);
+                        }}>
+                            Cancel
+                        </Button>
+
+                        <WaitButton disabled={resetPasswordData.inProcess}>
+                            <Button
+                                type="submit"
+                                disabled={!(invite.info.isPossibleToRecover && invite.info.balanceEth >= invite.info.recoveryPriceEth) || isDisabled()}
+                                variant="primary">
+                                Recover
+                            </Button>
+                        </WaitButton>
+                    </Modal.Footer>
+                </Form>
             </Modal>
 
             <Form className="Signup col-md-4" onSubmit={onSubmit}>
@@ -251,7 +256,9 @@ function Signup() {
                                     type="submit"
                                     className={dropDown.length > 1 ? "col-md-10" : "col-md-12"}
                                     disabled={isDisabled()}
-                            >Sign up with {getDropDownTitle(method)}</Button>
+                            >
+                                Sign up with {getDropDownTitle(method)}
+                            </Button>
                         </WaitButton>
 
                         {dropDown.length > 1 && <Dropdown.Toggle className="" split variant="primary"
@@ -264,14 +271,17 @@ function Signup() {
                         </Dropdown.Menu>}
                     </Dropdown>
 
-                    <button
-                        type="button"
-                        disabled={!invite.info.isPossibleToRecover}
-                        className="btn btn-link"
-                        onClick={_ => {
-                            setShowRecoverModal(true);
-                        }}>Recover account
-                    </button>
+                    <WaitButton disabled={invite.info.inProcess}>
+                        <button
+                            type="button"
+                            disabled={!invite.info.isPossibleToRecover}
+                            className="btn btn-link"
+                            onClick={_ => {
+                                setShowRecoverModal(true);
+                            }}>
+                            Recover account
+                        </button>
+                    </WaitButton>
 
                     {signup.log.length > 0 && <details className="mt-2">
                         <summary>{signup.status}</summary>

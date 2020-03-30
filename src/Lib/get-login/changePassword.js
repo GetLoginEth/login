@@ -152,7 +152,7 @@ export default class ChangePassword extends Logger {
 
         const usernameHash = getUsernameHash(web3, username);
 
-        const account = await this.crypto.getAccountFromInvite(invite);
+        //const account = await this.crypto.getAccountFromInvite(invite);
         const inviteInfo = await this.invite.getInviteInfo(invite);
         if (!inviteInfo.isPossibleToRecover) {
             throw new Error('Forbidden to recover');
@@ -162,9 +162,6 @@ export default class ChangePassword extends Logger {
             throw new Error('Incorrect username for this invite');
         }
 
-        const balance = await web3.eth.getBalance(account.address);
-        // todo check invite, get wallet info, check balance, check is balance available
-        // todo send tx from invite account
         const newDecryptedWallet = createWallet(web3);
         const newEncryptedWallet = encryptWallet(newDecryptedWallet, newPassword);
         this.log(LOG_CHANGE_PASSWORD);

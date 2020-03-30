@@ -503,7 +503,9 @@ export const getInviteInfo = async (invitePrivateKey) => {
 
 export const resetPassword = async (invite, username, newPassword) => {
     return callMethod(ACTION_RESET_PASSWORD, async () => {
-        return await password.resetPasswordByInvite(invite, username, newPassword);
+        const data = await password.resetPasswordByInvite(invite, username, newPassword);
+        setUserData(username, data.wallet, LOGIN_DATA);
+        await callMethod(ACTION_LOCAL_AUTH, async () => getUserData());
     });
 };
 
