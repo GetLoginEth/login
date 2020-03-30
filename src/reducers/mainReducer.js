@@ -68,7 +68,7 @@ export const reducer = (state, action) => {
             data = {log: [], status: '', inProcess: true, errorMessage: ''};
             return merge('password', data);
         case getStatus(ACTION_CHANGE_PASSWORD, STATUS_FAIL):
-            data = {inProcess: false, errorMessage: action.data.message};
+            data = {errorMessage: action.data.message};
             return merge('password', data);
         case getStatus(ACTION_CHANGE_PASSWORD, STATUS_COMPLETE):
             data = {inProcess: false};
@@ -78,7 +78,13 @@ export const reducer = (state, action) => {
             return merge('password', data);
 
         case getStatus(ACTION_CREATE_INVITE, STATUS_START):
-            data = {inProcessCreation: true};
+            data = {inProcessCreation: true, errorMessage: ''};
+            return merge('invite', data);
+        case getStatus(ACTION_CREATE_INVITE, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('invite', data);
+        case getStatus(ACTION_CREATE_INVITE, STATUS_SUCCESS):
+            data = {createdInvites: [...state.invite.createdInvites, action.data]};
             return merge('invite', data);
         case getStatus(ACTION_CREATE_INVITE, STATUS_COMPLETE):
             data = {inProcessCreation: false};
@@ -119,12 +125,6 @@ export const reducer = (state, action) => {
 
         case getStatus(ACTION_GET_INVITE, STATUS_SUCCESS):
             data = {inviteInfo: {...state.invite.inviteInfo, [action.data.inviteAddress]: action.data}};
-            //console.log(data);
-            return merge('invite', data);
-
-        case getStatus(ACTION_CREATE_INVITE, STATUS_SUCCESS):
-            //console.log(action.data);
-            data = {createdInvites: [...state.invite.createdInvites, action.data]};
             //console.log(data);
             return merge('invite', data);
 
