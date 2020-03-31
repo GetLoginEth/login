@@ -2369,7 +2369,9 @@ export default class contract {
     }
 
     async setInviteReset(allow) {
-        return await this.sendTx('setInviteReset', this.sendTxDefault, allow.toString());
+        return await this.sendTx('setInviteReset', {
+            ...this.sendTxDefault
+        }, allow.toString());
     }
 }
 

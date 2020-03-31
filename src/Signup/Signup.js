@@ -157,6 +157,7 @@ function Signup() {
                     <Modal.Title>Recovery account information</Modal.Title>
                 </Modal.Header>
                 <Form onSubmit={_ => {
+                    _.preventDefault();
                     resetPassword(inviteData, username, password).then();
                 }}>
                     <Modal.Body>

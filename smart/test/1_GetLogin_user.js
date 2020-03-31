@@ -7,7 +7,7 @@ const demoAccounts = {
     invite: {
         address: '0x957D6F9a75c89982c7ab6cb9D5425Bf050eFe7A2',
         privateKey: '0x266a5ee9cd3452d17f71664b21243b22e073250d2283f278b2ca50691dd3081e',
-        balance: '4'
+        balance: '10'
     },
     createdWithInvite: {
         address: "0xe2b28AF05777125db26CEBB8EDB4844889675938",
@@ -16,7 +16,7 @@ const demoAccounts = {
         iv: "8ff7f0b9a85dcd391596067fd518ed71",
         salt: "b1027ab58816c2ed83ff6248234e0aabf10a8f6f631e0cfc477c4d5311e57f70",
         mac: "4c4b94429e6920ac0e9677d4d10c744ab1f1f287247ae3546704f7ec6a8ddd61",
-        balance: '3'
+        balance: '8'
     },
     changePassword: {
         address: "0xbA29b40E0BC3F5166C265795AbA58BF5d7962c52",
@@ -25,7 +25,7 @@ const demoAccounts = {
         iv: "4ac2b96f257131ef74a9aeea45836e9d",
         salt: "4e54660f3062d56610dcf0871e8fd45356cc8da7ab14eb9f54eb9396fe83c869",
         mac: "ed110af146ef9f9ed8081ef4861e37dccefb2ce319f272176030ba48cd262e9d",
-        balance: '2'
+        balance: '6'
     },
     resetPassword: {
         address: "0x4152737c73239d579187FE3F0E6a9627E9b98B03",
@@ -202,7 +202,14 @@ contract("GetLogin", async accounts => {
                 from: demoAccounts.changePassword.address
             });
             await getLoginLogic.resetPassword(account.address, account.ciphertext, account.iv, account.salt, account.mac, {
-                from: demoAccounts.invite.address
+                from: demoAccounts.invite.address,
+                value: web3.utils.toWei(account.balance, "ether")
+            });
+        });
+
+        it("Check reset account rights", async () => {
+            await getLoginLogic.setInviteReset("true", {
+                from: demoAccounts.resetPassword.address
             });
         });
     });

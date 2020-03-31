@@ -276,6 +276,7 @@ contract GetLoginLogic {
         // todo check is correct
         require(invite.registeredUsername != "", "Only invite with username can reset password");
         require(keccak256(abi.encode(getInviteReset(invite.registeredUsername))) == keccak256(abi.encode("true")), "Settings not allow reset password");
+        getLoginStorage.setUsersAddressUsername(walletAddress, GetLoginStorage.Username({username : invite.registeredUsername, isActive : true}));
         walletAddress.transfer(msg.value);
         getLoginStorage.emitEventStoreWallet(invite.registeredUsername, walletAddress, ciphertext, iv, salt, mac);
     }
