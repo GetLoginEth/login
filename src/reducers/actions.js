@@ -343,7 +343,7 @@ export const allowApp = async (appId) => {
         const sessionInfo = await session.createSession(appId);
 
         return setRawAccessToken(appId, {
-            transactionHash: sessionInfo.createdSession.transactionHash,
+            transactionHash: sessionInfo.createdSession,
             privateKey: sessionInfo.wallet.privateKey
         });
     }, {appId});
