@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import './Authorize.css';
-import {allowApp, getAllowedApp, getAppInfo, getLocalUsernameHash} from "../reducers/actions";
+import {allowApp, getAppSession, getAppInfo, getLocalUsernameHash} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
 import WaitButton from "../Elements/WaitButton";
 import Spinner from "../Elements/Spinner";
@@ -46,6 +46,7 @@ function Authorize() {
     };
 
     const {state: {authorizeApp}} = useStateValue();
+    const {state: {sessionApp}} = useStateValue();
     const params = new URLSearchParams(window.location.search);
     const clientId = params.get('client_id');
     /**
@@ -60,35 +61,24 @@ function Authorize() {
     };
 
     useEffect(_ => {
-        const check = async () => {
-            await getAppInfo(clientId);
-        };
-        check().then();
+        getAppSession(clientId).then();
+        getAppInfo(clientId).then();
     }, [clientId]);
 
     useEffect(_ => {
-        const check = async () => {
-            //setIsShowForm(false);
-            if (!authorizeApp.id) {
-                return;
-            }
+        //console.log('// todo check it',clientId, authorizeApp, redirectUri);
+        console.log(sessionApp, authorizeApp);
+        if (!authorizeApp || !authorizeApp.id || !sessionApp || !sessionApp.transactionHash) {
+            return;
+        }
 
-            const info = await getAllowedApp(clientId);
-            //console.log(info);
-
-            if (!info) {
-                return;
-            }
-
-            const usernameHash = getLocalUsernameHash();
-            if (Array.isArray(authorizeApp.allowedUrls) && authorizeApp.allowedUrls.includes(redirectUri.href)) {
-                successReturn(info.transactionHash, usernameHash);
-            } else {
-                //setIsShowForm(true);
-            }
-        };
-        check().then();
-    }, [clientId, authorizeApp, redirectUri]);
+        const usernameHash = getLocalUsernameHash();
+        if (Array.isArray(authorizeApp.allowedUrls) && authorizeApp.allowedUrls.includes(redirectUri.href)) {
+            successReturn(sessionApp.transactionHash, usernameHash);
+        } else {
+            //setIsShowForm(true);
+        }
+    }, [sessionApp, authorizeApp]);
 
     const onDecline = () => {
         window.location.replace(redirectUri.toString() + '#error=access_denied&error_reason=user_denied&error_description=User denied your request');
@@ -97,7 +87,7 @@ function Authorize() {
     const onAllow = async () => {
         try {
             const usernameHash = getLocalUsernameHash();
-            let info = await getAllowedApp(clientId);
+            let info = await getAppSession(clientId);
 
             if (!info) {
                 info = await allowApp(clientId);

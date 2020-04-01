@@ -4,7 +4,7 @@ import {
     ACTION_CREATE_INVITE,
     ACTION_CREATE_MY_APP,
     ACTION_DELETE_MY_APP, ACTION_EDIT_MY_APP,
-    ACTION_GET_ALLOWED_APP,
+    ACTION_GET_SESSION_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
     ACTION_GET_INVITES, ACTION_GET_LOGIC_CONTRACT,
@@ -349,8 +349,8 @@ export const allowApp = async (appId) => {
     }, {appId});
 };
 
-export const getAllowedApp = async (appId) => {
-    return callMethod(ACTION_GET_ALLOWED_APP, async () => {
+export const getAppSession = async (appId) => {
+    return callMethod(ACTION_GET_SESSION_APP, async () => {
         if (!appId) {
             throw new Error('Empty appId');
         }

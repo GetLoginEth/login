@@ -293,10 +293,25 @@ export const reducer = (state, action) => {
             data = {inProcess: false};
             return merge('settings', data);
 
+        case getStatus(ACTION_GET_SESSION_APP, STATUS_START):
+            data = {inProcess: true};
+            return merge('sessionApp', data);
+        case getStatus(ACTION_GET_SESSION_APP, STATUS_SUCCESS):
+            return merge('sessionApp', action.data);
+        case getStatus(ACTION_GET_SESSION_APP, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('sessionApp', data);
+        case getStatus(ACTION_GET_SESSION_APP, STATUS_COMPLETE):
+            data = {inProcess: false};
+            return merge('sessionApp', data);
+
         case getStatus(ACTION_GET_LOGIC_CONTRACT, STATUS_SUCCESS):
             data = {smartContractLogicAddress: action.data,};
             return merge('app', data);
 
+        case getStatus(ACTION_ALLOW_APP, STATUS_SUCCESS):
+            data = {transactionHash: action.data.transactionHash};
+            return merge('sessionApp', data);
         case getStatus(ACTION_ALLOW_APP, STATUS_FAIL):
             data = {errorMessage: action.data.message};
             return merge('authorizeApp', data);
@@ -331,6 +346,10 @@ export const initialState = {
             address: '',
             privateKey: '',
         }
+    },
+    sessionApp: {
+        inProcess: false,
+        errorMessage: ''
     },
     resetPasswordData: {
         inProcess: false,
@@ -439,7 +458,7 @@ export const ACTION_SESSION = 'session';
 export const ACTION_SELF_APP_INFO = 'self_app_info';
 export const ACTION_APP_INFO = 'app_info';
 export const ACTION_ALLOW_APP = 'allow_app';
-export const ACTION_GET_ALLOWED_APP = 'allowed_app';
+export const ACTION_GET_SESSION_APP = 'get_session_app';
 export const ACTION_GET_INVITES = 'get_invites';
 export const ACTION_GET_INVITE = 'get_invite';
 export const ACTION_CREATE_INVITE = 'create_invite';
