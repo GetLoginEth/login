@@ -48,12 +48,20 @@ function Signup() {
         } else {
             setInviteData(invite);
             setMethod(SIGN_UP_INVITE);
-            if (isCorrectInvite(invite)) {
+            /*if (isCorrectInvite(invite)) {
                 getInviteInfo(invite).then();
-            }
+            }*/
         }
         //setMethod(SIGN_UP_INVITE);
     }, []);
+
+    useEffect(_ => {
+        if (!isCorrectInvite(inviteData)) {
+            return;
+        }
+
+        getInviteInfo(inviteData).then();
+    }, [inviteData]);
 
     const onSubmit = async data => {
         data.preventDefault();
@@ -275,7 +283,7 @@ function Signup() {
                     <WaitButton disabled={invite.info.inProcess}>
                         <button
                             type="button"
-                            disabled={!invite.info.isPossibleToRecover}
+                            disabled={!invite.info.isPossibleToRecover || !isCorrectInvite(inviteData)}
                             className="btn btn-link"
                             onClick={_ => {
                                 setShowRecoverModal(true);
