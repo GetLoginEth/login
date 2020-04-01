@@ -21,7 +21,7 @@ export const LOG_CHANGE_PASSWORD = 'log_change_password';
 export const LOGIN_USERNAME_PASSWORD = 'login_username_password';
 
 export default class ChangePassword extends Logger {
-    constructor(crypto, contract, session) {
+    constructor(crypto, contract, session, invite) {
         super();
 
         /**
@@ -41,6 +41,12 @@ export default class ChangePassword extends Logger {
          * @type {Session}
          */
         this.session = session;
+
+        /**
+         *
+         * @type {Invite}
+         */
+        this.invite = invite;
     }
 
     async _changePassword(username, oldPassword, newPassword) {
@@ -112,5 +118,61 @@ export default class ChangePassword extends Logger {
         }
 
         return result;
+    }
+
+    async getEstimatePriceResetPassword(invite) {
+        const {web3} = this.crypto;
+
+        const newDecryptedWallet = createWallet(web3);
+        const newEncryptedWallet = encryptWallet(newDecryptedWallet, 'hello');
+        await this.contract.setPrivateKey(invite);
+        let data = await this.contract.prepareTx('resetPassword',
+            {...this.contract.sendTxDefault, balanceEther: 'all'},
+            '0x' + newEncryptedWallet.address,
+            newEncryptedWallet.crypto.ciphertext,
+            newEncryptedWallet.crypto.cipherparams.iv,
+            newEncryptedWallet.crypto.kdfparams.salt,
+            newEncryptedWallet.crypto.mac);
+        const r = await this.contract.calculateEstimateGas(data);
+
+        return web3.utils.fromWei(r);
+    }
+
+    async resetPasswordByInvite(invite, username, newPassword) {
+        const {web3} = this.crypto;
+
+        this.log(LOG_LOG_IN_CHECK_PASSWORD);
+        await validatePassword(newPassword);
+        this.log(LOG_LOG_IN_CHECK_USERNAME);
+        username = filterUsername(username);
+        await validateUsername(username);
+        if (!await isUsernameRegistered(this.contract, username)) {
+            throw new LoginError(CODE_USERNAME_NOT_FOUND);
+        }
+
+        const usernameHash = getUsernameHash(web3, username);
+
+        //const account = await this.crypto.getAccountFromInvite(invite);
+        const inviteInfo = await this.invite.getInviteInfo(invite);
+        if (!inviteInfo.isPossibleToRecover) {
+            throw new Error('Forbidden to recover');
+        }
+
+        if (inviteInfo.registeredUsername.toLowerCase() !== usernameHash.toLowerCase()) {
+            throw new Error('Incorrect username for this invite');
+        }
+
+        const newDecryptedWallet = createWallet(web3);
+        const newEncryptedWallet = encryptWallet(newDecryptedWallet, newPassword);
+        this.log(LOG_CHANGE_PASSWORD);
+        await this.contract.setPrivateKey(invite);
+        const txHash = await this.contract.resetPassword('all',
+            '0x' + newEncryptedWallet.address,
+            newEncryptedWallet.crypto.ciphertext,
+            newEncryptedWallet.crypto.cipherparams.iv,
+            newEncryptedWallet.crypto.kdfparams.salt,
+            newEncryptedWallet.crypto.mac);
+
+        return {txHash, wallet: newDecryptedWallet};
     }
 }

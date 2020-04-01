@@ -1,4 +1,4 @@
-import {appLogoutLocal, getAllowedApp, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
+import {appLogoutLocal, getAppSession, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
 import sessionContract from "../Lib/get-login/sessionContract";
 
 export default class PluginReceiver {
@@ -70,7 +70,7 @@ export default class PluginReceiver {
 
     async sendTransaction(data) {
         const {abi, address, method, txParams, params} = data;
-        const app = await getAllowedApp(this.appId);
+        const app = await getAppSession(this.appId);
         if (!app) {
             throw new Error('Access token not found');
         }
@@ -112,7 +112,7 @@ export default class PluginReceiver {
         }
 
         window.addEventListener('message', this._listener);
-        getAllowedApp(clientId)
+        getAppSession(clientId)
             .then(info => {
                 console.log(info);
                 let is_client_allowed = false;

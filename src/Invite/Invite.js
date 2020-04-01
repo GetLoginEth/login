@@ -17,6 +17,11 @@ function Invite() {
     const isCanCreateInvite = Number(user.balance.original) >= Number(0.1);
     return <Fragment>
         <h1>Invites</h1>
+
+        {invite.errorMessage && <div className="alert alert-danger" role="alert">
+            {invite.errorMessage}
+        </div>}
+
         {user.balance.original !== null && !isCanCreateInvite &&
         <p>Your balance must be more than 0.1 ETH to create invite</p>}
         <WaitButton disabled={invite.inProcessCreation}>

@@ -4,18 +4,18 @@ import {
     ACTION_CREATE_INVITE,
     ACTION_CREATE_MY_APP,
     ACTION_DELETE_MY_APP, ACTION_EDIT_MY_APP,
-    ACTION_GET_ALLOWED_APP,
+    ACTION_GET_SESSION_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
     ACTION_GET_INVITES, ACTION_GET_LOGIC_CONTRACT,
     ACTION_GET_MY_APPS,
-    ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS, ACTION_GET_TREZOR_ADDRESSES,
-    ACTION_INVITE,
+    ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS, ACTION_GET_SETTINGS, ACTION_GET_TREZOR_ADDRESSES,
+    ACTION_INVITE, ACTION_GET_INVITE_INFO,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
     ACTION_RESTORE_MY_APP,
     ACTION_SELF_APP_INFO,
-    ACTION_SESSION,
+    ACTION_SESSION, ACTION_SET_INVITE_RESET,
     ACTION_SIGNIN,
     ACTION_SIGNUP,
     getStatus,
@@ -25,7 +25,7 @@ import {
     STATUS_LOG,
     STATUS_MINED,
     STATUS_START,
-    STATUS_SUCCESS
+    STATUS_SUCCESS, ACTION_RESET_PASSWORD
 } from "./mainReducer";
 import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD, LOGIN_WEB3_PROVIDER} from "../Lib/get-login/signin";
@@ -99,7 +99,7 @@ export const init = (dispatch) => {
     signin = new Signin(cryptoInstance, contractInstance);
     invite = new Invite(cryptoInstance, contractInstance);
     session = new Session(cryptoInstance, contractInstance);
-    password = new ChangePassword(cryptoInstance, contractInstance, session);
+    password = new ChangePassword(cryptoInstance, contractInstance, session, invite);
     signup.setLogger(getLogger(ACTION_SIGNUP));
     signin.setLogger(getLogger(ACTION_SIGNIN));
     invite.setLogger(getLogger(ACTION_INVITE));
@@ -151,8 +151,12 @@ export const checkLocalCredentials = async () => {
 
         getWalletBalance(address).then();
         setInterval(_ => {
-            getWalletBalance(getLocalAddress()).then();
-        }, 30000);
+            try {
+                getWalletBalance(getLocalAddress()).then();
+            } catch (e) {
+
+            }
+        }, 10000);
         const redirectUrl = window.sessionStorage.getItem('redirect_url');
         if (redirectUrl) {
             window.location.replace(redirectUrl);
@@ -339,14 +343,14 @@ export const allowApp = async (appId) => {
         const sessionInfo = await session.createSession(appId);
 
         return setRawAccessToken(appId, {
-            transactionHash: sessionInfo.createdSession.transactionHash,
+            transactionHash: sessionInfo.createdSession,
             privateKey: sessionInfo.wallet.privateKey
         });
     }, {appId});
 };
 
-export const getAllowedApp = async (appId) => {
-    return callMethod(ACTION_GET_ALLOWED_APP, async () => {
+export const getAppSession = async (appId) => {
+    return callMethod(ACTION_GET_SESSION_APP, async () => {
         if (!appId) {
             throw new Error('Empty appId');
         }
@@ -474,6 +478,34 @@ export const setAddressIndex = (index) => {
 export const getLogicContractAddress = async () => {
     return callMethod(ACTION_GET_LOGIC_CONTRACT, async () => {
         return await contractInstance.getLogicContractAddress();
+    });
+};
+
+export const getAllSettings = async (usernameHash) => {
+    return callMethod(ACTION_GET_SETTINGS, async () => {
+        return await contractInstance.getAllSettings(usernameHash);
+    });
+};
+
+export const setInviteReset = async (allow) => {
+    return callMethod(ACTION_SET_INVITE_RESET, async () => {
+        await contractInstance.setInviteReset(allow);
+
+        return allow;
+    });
+};
+
+export const getInviteInfo = async (invitePrivateKey) => {
+    return callMethod(ACTION_GET_INVITE_INFO, async () => {
+        return await invite.getInviteInfo(invitePrivateKey, password);
+    });
+};
+
+export const resetPassword = async (invite, username, newPassword) => {
+    return callMethod(ACTION_RESET_PASSWORD, async () => {
+        const data = await password.resetPasswordByInvite(invite, username, newPassword);
+        setUserData(username, data.wallet, LOGIN_DATA);
+        await callMethod(ACTION_LOCAL_AUTH, async () => getUserData());
     });
 };
 

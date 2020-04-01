@@ -1,4 +1,4 @@
-pragma solidity ^0.6.1;
+pragma solidity ^0.6.4;
 pragma experimental ABIEncoderV2;
 
 import './GetLoginStorage.sol';
@@ -6,6 +6,7 @@ import './GetLoginStorage.sol';
 contract GetLoginLogic {
     GetLoginStorage public getLoginStorage;
     address public owner;
+    string settingsInviteReset = "invite_reset";
 
     struct SessionData
     {
@@ -14,6 +15,11 @@ contract GetLoginLogic {
         string ephemPublicKey;
         string ciphertext;
         string mac;
+    }
+
+    struct SettingsData
+    {
+        string inviteReset;
     }
 
     uint8 sessionMain = 1;
@@ -47,8 +53,8 @@ contract GetLoginLogic {
             uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app', allowedUrls, allowedContracts);
             _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
             _addApplicationUrl(newAppId, 'https://localhost:3001/');
-            _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
-            _addApplicationContract(newAppId, 0xD66521103Cb882d6afEb051Ae3e986506Af56409);
+            _addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
+            //_addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
         }
     }
 
@@ -106,6 +112,12 @@ contract GetLoginLogic {
         bytes32 usernameHash = getUsernameByAddress(wallet);
         //UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
         getLoginStorage.pushUserSession(usernameHash, wallet, sessionType, appId);
+    }
+
+    function _setSettings(bytes32 usernameHash, string memory key, string memory value) private {
+        // todo inspect is correct way
+        bytes32 keyHash = keccak256(abi.encode(usernameHash, "_", key));
+        getLoginStorage.setSettings(keyHash, value);
     }
 
     /* End of private methods */
@@ -212,7 +224,7 @@ contract GetLoginLogic {
         getLoginStorage.emitEventInviteCreated(creatorUsername, inviteAddress);
     }
 
-    function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
+    function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, bool allowReset) public payable {
         validateInviteActive(msg.sender);
         require(isAddressRegistered(walletAddress) == false, "Address already registered");
         GetLoginStorage.InviteInfo memory invite = getLoginStorage.getInvite(msg.sender);
@@ -221,6 +233,8 @@ contract GetLoginLogic {
         invite.registeredUsername = usernameHash;
         getLoginStorage.setInvite(msg.sender, invite);
         walletAddress.transfer(msg.value);
+        //setInviteReset(allowReset);
+        _setSettings(usernameHash, settingsInviteReset, allowReset ? "true" : "false");
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
@@ -256,10 +270,26 @@ contract GetLoginLogic {
         getLoginStorage.emitEventAppSession(appId, username, iv, ephemPublicKey, ciphertext, mac);
     }
 
+    function resetPassword(address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
+        GetLoginStorage.InviteInfo memory invite = getLoginStorage.getInvite(msg.sender);
+        require(invite.isActive == false, "Only inactive invite can reset password");
+        // todo check is correct
+        require(invite.registeredUsername != "", "Only invite with username can reset password");
+        require(keccak256(abi.encode(getInviteReset(invite.registeredUsername))) == keccak256(abi.encode("true")), "Settings not allow reset password");
+        getLoginStorage.setUsersAddressUsername(walletAddress, GetLoginStorage.Username({username : invite.registeredUsername, isActive : true}));
+        walletAddress.transfer(msg.value);
+        getLoginStorage.emitEventStoreWallet(invite.registeredUsername, walletAddress, ciphertext, iv, salt, mac);
+    }
+
     /*function addMainSession(address wallet) public payable {
         validateAddressRegistered(msg.sender);
         _addSession(wallet, sessionApp, 0);
     }*/
+
+    function setInviteReset(string memory value) public {
+        bytes32 usernameHash = getUsernameByAddress(msg.sender);
+        _setSettings(usernameHash, settingsInviteReset, value);
+    }
 
     /* End of public methods */
 
@@ -325,6 +355,20 @@ contract GetLoginLogic {
 
     function getUserSessions(bytes32 usernameHash) public view returns (GetLoginStorage.UserSession[] memory) {
         return getLoginStorage.getUserSessions(usernameHash);
+    }
+
+    function getAllSettings(bytes32 usernameHash) public view returns (SettingsData memory) {
+        return SettingsData({inviteReset : getInviteReset(usernameHash)});
+    }
+
+    function getSettings(bytes32 usernameHash, string memory key) public view returns (string memory) {
+        // todo inspect is correct way / collisions possible
+        bytes32 keyHash = keccak256(abi.encode(usernameHash, "_", key));
+        return getLoginStorage.getSettings(keyHash);
+    }
+
+    function getInviteReset(bytes32 usernameHash) public view returns (string memory) {
+        return getSettings(usernameHash, settingsInviteReset);
     }
 
     /* End of view methods */

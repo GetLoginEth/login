@@ -68,7 +68,7 @@ export const reducer = (state, action) => {
             data = {log: [], status: '', inProcess: true, errorMessage: ''};
             return merge('password', data);
         case getStatus(ACTION_CHANGE_PASSWORD, STATUS_FAIL):
-            data = {inProcess: false, errorMessage: action.data.message};
+            data = {errorMessage: action.data.message};
             return merge('password', data);
         case getStatus(ACTION_CHANGE_PASSWORD, STATUS_COMPLETE):
             data = {inProcess: false};
@@ -78,7 +78,13 @@ export const reducer = (state, action) => {
             return merge('password', data);
 
         case getStatus(ACTION_CREATE_INVITE, STATUS_START):
-            data = {inProcessCreation: true};
+            data = {inProcessCreation: true, errorMessage: ''};
+            return merge('invite', data);
+        case getStatus(ACTION_CREATE_INVITE, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('invite', data);
+        case getStatus(ACTION_CREATE_INVITE, STATUS_SUCCESS):
+            data = {createdInvites: [...state.invite.createdInvites, action.data]};
             return merge('invite', data);
         case getStatus(ACTION_CREATE_INVITE, STATUS_COMPLETE):
             data = {inProcessCreation: false};
@@ -119,12 +125,6 @@ export const reducer = (state, action) => {
 
         case getStatus(ACTION_GET_INVITE, STATUS_SUCCESS):
             data = {inviteInfo: {...state.invite.inviteInfo, [action.data.inviteAddress]: action.data}};
-            //console.log(data);
-            return merge('invite', data);
-
-        case getStatus(ACTION_CREATE_INVITE, STATUS_SUCCESS):
-            //console.log(action.data);
-            data = {createdInvites: [...state.invite.createdInvites, action.data]};
             //console.log(data);
             return merge('invite', data);
 
@@ -252,10 +252,66 @@ export const reducer = (state, action) => {
             data = {inProcessEditing: false,};
             return merge('myApps', data);
 
+        case getStatus(ACTION_RESET_PASSWORD, STATUS_START):
+            data = {inProcess: true, errorMessage: ''};
+            return merge('resetPasswordData', data);
+        case getStatus(ACTION_RESET_PASSWORD, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('resetPasswordData', data);
+        /*case getStatus(ACTION_RESET_PASSWORD, STATUS_SUCCESS):
+            return state;*/
+        case getStatus(ACTION_RESET_PASSWORD, STATUS_COMPLETE):
+            data = {inProcess: false,};
+            return merge('resetPasswordData', data);
+
+        case getStatus(ACTION_SET_INVITE_RESET, STATUS_START):
+            data = {inProcess: true};
+            return merge('settings', data);
+        case getStatus(ACTION_SET_INVITE_RESET, STATUS_SUCCESS):
+            data = {inviteReset: action.data};
+            return merge('settings', data);
+        case getStatus(ACTION_SET_INVITE_RESET, STATUS_COMPLETE):
+            data = {inProcess: false};
+            return merge('settings', data);
+
+        case getStatus(ACTION_GET_INVITE_INFO, STATUS_START):
+            data = {info: {inProcess: true, errorMessage: ''}};
+            return merge('invite', data);
+        case getStatus(ACTION_GET_INVITE_INFO, STATUS_SUCCESS):
+            data = {info: action.data};
+            return merge('invite', data);
+        case getStatus(ACTION_GET_INVITE_INFO, STATUS_COMPLETE):
+            data = {info: {...state.invite.info, inProcess: false}};
+            return merge('invite', data);
+
+        case getStatus(ACTION_GET_SETTINGS, STATUS_START):
+            data = {inProcess: true};
+            return merge('settings', data);
+        case getStatus(ACTION_GET_SETTINGS, STATUS_SUCCESS):
+            return merge('settings', action.data);
+        case getStatus(ACTION_GET_SETTINGS, STATUS_COMPLETE):
+            data = {inProcess: false};
+            return merge('settings', data);
+
+        case getStatus(ACTION_GET_SESSION_APP, STATUS_START):
+            data = {inProcess: true};
+            return merge('sessionApp', data);
+        case getStatus(ACTION_GET_SESSION_APP, STATUS_SUCCESS):
+            return merge('sessionApp', action.data);
+        case getStatus(ACTION_GET_SESSION_APP, STATUS_FAIL):
+            data = {errorMessage: action.data.message};
+            return merge('sessionApp', data);
+        case getStatus(ACTION_GET_SESSION_APP, STATUS_COMPLETE):
+            data = {inProcess: false};
+            return merge('sessionApp', data);
+
         case getStatus(ACTION_GET_LOGIC_CONTRACT, STATUS_SUCCESS):
             data = {smartContractLogicAddress: action.data,};
             return merge('app', data);
 
+        case getStatus(ACTION_ALLOW_APP, STATUS_SUCCESS):
+            data = {transactionHash: action.data.transactionHash};
+            return merge('sessionApp', data);
         case getStatus(ACTION_ALLOW_APP, STATUS_FAIL):
             data = {errorMessage: action.data.message};
             return merge('authorizeApp', data);
@@ -290,6 +346,18 @@ export const initialState = {
             address: '',
             privateKey: '',
         }
+    },
+    sessionApp: {
+        inProcess: false,
+        errorMessage: ''
+    },
+    resetPasswordData: {
+        inProcess: false,
+        errorMessage: ''
+    },
+    settings: {
+        inProcess: false,
+        inviteReset: null
     },
     signup: {
         inProcess: false,
@@ -331,7 +399,8 @@ export const initialState = {
         invites: [],
         inviteInfo: {},
         errorMessage: '',
-        createdInvites: []
+        createdInvites: [],
+        info: {}
     },
     myApps: {
         inProcessCreation: false,
@@ -389,7 +458,7 @@ export const ACTION_SESSION = 'session';
 export const ACTION_SELF_APP_INFO = 'self_app_info';
 export const ACTION_APP_INFO = 'app_info';
 export const ACTION_ALLOW_APP = 'allow_app';
-export const ACTION_GET_ALLOWED_APP = 'allowed_app';
+export const ACTION_GET_SESSION_APP = 'get_session_app';
 export const ACTION_GET_INVITES = 'get_invites';
 export const ACTION_GET_INVITE = 'get_invite';
 export const ACTION_CREATE_INVITE = 'create_invite';
@@ -404,3 +473,7 @@ export const ACTION_RESTORE_MY_APP = 'restore_my_app';
 export const ACTION_GET_MY_SESSIONS = 'get_my_sessions';
 export const ACTION_GET_TREZOR_ADDRESSES = 'get_trezor_addresses';
 export const ACTION_GET_LOGIC_CONTRACT = 'get_logic_contract';
+export const ACTION_GET_SETTINGS = 'get_settings';
+export const ACTION_SET_INVITE_RESET = 'set_invite_reset';
+export const ACTION_GET_INVITE_INFO = 'get_invite_info';
+export const ACTION_RESET_PASSWORD = 'reset_password';
