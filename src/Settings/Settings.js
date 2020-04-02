@@ -68,18 +68,45 @@ function Settings() {
             test();
         }}>Test
         </button>*/}
-
+        <hr/>
         <h1>My sessions</h1>
 
         {mySessions.inProcessReceiving && <Spinner/>}
 
         {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <p>Sessions not opened</p>}
 
-        {mySessions.sessions.length > 0 && mySessions.sessions.map((item, i) => <p key={i}>
-            App ID: {item.returnValues.appId} / Tx hash: <a target="_blank"
-                                                            href={`https://rinkeby.etherscan.io/tx/${item.transactionHash}`}>{item.transactionHash}</a>
-        </p>)}
+        {mySessions.sessions.length > 0 && <table className="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Tx hash</th>
+                <th scope="col">Manage</th>
+            </tr>
+            </thead>
+            <tbody>
 
+            {mySessions.sessions.map((item, i) =>
+                <tr key={i}>
+                    <th scope="row">
+                        {item.returnValues.appId}
+                    </th>
+                    <td>
+                        <a target="_blank" href={`https://rinkeby.etherscan.io/tx/${item.transactionHash}`}>
+                            {item.transactionHash}
+                        </a>
+                    </td>
+                    <td>
+                        <button className="btn btn-danger btn-sm" onClick={_ => {
+                            alert('Not implemented');
+                        }}>Close
+                        </button>
+                    </td>
+                </tr>
+            )}
+
+            </tbody>
+        </table>}
+        <hr/>
         <details>
             <summary>App info</summary>
 
