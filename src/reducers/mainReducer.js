@@ -477,3 +477,4 @@ export const ACTION_GET_SETTINGS = 'get_settings';
 export const ACTION_SET_INVITE_RESET = 'set_invite_reset';
 export const ACTION_GET_INVITE_INFO = 'get_invite_info';
 export const ACTION_RESET_PASSWORD = 'reset_password';
+export const ACTION_CREATE_EMPTY_SESSION = 'create_empty_session';

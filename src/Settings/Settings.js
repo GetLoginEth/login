@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
 import {
-    changePassword,
+    changePassword, createEmptyAppSession,
     getAllSettings,
     getLocalType, getLocalUsernameHash,
     getLogicContractAddress,
@@ -73,7 +73,6 @@ function Settings() {
 
         {mySessions.inProcessReceiving && <Spinner/>}
 
-        {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <p>Sessions not opened</p>}
 
         {mySessions.sessions.length > 0 && <table className="table table-bordered">
             <thead>
@@ -96,13 +95,22 @@ function Settings() {
                         </a>
                     </td>
                     <td>
-                        <button className="btn btn-danger btn-sm" onClick={_ => {
-                            alert('Not implemented');
-                        }}>Close
-                        </button>
+                        <WaitButton disabled={false}>
+                            <button disabled={item.returnValues.iv === ''} className="btn btn-danger btn-sm"
+                                    onClick={_ => {
+                                        createEmptyAppSession(item.returnValues.appId).then();
+                                    }}>Close
+                            </button>
+                        </WaitButton>
                     </td>
                 </tr>
             )}
+
+            {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <tr>
+                <td colSpan="7">
+                    <div className="empty">No results found.</div>
+                </td>
+            </tr>}
 
             </tbody>
         </table>}
