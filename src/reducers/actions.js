@@ -25,7 +25,7 @@ import {
     STATUS_LOG,
     STATUS_MINED,
     STATUS_START,
-    STATUS_SUCCESS, ACTION_RESET_PASSWORD, ACTION_CREATE_EMPTY_SESSION
+    STATUS_SUCCESS, ACTION_RESET_PASSWORD, ACTION_CLOSE_SESSION
 } from "./mainReducer";
 import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD, LOGIN_WEB3_PROVIDER} from "../Lib/get-login/signin";
@@ -78,8 +78,8 @@ let invite = null;
 
 export const web3 = cryptoInstance.web3;
 
-export const doDispatch = (type, data = {}) => {
-    dispatch({type, data});
+export const doDispatch = (type, data = {}, startData = {}) => {
+    dispatch({type, data, startData});
 };
 
 export const init = (dispatch) => {
@@ -501,10 +501,12 @@ export const getInviteInfo = async (invitePrivateKey) => {
     });
 };
 
-export const createEmptyAppSession = async (appId) => {
-    return callMethod(ACTION_CREATE_EMPTY_SESSION, async () => {
-        return await contractInstance.createEmptyAppSession(appId);
-    });
+export const closeSession = async (appId, logId) => {
+    return callMethod(ACTION_CLOSE_SESSION, async () => {
+        const usernameHash = getLocalUsernameHash();
+        return await session.closeSession(appId, usernameHash, getLocalAddress());
+        //return await getMySessions();
+    }, {appId, logId});
 };
 
 export const resetPassword = async (invite, username, newPassword) => {
@@ -530,7 +532,7 @@ export const callMethod = async (actionName, func, startData = null) => {
         }
 
         result = await func();
-        doDispatch(getStatus(actionName, STATUS_SUCCESS), result);
+        doDispatch(getStatus(actionName, STATUS_SUCCESS), result, startData);
     } catch (error) {
         // todo not log error, but pass correct filenames to dispatch
         console.log(error);

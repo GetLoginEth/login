@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
 import {
-    changePassword, createEmptyAppSession,
+    changePassword, closeSession,
     getAllSettings,
     getLocalType, getLocalUsernameHash,
     getLogicContractAddress,
@@ -95,13 +95,17 @@ function Settings() {
                         </a>
                     </td>
                     <td>
-                        <WaitButton disabled={false}>
+                        {item.returnValues.iv.length === 0 && <p>Session closed</p>}
+                        {item.returnValues.iv.length > 0 &&
+                        <WaitButton disabled={mySessions.inProcessClose && mySessions.closeId === item.id}>
                             <button disabled={item.returnValues.iv === ''} className="btn btn-danger btn-sm"
                                     onClick={_ => {
-                                        createEmptyAppSession(item.returnValues.appId).then();
+                                        closeSession(item.returnValues.appId, item.id).then(_ => {
+
+                                        });
                                     }}>Close
                             </button>
-                        </WaitButton>
+                        </WaitButton>}
                     </td>
                 </tr>
             )}
