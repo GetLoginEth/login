@@ -60,9 +60,37 @@ export default class Session extends Logger {
             throw new Error('Session not found');
         }
 
-        //encryptedSession.privateKey = await EthCrypto.decryptWithPrivateKey(this.crypto.getAccount().privateKey, encryptedSession.returnValues);
         encryptedSession.privateKey = await this.decryptWithPrivateKey(this.crypto.getAccount().privateKey, encryptedSession.returnValues);
 
         return encryptedSession;
+    }
+
+    async moveFunds(account, toAddress, amount = 'all') {
+        const web3 = this.crypto.web3;
+        const gas = '21000';
+        if (amount === 'all') {
+            amount = await web3.eth.getBalance(account.address);
+            const costsBN = web3.utils.toBN(await web3.eth.getGasPrice()).mul(web3.utils.toBN(gas));
+            amount = web3.utils.toBN(amount).sub(costsBN);
+            if (amount.isNeg()) {
+                throw new Error("Not enough funds");
+            }
+        }
+
+        const signedTx = await account.signTransaction({
+            to: toAddress,
+            value: amount,
+            gas
+        });
+
+        return this.crypto.web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    }
+
+    async closeSession(appId, usernameHash, etherBackAddress) {
+        const decryptedSession = await this.getSessionInfo(appId, usernameHash);
+        const account = await this.crypto.getAccountFromInvite(decryptedSession.privateKey);
+        this.moveFunds(account, etherBackAddress).catch(_ => {
+        });
+        return this.contract.createEmptyAppSession(appId);
     }
 }

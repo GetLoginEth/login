@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
 import {
-    changePassword,
+    changePassword, closeSession,
     getAllSettings,
     getLocalType, getLocalUsernameHash,
     getLogicContractAddress,
@@ -56,11 +56,13 @@ function Settings() {
                                setInviteReset(e.target.checked).then();
                            }
                        }}/>
-                <label className="form-check-label" htmlFor="allowReset">
-                    Allow password reset
-                    <br/>
-                    <small>Anyone who has your invite will be able to reset your password</small>
-                </label>
+                <WaitButton disabled={settings.inProcess}>
+                    <label className="form-check-label" htmlFor="allowReset">
+                        Allow password reset
+                        <br/>
+                        <small>Anyone who has your invite will be able to reset your password</small>
+                    </label>
+                </WaitButton>
             </div>
         </fieldset>
 
@@ -68,18 +70,56 @@ function Settings() {
             test();
         }}>Test
         </button>*/}
-
+        <hr/>
         <h1>My sessions</h1>
 
         {mySessions.inProcessReceiving && <Spinner/>}
 
-        {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <p>Sessions not opened</p>}
+        {mySessions.sessions.length > 0 && <table className="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Tx hash</th>
+                <th scope="col">Manage</th>
+            </tr>
+            </thead>
+            <tbody>
 
-        {mySessions.sessions.length > 0 && mySessions.sessions.map((item, i) => <p key={i}>
-            App ID: {item.returnValues.appId} / Tx hash: <a target="_blank"
-                                                            href={`https://rinkeby.etherscan.io/tx/${item.transactionHash}`}>{item.transactionHash}</a>
-        </p>)}
+            {mySessions.sessions.map((item, i) =>
+                <tr key={i}>
+                    <th scope="row">
+                        {item.returnValues.appId}
+                    </th>
+                    <td>
+                        <a target="_blank" href={`https://rinkeby.etherscan.io/tx/${item.transactionHash}`}>
+                            {item.transactionHash}
+                        </a>
+                    </td>
+                    <td>
+                        {item.returnValues.iv.length === 0 && <p>Session closed</p>}
+                        {item.returnValues.iv.length > 0 &&
+                        <WaitButton disabled={mySessions.inProcessClose && mySessions.closeId === item.id}>
+                            <button disabled={item.returnValues.iv === ''} className="btn btn-danger btn-sm"
+                                    onClick={_ => {
+                                        closeSession(item.returnValues.appId, item.id).then(_ => {
 
+                                        });
+                                    }}>Close
+                            </button>
+                        </WaitButton>}
+                    </td>
+                </tr>
+            )}
+
+            {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <tr>
+                <td colSpan="7">
+                    <div className="empty">No results found.</div>
+                </td>
+            </tr>}
+
+            </tbody>
+        </table>}
+        <hr/>
         <details>
             <summary>App info</summary>
 

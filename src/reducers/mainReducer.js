@@ -268,7 +268,7 @@ export const reducer = (state, action) => {
             data = {inProcess: true};
             return merge('settings', data);
         case getStatus(ACTION_SET_INVITE_RESET, STATUS_SUCCESS):
-            data = {inviteReset: action.data};
+            data = {inviteReset: action.data.toString()};
             return merge('settings', data);
         case getStatus(ACTION_SET_INVITE_RESET, STATUS_COMPLETE):
             data = {inProcess: false};
@@ -294,7 +294,7 @@ export const reducer = (state, action) => {
             return merge('settings', data);
 
         case getStatus(ACTION_GET_SESSION_APP, STATUS_START):
-            data = {inProcess: true};
+            data = {inProcess: true, errorMessage: ''};
             return merge('sessionApp', data);
         case getStatus(ACTION_GET_SESSION_APP, STATUS_SUCCESS):
             return merge('sessionApp', action.data);
@@ -304,6 +304,25 @@ export const reducer = (state, action) => {
         case getStatus(ACTION_GET_SESSION_APP, STATUS_COMPLETE):
             data = {inProcess: false};
             return merge('sessionApp', data);
+
+        case getStatus(ACTION_CLOSE_SESSION, STATUS_START):
+            data = {inProcessClose: true, closeId: action.data.logId};
+            return merge('mySessions', data);
+        case getStatus(ACTION_CLOSE_SESSION, STATUS_SUCCESS):
+            // todo check. JSON.stringify/parse because object clones
+            let sessions = JSON.parse(JSON.stringify(state.mySessions.sessions));
+            sessions = sessions.map(sourceItem => {
+                const item = {...sourceItem};
+                if (item.id === action.startData.logId) {
+                    item.returnValues.iv = '';
+                }
+
+                return item;
+            });
+            return merge('mySessions', {sessions});
+        case getStatus(ACTION_CLOSE_SESSION, STATUS_COMPLETE):
+            data = {inProcessClose: false, closeId: null};
+            return merge('mySessions', data);
 
         case getStatus(ACTION_GET_LOGIC_CONTRACT, STATUS_SUCCESS):
             data = {smartContractLogicAddress: action.data,};
@@ -417,6 +436,8 @@ export const initialState = {
     },
     mySessions: {
         inProcessReceiving: false,
+        inProcessClose: false,
+        closeId: null,
         errorMessage: '',
         sessions: []
     },
@@ -477,3 +498,4 @@ export const ACTION_GET_SETTINGS = 'get_settings';
 export const ACTION_SET_INVITE_RESET = 'set_invite_reset';
 export const ACTION_GET_INVITE_INFO = 'get_invite_info';
 export const ACTION_RESET_PASSWORD = 'reset_password';
+export const ACTION_CLOSE_SESSION = 'close_session';

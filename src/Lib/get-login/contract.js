@@ -2294,6 +2294,10 @@ export default class contract {
         }, appId, address, iv, ephemPublicKey, ciphertext, mac);
     }
 
+    async createEmptyAppSession(appId) {
+        return this.createAppSession(appId, '0x0000000000000000000000000000000000000000', '', '', '', '', '0');
+    }
+
     async getSession(appId, username) {
         const storageContract = await this.getStorageContract();
         const results = await storageContract.getPastEvents('EventAppSession', {
