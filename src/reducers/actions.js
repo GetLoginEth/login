@@ -434,7 +434,7 @@ export const changePassword = async (username, oldPassword, newPassword) => {
     return callMethod(ACTION_CHANGE_PASSWORD, async () => {
         const data = await password.changePassword(username, oldPassword, newPassword);
         setUserData(getLocalUsername(), data.wallet, LOGIN_DATA);
-        await callMethod(ACTION_LOCAL_AUTH, async () => getUserData());
+        await callMethod(ACTION_LOCAL_AUTH, async () => getUserData(), {isQuiet: true});
 
         return data;
     });

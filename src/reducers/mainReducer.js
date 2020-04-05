@@ -11,7 +11,11 @@ export const reducer = (state, action) => {
     let data = {};
     switch (action.type) {
         case getStatus(ACTION_LOCAL_AUTH, STATUS_START):
-            return merge('user', {status: USER_STATUS_CHECKING});
+            if (action.data && action.data.isQuiet) {
+                return state;
+            } else {
+                return merge('user', {status: USER_STATUS_CHECKING});
+            }
         case getStatus(ACTION_LOCAL_AUTH, STATUS_SUCCESS):
             return merge('user', {status: USER_STATUS_LOGGED, ...action.data});
         case getStatus(ACTION_LOCAL_AUTH, STATUS_FAIL):

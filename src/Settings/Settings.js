@@ -2,11 +2,14 @@ import React, {Fragment, useEffect, useState} from 'react';
 import './Settings.css';
 import {useStateValue} from "../reducers/state";
 import {
-    changePassword, closeSession,
+    changePassword,
+    closeSession,
     getAllSettings,
-    getLocalType, getLocalUsernameHash,
+    getLocalType,
+    getLocalUsernameHash,
     getLogicContractAddress,
-    getMySessions, setInviteReset
+    getMySessions,
+    setInviteReset
 } from "../reducers/actions";
 import Spinner from "../Elements/Spinner";
 import {LOGIN_DATA} from "../Lib/get-login/signin";
@@ -137,7 +140,7 @@ function Settings() {
                 {password.errorMessage}
             </div>}
 
-            {isPasswordChanged === true && <div className="alert alert-success" role="alert">
+            {isPasswordChanged && <div className="alert alert-success" role="alert">
                 Password changed
             </div>}
 
@@ -148,16 +151,14 @@ function Settings() {
                     return;
                 }
 
-                changePassword(user.username, oldPassword, newPassword)
-                    .then(data => {
-                        if (data) {
-                            console.log(data);
-                            setIsPasswordChanged(true);
-                            setOldPassword('');
-                            setNewPassword('');
-                            setNewPasswordRepeat('');
-                        }
-                    });
+                changePassword(user.username, oldPassword, newPassword).then(data => {
+                    if (data) {
+                        setIsPasswordChanged(true);
+                        setOldPassword('');
+                        setNewPassword('');
+                        setNewPasswordRepeat('');
+                    }
+                });
             }}>
                 <fieldset disabled={password.inProcess}>
                     <div className="form-group">
