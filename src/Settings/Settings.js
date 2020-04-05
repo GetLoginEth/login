@@ -56,11 +56,13 @@ function Settings() {
                                setInviteReset(e.target.checked).then();
                            }
                        }}/>
-                <label className="form-check-label" htmlFor="allowReset">
-                    Allow password reset
-                    <br/>
-                    <small>Anyone who has your invite will be able to reset your password</small>
-                </label>
+                <WaitButton disabled={settings.inProcess}>
+                    <label className="form-check-label" htmlFor="allowReset">
+                        Allow password reset
+                        <br/>
+                        <small>Anyone who has your invite will be able to reset your password</small>
+                    </label>
+                </WaitButton>
             </div>
         </fieldset>
 
@@ -72,7 +74,6 @@ function Settings() {
         <h1>My sessions</h1>
 
         {mySessions.inProcessReceiving && <Spinner/>}
-
 
         {mySessions.sessions.length > 0 && <table className="table table-bordered">
             <thead>

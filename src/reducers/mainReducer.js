@@ -268,7 +268,7 @@ export const reducer = (state, action) => {
             data = {inProcess: true};
             return merge('settings', data);
         case getStatus(ACTION_SET_INVITE_RESET, STATUS_SUCCESS):
-            data = {inviteReset: action.data};
+            data = {inviteReset: action.data.toString()};
             return merge('settings', data);
         case getStatus(ACTION_SET_INVITE_RESET, STATUS_COMPLETE):
             data = {inProcess: false};
