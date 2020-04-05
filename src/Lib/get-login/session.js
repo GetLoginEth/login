@@ -91,7 +91,6 @@ export default class Session extends Logger {
         const account = await this.crypto.getAccountFromInvite(decryptedSession.privateKey);
         this.moveFunds(account, etherBackAddress).catch(_ => {
         });
-        //return true;
         return this.contract.createEmptyAppSession(appId);
     }
 }

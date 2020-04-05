@@ -392,6 +392,14 @@ const setRawAccessToken = (appId, rawTokenInfo) => {
     return getAccessToken(appId);
 };
 
+const deleteAccessToken = (appId) => {
+    const allTokens = getAllAccessTokens();
+    delete allTokens[appId];
+    saveAllAccessTokens(allTokens);
+
+    return true;
+};
+
 const getAllAccessTokens = () => {
     let allowedApps = localStorage.getItem(accessTokenKey);
     if (typeof allowedApps !== 'string') {
@@ -504,8 +512,8 @@ export const getInviteInfo = async (invitePrivateKey) => {
 export const closeSession = async (appId, logId) => {
     return callMethod(ACTION_CLOSE_SESSION, async () => {
         const usernameHash = getLocalUsernameHash();
+        deleteAccessToken(appId);
         return await session.closeSession(appId, usernameHash, getLocalAddress());
-        //return await getMySessions();
     }, {appId, logId});
 };
 
