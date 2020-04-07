@@ -1,21 +1,31 @@
 import {
     ACTION_ALLOW_APP,
-    ACTION_APP_INFO, ACTION_CHANGE_PASSWORD,
+    ACTION_APP_INFO,
+    ACTION_CHANGE_PASSWORD,
+    ACTION_CLOSE_SESSION,
     ACTION_CREATE_INVITE,
     ACTION_CREATE_MY_APP,
-    ACTION_DELETE_MY_APP, ACTION_EDIT_MY_APP,
-    ACTION_GET_SESSION_APP,
+    ACTION_DELETE_MY_APP,
+    ACTION_EDIT_MY_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
-    ACTION_GET_INVITES, ACTION_GET_LOGIC_CONTRACT,
+    ACTION_GET_INVITE_INFO,
+    ACTION_GET_INVITES,
+    ACTION_GET_LOGIC_CONTRACT,
     ACTION_GET_MY_APPS,
-    ACTION_GET_MY_APPS_INFO, ACTION_GET_MY_SESSIONS, ACTION_GET_SETTINGS, ACTION_GET_TREZOR_ADDRESSES,
-    ACTION_INVITE, ACTION_GET_INVITE_INFO,
+    ACTION_GET_MY_APPS_INFO,
+    ACTION_GET_MY_SESSIONS,
+    ACTION_GET_SESSION_APP,
+    ACTION_GET_SETTINGS,
+    ACTION_GET_TREZOR_ADDRESSES,
+    ACTION_INVITE,
     ACTION_LOCAL_AUTH,
     ACTION_LOGOUT,
+    ACTION_RESET_PASSWORD,
     ACTION_RESTORE_MY_APP,
     ACTION_SELF_APP_INFO,
-    ACTION_SESSION, ACTION_SET_INVITE_RESET,
+    ACTION_SESSION,
+    ACTION_SET_INVITE_RESET,
     ACTION_SIGNIN,
     ACTION_SIGNUP,
     getStatus,
@@ -25,19 +35,19 @@ import {
     STATUS_LOG,
     STATUS_MINED,
     STATUS_START,
-    STATUS_SUCCESS, ACTION_RESET_PASSWORD, ACTION_CLOSE_SESSION
+    STATUS_SUCCESS
 } from "./mainReducer";
 import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD, LOGIN_WEB3_PROVIDER} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
 import {getUsernameHash, LOGIN_TREZOR, validateUserData} from "../Lib/get-login/utils";
+/*import TrezorConnect from 'trezor-connect';*/
 import crypto from "../Lib/get-login/crypto";
+import TrezorConnect from "../Lib/get-login/crypto";
 import contract, {defaultAddresses} from "../Lib/get-login/contract";
 import Invite from "../Lib/get-login/invite";
 import Session from "../Lib/get-login/session";
-/*import TrezorConnect from 'trezor-connect';*/
-import TrezorConnect from "../Lib/get-login/crypto";
 import ChangePassword from "../Lib/get-login/changePassword";
 
 /*TrezorConnect.manifest({

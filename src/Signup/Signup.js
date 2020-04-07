@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './Signup.css';
 import Button from "react-bootstrap/Button";
-import {getTrezorAddresses, initPage, getInviteInfo, signUp, resetPassword} from "../reducers/actions";
+import {getInviteInfo, getTrezorAddresses, initPage, resetPassword, signUp} from "../reducers/actions";
 import Form from "react-bootstrap/Form";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
