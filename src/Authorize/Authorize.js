@@ -6,7 +6,8 @@ import WaitButton from "../Elements/WaitButton";
 import Spinner from "../Elements/Spinner";
 
 function Authorize() {
-    //const [isShowForm, setIsShowForm] = useState(false);
+    const {state: {authorizeApp}} = useStateValue();
+    const {state: {sessionApp}} = useStateValue();
 
     const setRedirectUrl = (url) => {
         //console.log(url);
@@ -21,9 +22,6 @@ function Authorize() {
     };
 
     const isValidRedirectURI = (redirectUrl) => {
-        // todo check is not equal current page and other cases
-        // todo compare with allowed urls in blockchain
-
         try {
             if (typeof redirectUrl === 'string') {
                 redirectUrl = new URL(redirectUrl);
@@ -45,8 +43,6 @@ function Authorize() {
         return responseType === 'id_token';
     };
 
-    const {state: {authorizeApp}} = useStateValue();
-    const {state: {sessionApp}} = useStateValue();
     const params = new URLSearchParams(window.location.search);
     const clientId = params.get('client_id');
     /**
@@ -66,8 +62,6 @@ function Authorize() {
     }, [clientId]);
 
     useEffect(_ => {
-        //console.log('// todo check it',clientId, authorizeApp, redirectUri);
-        console.log(sessionApp, authorizeApp);
         if (!authorizeApp || !authorizeApp.id || !sessionApp || !sessionApp.transactionHash) {
             return;
         }
