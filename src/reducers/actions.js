@@ -216,7 +216,6 @@ export const getDispatch = () => {
 };
 
 export const signIn = async (method, username, password, wallet, options = {}) => {
-    // todo reset all state because new user
     return callMethod(ACTION_SIGNIN, async () => {
         const usernameHash = getUsernameHash(cryptoInstance.web3, username);
         const receivedWallet = await signin.signIn(method, username, password, wallet, options);

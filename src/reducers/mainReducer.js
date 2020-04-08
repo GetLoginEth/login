@@ -22,8 +22,9 @@ export const reducer = (state, action) => {
             return merge('user', {status: USER_STATUS_NOT_LOGGED});
 
         case getStatus(ACTION_SIGNIN, STATUS_INIT):
-            data = {log: [], status: '', inProcess: false, errorMessage: ''};
-            return merge('signin', data);
+            /*data = {log: [], status: '', inProcess: false, errorMessage: ''};
+            return merge('signin', data);*/
+            return initialState;
         case getStatus(ACTION_SIGNIN, STATUS_START):
             data = {log: [], status: '', inProcess: true, errorMessage: ''};
             return merge('signin', data);
@@ -133,7 +134,8 @@ export const reducer = (state, action) => {
             return merge('invite', data);
 
         case getStatus(ACTION_LOGOUT, STATUS_SUCCESS):
-            return merge('user', {status: USER_STATUS_NOT_LOGGED, username: ''});
+            //return merge('user', {status: USER_STATUS_NOT_LOGGED, username: ''});
+            return initialState;
 
         case getStatus(ACTION_GET_BALANCE, STATUS_SUCCESS):
             //console.log(action.data);
