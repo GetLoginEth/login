@@ -178,16 +178,33 @@ export const checkLocalCredentials = async () => {
 };
 
 export const getWalletBalance = async (wallet) => {
-    return callMethod(ACTION_GET_BALANCE, async () => cryptoInstance.web3.eth.getBalance(wallet)
-        .then(data => {
-            const original = cryptoInstance.web3.utils.fromWei(data);
-            // todo fix situation when 3.65898484 displays as 3.66
-            const web = Number(original).toFixed(2);
-            return {
-                original,
-                web
-            };
-        }), wallet);
+    return callMethod(ACTION_GET_BALANCE, async () => {
+        const data = await cryptoInstance.web3.eth.getBalance(wallet);
+        const original = cryptoInstance.web3.utils.fromWei(data);
+        const beautyBalance = (balance, limit = 2) => {
+            if (balance.indexOf('.') < 0) {
+                return balance;
+            }
+
+            const split = balance.split('.');
+            if (split.length === 2) {
+                let secondPart = split[1];
+                if (secondPart.length > limit) {
+                    secondPart = secondPart.substr(0, limit);
+                    if (secondPart === '0'.repeat(limit)) {
+                        secondPart = null;
+                    }
+
+                    balance = secondPart ? split[0] + '.' + secondPart : split[0];
+                }
+            }
+
+            return balance;
+        };
+
+        const web = beautyBalance(original);
+        return {original, web};
+    }, wallet);
 };
 
 export const setDispatch = (newDispatch) => {
