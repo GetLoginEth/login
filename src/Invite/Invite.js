@@ -45,22 +45,37 @@ function Invite() {
         {invite.invites.length > 0 && <div className="mt-3">
             <h4>Previously created invites</h4>
             <small>There are public addresses. You can not use it as invites</small>
-            {invite.invites.map((item, index) => {
-                const inviteAddress = item.returnValues.inviteAddress;
-                const info = inviteInfo[inviteAddress];
 
-                return <p
-                    key={index}>{item.returnValues.inviteAddress} <span
-                    className="mr-2">{info && (info.isActive ? '/ Active' : '/ Used')}</span>
+            <table className="table table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col">Address</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
 
-                    <button className="btn btn-secondary btn-sm" onClick={_ => {
-                        getInvite(item.returnValues.inviteAddress).then();
-                    }}>
-                        Check
-                    </button>
+                {invite.invites.map((item, index) => {
+                    const inviteAddress = item.returnValues.inviteAddress;
+                    const info = inviteInfo[inviteAddress];
 
-                </p>
-            })}
+                    return <tr key={index}>
+                        <td>
+                            {item.returnValues.inviteAddress} <span
+                            className="mr-2">{info && (info.isActive ? '/ Active' : '/ Used')}</span>
+                        </td>
+                        <td>
+                            <button className="btn btn-secondary btn-sm" onClick={_ => {
+                                getInvite(item.returnValues.inviteAddress).then();
+                            }}>
+                                Check
+                            </button>
+                        </td>
+                    </tr>;
+                })}
+
+                </tbody>
+            </table>
         </div>}
     </Fragment>;
 }
