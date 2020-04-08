@@ -96,8 +96,6 @@ export default class ChangePassword extends Logger {
             }
         }
 
-        // todo decode and encode sessions with new public key, send back to blockchain
-        // todo send all sessions in one tx with password changing?
         this.log(LOG_CHANGE_PASSWORD);
         const txHash = await this.contract.changePassword('all',
             '0x' + newEncryptedWallet.address,
