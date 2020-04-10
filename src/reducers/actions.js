@@ -9,7 +9,7 @@ import {
     ACTION_EDIT_MY_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
-    ACTION_GET_INVITE_INFO,
+    ACTION_GET_INVITE_INFO, ACTION_GET_INVITE_PRICE,
     ACTION_GET_INVITES,
     ACTION_GET_LOGIC_CONTRACT,
     ACTION_GET_MY_APPS,
@@ -41,7 +41,7 @@ import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD, LOGIN_WEB3_PROVIDER} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
-import {getUsernameHash, LOGIN_TREZOR, validateUserData} from "../Lib/get-login/utils";
+import {beautyBalance, getUsernameHash, LOGIN_TREZOR, validateUserData} from "../Lib/get-login/utils";
 /*import TrezorConnect from 'trezor-connect';*/
 import crypto from "../Lib/get-login/crypto";
 import TrezorConnect from "../Lib/get-login/crypto";
@@ -181,27 +181,6 @@ export const getWalletBalance = async (wallet) => {
     return callMethod(ACTION_GET_BALANCE, async () => {
         const data = await cryptoInstance.web3.eth.getBalance(wallet);
         const original = cryptoInstance.web3.utils.fromWei(data);
-        const beautyBalance = (balance, limit = 2) => {
-            if (balance.indexOf('.') < 0) {
-                return balance;
-            }
-
-            const split = balance.split('.');
-            if (split.length === 2) {
-                let secondPart = split[1];
-                if (secondPart.length > limit) {
-                    secondPart = secondPart.substr(0, limit);
-                    if (secondPart === '0'.repeat(limit)) {
-                        secondPart = null;
-                    }
-
-                    balance = secondPart ? split[0] + '.' + secondPart : split[0];
-                }
-            }
-
-            return balance;
-        };
-
         const web = beautyBalance(original);
         return {original, web};
     }, wallet);
@@ -452,8 +431,8 @@ export const getInvite = async (address) => {
     return callMethod(ACTION_GET_INVITE, async () => await contractInstance.getInvite(address));
 };
 
-export const createInvite = async () => {
-    return callMethod(ACTION_CREATE_INVITE, async () => await invite.createInvite());
+export const createInvite = async (sendBalance) => {
+    return callMethod(ACTION_CREATE_INVITE, async () => await invite.createInvite(sendBalance));
 };
 
 export const changePassword = async (username, oldPassword, newPassword) => {
@@ -548,6 +527,19 @@ export const resetPassword = async (invite, username, newPassword) => {
         const data = await password.resetPasswordByInvite(invite, username, newPassword);
         setUserData(username, data.wallet, LOGIN_DATA);
         await callMethod(ACTION_LOCAL_AUTH, async () => getUserData());
+    });
+};
+
+export const getInvitePrice = async () => {
+    return callMethod(ACTION_GET_INVITE_PRICE, async () => {
+        let invitePrice = await invite.getPrice();
+        //let signupPrice = await signup.getPrice();
+        // todo get registration price (fails because permissions)
+        // todo cache this value
+        // full cycle: create invite, register new user, send 10-100 simple txs
+        const result = invitePrice * 1000;
+
+        return {price: result, priceWeb: beautyBalance(result, 4)};
     });
 };
 

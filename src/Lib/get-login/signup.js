@@ -214,4 +214,22 @@ export default class Signup extends Logger {
 
         return result;
     }
+
+    /*async getPrice() {
+        const {web3} = this.crypto;
+
+        const decryptedWallet = createWallet(web3);
+        const encryptedWallet = encryptWallet(decryptedWallet, 'hello');
+        console.log(encryptedWallet);
+        let data = await this.contract.prepareTx('createUserFromInvite',
+            {...this.contract.sendTxDefault, balanceEther: 'all'},
+            web3.utils.keccak256('admin'),
+            decryptedWallet.address,
+            encryptedWallet.crypto.ciphertext,
+            encryptedWallet.crypto.cipherparams.iv,
+            encryptedWallet.crypto.kdfparams.salt,
+            encryptedWallet.crypto.mac, true);
+
+        return web3.utils.fromWei(await this.contract.calculateEstimateGas(data));
+    }*/
 }

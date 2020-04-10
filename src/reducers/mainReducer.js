@@ -334,6 +334,15 @@ export const reducer = (state, action) => {
             data = {smartContractLogicAddress: action.data,};
             return merge('app', data);
 
+        case getStatus(ACTION_GET_INVITE_PRICE, STATUS_START):
+            return merge('invite', {inProcessReceivePrice: true});
+        case getStatus(ACTION_GET_INVITE_PRICE, STATUS_FAIL):
+            return merge('invite', {errorMessage: action.data});
+        case getStatus(ACTION_GET_INVITE_PRICE, STATUS_SUCCESS):
+            return merge('invite', {price: action.data.price, priceWeb: action.data.priceWeb,});
+        case getStatus(ACTION_GET_INVITE_PRICE, STATUS_COMPLETE):
+            return merge('invite', {inProcessReceivePrice: false});
+
         case getStatus(ACTION_ALLOW_APP, STATUS_SUCCESS):
             data = {transactionHash: action.data.transactionHash};
             return merge('sessionApp', data);
@@ -419,13 +428,15 @@ export const initialState = {
     invite: {
         inProcessCreation: false,
         inProcessReceiving: false,
+        inProcessReceivePrice: false,
         status: '',
         log: [],
         invites: [],
         inviteInfo: {},
         errorMessage: '',
         createdInvites: [],
-        info: {}
+        info: {},
+        price: null
     },
     myApps: {
         inProcessCreation: false,
@@ -478,7 +489,7 @@ export const getStatus = (action, status) => {
 export const ACTION_LOCAL_AUTH = 'local_auth';
 export const ACTION_SIGNIN = 'signin';
 export const ACTION_LOGOUT = 'logout';
-export const ACTION_LOGOUT_APP = 'logout_app';
+//export const ACTION_LOGOUT_APP = 'logout_app';
 export const ACTION_SIGNUP = 'signup';
 export const ACTION_INVITE = 'invite';
 export const ACTION_SESSION = 'session';
@@ -505,3 +516,4 @@ export const ACTION_SET_INVITE_RESET = 'set_invite_reset';
 export const ACTION_GET_INVITE_INFO = 'get_invite_info';
 export const ACTION_RESET_PASSWORD = 'reset_password';
 export const ACTION_CLOSE_SESSION = 'close_session';
+export const ACTION_GET_INVITE_PRICE = 'get_invite_price';

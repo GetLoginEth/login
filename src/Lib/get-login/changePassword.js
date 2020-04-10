@@ -131,9 +131,8 @@ export default class ChangePassword extends Logger {
             newEncryptedWallet.crypto.cipherparams.iv,
             newEncryptedWallet.crypto.kdfparams.salt,
             newEncryptedWallet.crypto.mac);
-        const r = await this.contract.calculateEstimateGas(data);
 
-        return web3.utils.fromWei(r);
+        return web3.utils.fromWei(await this.contract.calculateEstimateGas(data));
     }
 
     async resetPasswordByInvite(invite, username, newPassword) {
@@ -149,8 +148,6 @@ export default class ChangePassword extends Logger {
         }
 
         const usernameHash = getUsernameHash(web3, username);
-
-        //const account = await this.crypto.getAccountFromInvite(invite);
         const inviteInfo = await this.invite.getInviteInfo(invite);
         if (!inviteInfo.isPossibleToRecover) {
             throw new Error('Forbidden to recover');

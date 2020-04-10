@@ -45,6 +45,7 @@ export default class Invite extends Logger {
      * @returns {Promise<Account>}
      */
     async createInvite(sendBalance = '0.1') {
+        sendBalance = sendBalance.toString();
         const {web3} = this.crypto;
 
         this.log(INVITE_CREATE_WALLET);
@@ -54,5 +55,16 @@ export default class Invite extends Logger {
         await this.contract.createInvite(wallet.address, sendBalance);
 
         return wallet;
+    }
+
+    async getPrice() {
+        const {web3} = this.crypto;
+
+        const newDecryptedWallet = createWallet(web3);
+        let data = await this.contract.prepareTx('createInvite',
+            {...this.contract.sendTxDefault, balanceEther: 'all'},
+            newDecryptedWallet.address);
+
+        return web3.utils.fromWei(await this.contract.calculateEstimateGas(data));
     }
 }

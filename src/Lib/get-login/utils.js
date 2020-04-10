@@ -141,3 +141,25 @@ export const dataToV3Wallet = data => {
         },
     };
 };
+
+export const beautyBalance = (balance, limit = 2) => {
+    balance = balance.toString();
+    if (balance.indexOf('.') < 0) {
+        return balance;
+    }
+
+    const split = balance.split('.');
+    if (split.length === 2) {
+        let secondPart = split[1];
+        if (secondPart.length > limit) {
+            secondPart = secondPart.substr(0, limit);
+            if (secondPart === '0'.repeat(limit)) {
+                secondPart = null;
+            }
+
+            balance = secondPart ? split[0] + '.' + secondPart : split[0];
+        }
+    }
+
+    return balance;
+};

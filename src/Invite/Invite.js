@@ -1,7 +1,7 @@
 import React, {Fragment, useEffect} from 'react';
 import './Invite.css';
 import {useStateValue} from "../reducers/state";
-import {createInvite, getInvite, getInvites} from "../reducers/actions";
+import {createInvite, getInvite, getInvitePrice, getInvites} from "../reducers/actions";
 import WaitButton from "../Elements/WaitButton";
 
 function Invite() {
@@ -10,11 +10,12 @@ function Invite() {
     const {state: {invite: {inviteInfo}}} = useStateValue();
 
     useEffect(_ => {
+        getInvitePrice().then();
         getInvites(user.usernameHash).then();
     }, []);
 
     // todo get invite min value from global state
-    const isCanCreateInvite = Number(user.balance.original) >= Number(0.1);
+    const isCanCreateInvite = invite.price ? Number(user.balance.original) >= Number(invite.price) : false;
     return <Fragment>
         <h1>Invites</h1>
 
@@ -22,11 +23,12 @@ function Invite() {
             {invite.errorMessage}
         </div>}
 
-        {user.balance.original !== null && !isCanCreateInvite &&
-        <p>Your balance must be more than 0.1 ETH to create invite</p>}
+        {user.balance.original !== null && invite.price > 0 && !isCanCreateInvite &&
+        <p>Your balance must be more than {invite.price} ETH to create invite</p>}
+        {isCanCreateInvite && invite.price > 0 && <p>Invite creation cost {invite.priceWeb} ETH</p>}
         <WaitButton disabled={invite.inProcessCreation}>
             <button disabled={!isCanCreateInvite} className="btn btn-primary" onClick={_ => {
-                createInvite().then();
+                createInvite(invite.price).then();
             }}>Create invite
             </button>
         </WaitButton>
