@@ -3,6 +3,7 @@ import './Header.css';
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import {Link, matchPath} from "react-router-dom";
+import {Button, NavDropdown} from "react-bootstrap";
 
 function Header({isLoggedIn, isCheckingAuth, username, balance}) {
     const result = matchPath(window.location.pathname, {
@@ -32,10 +33,12 @@ function Header({isLoggedIn, isCheckingAuth, username, balance}) {
                             <Link className={`nav-link ${result.params.page === 'xsignup' ? 'active' : ''}`}
                                   to="./xsignup">Sign up</Link>
                         </>}
-                        {isLoggedIn &&
-                        <Link className={`nav-link float-right ${result.params.page === 'logout' ? 'active' : ''}`}
-                              to="./logout">Logout ({username}) |
-                            Balance: {!balance ? '...' : balance} ETH</Link>}
+
+                        {isLoggedIn && <NavDropdown title={username} id="user-dropdown">
+                            <Button className="dropdown-item disabled"
+                                    disabled={true}>{!balance ? '...' : balance} ETH</Button>
+                            <Link to="./logout" className="dropdown-item">Logout</Link>
+                        </NavDropdown>}
                     </Nav>}
                 </Navbar.Collapse>
             </Navbar>

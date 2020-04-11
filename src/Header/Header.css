@@ -2,3 +2,6 @@
 
 }
 
+.dropdown-menu {
+    left: -100px !important;
+}
