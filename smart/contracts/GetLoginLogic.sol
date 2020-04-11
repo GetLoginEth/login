@@ -44,17 +44,16 @@ contract GetLoginLogic {
     }
 
     function init() onlyOwner public {
-        bytes32 username = keccak256('admin');
-        GetLoginStorage.UserInfo memory info = getLoginStorage.getUser(username);
+        bytes32 usernameHash = keccak256('admin');
+        GetLoginStorage.UserInfo memory info = getLoginStorage.getUser(usernameHash);
         if (info.isActive != true) {
-            _createUser(username, msg.sender);
+            _createUser(usernameHash, msg.sender);
             string[] memory allowedUrls;
             address[] memory allowedContracts;
-            uint64 newAppId = _createApplication(username, 'GetLogin', 'GetLogin - auth app', allowedUrls, allowedContracts);
+            uint64 newAppId = _createApplication(usernameHash, 'GetLogin', 'GetLogin - auth app', allowedUrls, allowedContracts);
             _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
             _addApplicationUrl(newAppId, 'https://localhost:3001/');
             _addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
-            //_addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
         }
     }
 
@@ -62,9 +61,7 @@ contract GetLoginLogic {
     function _createUser(bytes32 usernameHash, address ownerWallet) private {
         require(isUsernameExists(usernameHash) == false, "Username already used");
         require(isAddressRegistered(ownerWallet) == false, "Wallet already used");
-        //Users[usernameHash] = UserInfo({username : usernameHash, isActive : true});
         getLoginStorage.setUser(usernameHash, GetLoginStorage.UserInfo({username : usernameHash, isActive : true}));
-        //UsersAddressUsername[ownerWallet] = Username({username : usernameHash, isActive : true});
         getLoginStorage.setUsersAddressUsername(ownerWallet, GetLoginStorage.Username({username : usernameHash, isActive : true}));
         _addSessionInit(usernameHash, ownerWallet, sessionMain, 0);
     }
@@ -95,8 +92,6 @@ contract GetLoginLogic {
     }
 
     function _setApplicationActive(uint64 appId, bool isActive) private {
-        //Applications[appId].isActive = isActive;
-        // todo possibly not work because get and. try direct set
         GetLoginStorage.Application memory app = getLoginStorage.getApplication(appId);
         app.isActive = isActive;
         getLoginStorage.setApplication(appId, app);
@@ -211,17 +206,14 @@ contract GetLoginLogic {
         _createUser(usernameHash, msg.sender);
     }
 
-    // todo implement method createUserWithAddress, where I can pass created wallet with limited admin permissions
-    // (allow external apps etc)
-
     function createInvite(address payable inviteAddress) public payable {
         // todo only main session can create invite
         validateInviteAvailable(inviteAddress);
         validateAddressRegistered(msg.sender);
-        bytes32 creatorUsername = getUsernameByAddress(msg.sender);
-        getLoginStorage.setInvite(inviteAddress, GetLoginStorage.InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsername, registeredUsername : '', isActive : true}));
+        bytes32 creatorUsernameHash = getUsernameByAddress(msg.sender);
+        getLoginStorage.setInvite(inviteAddress, GetLoginStorage.InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsernameHash, registeredUsername : '', isActive : true}));
         inviteAddress.transfer(msg.value);
-        getLoginStorage.emitEventInviteCreated(creatorUsername, inviteAddress);
+        getLoginStorage.emitEventInviteCreated(creatorUsernameHash, inviteAddress);
     }
 
     function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, bool allowReset) public payable {
@@ -260,14 +252,12 @@ contract GetLoginLogic {
     function createAppSession(uint64 appId, address payable wallet, string memory iv, string memory ephemPublicKey, string memory ciphertext, string memory mac) public payable {
         validateAddressRegistered(msg.sender);
         validateAppExists(appId);
-        bytes32 username = getUsernameByAddress(msg.sender);
+        bytes32 usernameHash = getUsernameByAddress(msg.sender);
         // todo check only one main session possible
         // todo hide user apps ids?
-        //_addSession(wallet, sessionApp, appId);
-        //UsersAddressUsername[wallet] = Username({isActive : true, username : username});
-        getLoginStorage.setUsersAddressUsername(wallet, GetLoginStorage.Username({isActive : true, username : username}));
+        getLoginStorage.setUsersAddressUsername(wallet, GetLoginStorage.Username({isActive : true, username : usernameHash}));
         wallet.transfer(msg.value);
-        getLoginStorage.emitEventAppSession(appId, username, iv, ephemPublicKey, ciphertext, mac);
+        getLoginStorage.emitEventAppSession(appId, usernameHash, iv, ephemPublicKey, ciphertext, mac);
     }
 
     function resetPassword(address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) public payable {
