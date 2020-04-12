@@ -6,6 +6,8 @@ GetLogin implements an [OpenID Connect](https://openid.net/) authentication thro
 
 Last project build hosted at [getlogin.eth](https://swarm-gateways.net/bzz:/getlogin.eth/).
 
+[![ETHCC2020 - Daniel Nagy: "Decentralized User Account Management"](http://i3.ytimg.com/vi/vX3F4QyQRw8/maxresdefault.jpg)](https://www.youtube.com/watch?v=vX3F4QyQRw8)
+
 ### Register your app in GetLogin smart contract
 
 1) Get last contract address from url: `https://swarm-gateways.net/bzz:/getlogin.eth/xsettings`
