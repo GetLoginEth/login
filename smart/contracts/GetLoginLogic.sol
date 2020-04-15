@@ -142,7 +142,6 @@ contract GetLoginLogic {
     }
 
     function validateInviteAvailable(address wallet) public view {
-        //require(isActiveInvite(wallet) == false, "This address already used for invite");
         require(isInviteAddressUsed(wallet) == false, "This address already used for invite");
     }
     /* End validators */
@@ -206,14 +205,28 @@ contract GetLoginLogic {
         _createUser(usernameHash, msg.sender);
     }
 
-    function createInvite(address payable inviteAddress) public payable {
+    function createInvite(address payable[] memory invites) public payable {
         // todo only main session can create invite
-        validateInviteAvailable(inviteAddress);
         validateAddressRegistered(msg.sender);
+        for (uint i = 0; i < invites.length; i++) {
+            validateInviteAvailable(invites[i]);
+        }
+
         bytes32 creatorUsernameHash = getUsernameByAddress(msg.sender);
-        getLoginStorage.setInvite(inviteAddress, GetLoginStorage.InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsernameHash, registeredUsername : '', isActive : true}));
-        inviteAddress.transfer(msg.value);
-        getLoginStorage.emitEventInviteCreated(creatorUsernameHash, inviteAddress);
+        uint256 val = 0;
+        if (msg.value > 0 && invites.length > 0) {
+            val = msg.value / invites.length;
+        }
+
+        for (uint i = 0; i < invites.length; i++) {
+            address payable inviteAddress = invites[0];
+            getLoginStorage.setInvite(inviteAddress, GetLoginStorage.InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsernameHash, registeredUsername : '', isActive : true}));
+            if (val > 0) {
+                inviteAddress.transfer(val);
+            }
+
+            getLoginStorage.emitEventInviteCreated(creatorUsernameHash, inviteAddress);
+        }
     }
 
     function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, bool allowReset) public payable {
@@ -289,10 +302,6 @@ contract GetLoginLogic {
 
         return getLoginStorage.getApplication(id);
     }
-
-    /*function getAnyApplication(uint64 id) public view returns (GetLoginStorage.Application memory) {
-        return Applications[id];
-    }*/
 
     function getUserInfo(bytes32 usernameHash) public view returns (GetLoginStorage.UserInfo memory) {
         //return Users[usernameHash];

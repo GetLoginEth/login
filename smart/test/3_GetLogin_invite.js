@@ -22,21 +22,24 @@ contract("GetLogin", async accounts => {
 
         it("Create invite from registered user", async () => {
             // todo fix cumulative balance for inviteAddress
-            await getLoginLogic.createInvite(inviteAddress, {from: accounts[0], value: web3.utils.toWei('0.1', "ether")});
+            await getLoginLogic.createInvite([inviteAddress], {
+                from: accounts[0],
+                value: web3.utils.toWei('0.1', "ether")
+            });
             let balance = await web3.eth.getBalance(inviteAddress);
             balance = web3.utils.fromWei(balance, 'ether');
             assert.isAtLeast(Number(balance), Number('0.1'), 'Empty balance');
         });
 
         it("Create invite from non registered user", async () => {
-            await willFail(getLoginLogic.createInvite(inviteAddress, {
+            await willFail(getLoginLogic.createInvite([inviteAddress], {
                 from: accounts[9],
                 value: web3.utils.toWei('0.1', "ether")
-            }), 'This address already used for invite');
+            }), 'Address not registered');
         });
 
         it("Create invite with used address and registered user", async () => {
-            await willFail(getLoginLogic.createInvite(inviteAddress, {
+            await willFail(getLoginLogic.createInvite([inviteAddress], {
                 from: accounts[0],
                 value: web3.utils.toWei('0.1', "ether")
             }), 'This address already used for invite');

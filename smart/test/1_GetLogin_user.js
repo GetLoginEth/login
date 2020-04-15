@@ -89,7 +89,7 @@ contract("GetLogin", async accounts => {
 
         it("Create invite", async () => {
             const account = demoAccounts.invite;
-            await getLoginLogic.createInvite(account.address, {
+            await getLoginLogic.createInvite([account.address], {
                 from: accounts[0],
                 value: web3.utils.toWei(account.balance, "ether")
             });
@@ -97,7 +97,7 @@ contract("GetLogin", async accounts => {
             assert.equal(inviteInfo.inviteAddress, account.address, "Incorrect data");
             assert.equal(inviteInfo.creatorUsername, web3.utils.keccak256('admin'), "Incorrect data");
             assert.equal(inviteInfo.isActive, true, "Incorrect data");
-            await willFail(getLoginLogic.createInvite(account.address, {
+            await willFail(getLoginLogic.createInvite([account.address], {
                 from: accounts[0],
                 value: web3.utils.toWei(demoAccounts.invite.balance, "ether")
             }), 'This address already used for invite');
@@ -136,7 +136,7 @@ contract("GetLogin", async accounts => {
         });
 
         it("Create invite with the same address", async () => {
-            await willFail(getLoginLogic.createInvite(demoAccounts.invite.address, {
+            await willFail(getLoginLogic.createInvite([demoAccounts.invite.address], {
                 from: accounts[0],
                 value: web3.utils.toWei(demoAccounts.invite.balance, "ether")
             }), 'This address already used for invite');

@@ -164,8 +164,4 @@ contract GetLoginStorage {
     function getUserSessions(bytes32 usernameHash) public view returns (UserSession[] memory){
         return UserSessions[usernameHash];
     }
-
-    /*function setUserSessions(bytes32 usernameHash, UserSession[] memory data) onlyLogicAddress public {
-        UserSessions[usernameHash] = data;
-    }*/
 }
