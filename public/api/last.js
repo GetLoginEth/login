@@ -158,6 +158,7 @@ class GetLoginApi {
         await waitFrameLoaded();
 
         this.accessToken = answerData.access_token;
+        onApiLoaded(this);
         return {
             result: true,
             data: answerData
@@ -211,4 +212,14 @@ class GetLoginApi {
     }
 }
 
+// todo old init way. Check and optimize it with new way
 window.getLoginApi = new GetLoginApi();
+
+// new way
+// todo init when iframe loaded?
+function onApiLoaded(instance) {
+    if (window && window._onGetLoginApiLoaded) {
+        window._onGetLoginApiLoaded(instance);
+        delete window._onGetLoginApiLoaded;
+    }
+}
