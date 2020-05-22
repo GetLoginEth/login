@@ -17,6 +17,7 @@ export default class PluginReceiver {
             'callContractMethod',
             'sendTransaction',
             'logout',
+            'keccak256'
         ];
     }
 
@@ -37,6 +38,7 @@ export default class PluginReceiver {
         this.appId = event.data.appId;
         this.accessToken = event.data.accessToken;
 
+        // todo IMPORTANT check url sender and check with stored in smart contract
         // todo check access_token and appId
         if (!event.data.method || !this.allowedMethods.includes(event.data.method)) {
             event.source.postMessage({
@@ -60,6 +62,11 @@ export default class PluginReceiver {
                 }, event.origin);
             });
     };
+
+    async keccak256({data}) {
+        console.log('data', data);
+        return this.getWeb3().utils.keccak256(data);
+    }
 
     async getUserInfo() {
         return {
@@ -87,9 +94,10 @@ export default class PluginReceiver {
     }
 
     async callContractMethod({abi, address, method, params}) {
+        console.log(params);
         const contract = new this.web3.eth.Contract(abi, address);
 
-        return contract.methods[method](params).call();
+        return ((!params || params.length === 0) ? contract.methods[method]() : contract.methods[method](...params)).call();
     }
 
     init(clientId = null, accessToken = null) {

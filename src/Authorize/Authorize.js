@@ -30,7 +30,7 @@ function Authorize() {
             //console.log(redirectUrl);
             if (redirectUrl && redirectUrl.protocol === 'https:') {
             } else {
-                throw new Error();
+                throw new Error('url without https');
             }
         } catch {
             return false;
@@ -104,7 +104,8 @@ function Authorize() {
     const isRedirectUri = isValidRedirectURI(redirectUri);
     const isResponseType = isValidResponseType(responseType);
     const isValidParams = isRedirectUri && isResponseType;
-    const isUrlAllowed = authorizeApp.allowedUrls.includes(redirectUri.href);
+    const isUrlAllowed = isRedirectUri ? authorizeApp.allowedUrls.includes(redirectUri.href) : false;
+
 
     return <div className="Authorize">
         <h3 className="text-center">Authorization</h3>

@@ -178,7 +178,7 @@ class GetLoginApi {
         return true;
     }
 
-    async callContractMethod(address, method, params) {
+    async callContractMethod(address, method, ...params ) {
         const abi = this.getClientAbi();
         if (!abi) {
             throw new Error('Empty abi');
@@ -210,6 +210,10 @@ class GetLoginApi {
     async setOnLogout(func) {
         this.onLogout = func;
     }
+
+    async keccak256(data) {
+        return this._sendMessage(this.accessToken, 'keccak256', {data});
+    }
 }
 
 // todo old init way. Check and optimize it with new way
@@ -217,6 +221,6 @@ window.getLoginApi = new GetLoginApi();
 // new way
 // todo init when iframe loaded?
 if (window && window._onGetLoginApiLoaded) {
-    window._onGetLoginApiLoaded();
+    window._onGetLoginApiLoaded(window.getLoginApi);
     delete window._onGetLoginApiLoaded;
 }
