@@ -85,7 +85,8 @@ function Invite() {
 
             <Dropdown.Menu>
                 <Dropdown.Item onClick={e => {
-                    createInvite(5, invite.price).then();
+                    //createInvite(5, invite.price).then();
+                    alert('Not implemented');
                 }}>Create multiple</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>

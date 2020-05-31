@@ -532,12 +532,13 @@ export const resetPassword = async (invite, username, newPassword) => {
 
 export const getInvitePrice = async () => {
     return callMethod(ACTION_GET_INVITE_PRICE, async () => {
-        let invitePrice = await invite.getPrice();
+        /*let invitePrice = await invite.getPrice();
         //let signupPrice = await signup.getPrice();
         // todo get registration price (fails because permissions)
         // todo cache this value
         // full cycle: create invite, register new user, send 10-100 simple txs
-        const result = invitePrice * 1000;
+        const result = invitePrice * 1000;*/
+        const result = 0.1;
 
         return {price: result, priceWeb: beautyBalance(result, 4)};
     });
