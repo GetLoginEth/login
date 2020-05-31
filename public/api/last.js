@@ -27,7 +27,6 @@ class GetLoginApi {
     }
 
     _sendMessage(accessToken, method, params = null) {
-        //console.log('call ' + method);
         if (!this.iframe) {
             throw new Error('Empty iframe');
         }
@@ -96,6 +95,14 @@ class GetLoginApi {
         return `${this.authUrl}?client_id=${appId}&response_type=id_token&redirect_uri=${redirectUrl}`;
     }
 
+    resetInit() {
+        if (this.iframe) {
+            this.iframe = null;
+        }
+
+        this.isInitInProgress = false;
+    }
+
     async init(appId, baseApiUrl, redirectUrl, accessToken = null) {
         [appId, baseApiUrl, redirectUrl].forEach(item => {
             if (!item) {
@@ -158,6 +165,7 @@ class GetLoginApi {
         await waitFrameLoaded();
 
         this.accessToken = answerData.access_token;
+
         return {
             result: true,
             data: answerData
@@ -177,7 +185,7 @@ class GetLoginApi {
         return true;
     }
 
-    async callContractMethod(address, method, params) {
+    async callContractMethod(address, method, ...params) {
         const abi = this.getClientAbi();
         if (!abi) {
             throw new Error('Empty abi');
@@ -209,6 +217,13 @@ class GetLoginApi {
     async setOnLogout(func) {
         this.onLogout = func;
     }
+
+    async keccak256(data) {
+        return this._sendMessage(this.accessToken, 'keccak256', {data});
+    }
 }
 
-window.getLoginApi = new GetLoginApi();
+if (window && window._onGetLoginApiLoaded) {
+    window._onGetLoginApiLoaded(new GetLoginApi());
+    delete window._onGetLoginApiLoaded;
+}

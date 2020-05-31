@@ -17,6 +17,7 @@ export default class PluginReceiver {
             'callContractMethod',
             'sendTransaction',
             'logout',
+            'keccak256'
         ];
     }
 
@@ -29,7 +30,6 @@ export default class PluginReceiver {
     }
 
     _listener = (event) => {
-        //console.log(event);
         if (typeof event.data !== 'object' || event.data.app !== 'get_login') {
             return;
         }
@@ -37,7 +37,11 @@ export default class PluginReceiver {
         this.appId = event.data.appId;
         this.accessToken = event.data.accessToken;
 
+        // todo IMPORTANT check url sender and check with stored in smart contract
+        // todo check iframe parent. Allow only parents from contract
         // todo check access_token and appId
+        // todo access_token should be not tx hash, but hash from some data signed by private key, because tx is public
+        // and can be compromised
         if (!event.data.method || !this.allowedMethods.includes(event.data.method)) {
             event.source.postMessage({
                 id: event.data.id,
@@ -46,6 +50,7 @@ export default class PluginReceiver {
             return;
         }
 
+        console.log('event', event.data);
         this[event.data.method](event.data.params)
             .then(result => {
                 event.source.postMessage({
@@ -60,6 +65,11 @@ export default class PluginReceiver {
                 }, event.origin);
             });
     };
+
+    async keccak256({data}) {
+        console.log('data', data);
+        return this.getWeb3().utils.keccak256(data);
+    }
 
     async getUserInfo() {
         return {
@@ -87,9 +97,10 @@ export default class PluginReceiver {
     }
 
     async callContractMethod({abi, address, method, params}) {
+        console.log(params);
         const contract = new this.web3.eth.Contract(abi, address);
 
-        return contract.methods[method](params).call();
+        return ((!params || params.length === 0) ? contract.methods[method]() : contract.methods[method](...params)).call();
     }
 
     init(clientId = null, accessToken = null) {

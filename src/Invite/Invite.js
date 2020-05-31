@@ -1,10 +1,17 @@
-import React, {Fragment, useEffect} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import './Invite.css';
 import {useStateValue} from "../reducers/state";
-import {createInvite, getInvite, getInvitePrice, getInvites} from "../reducers/actions";
+import {createInvite, getInvite, getInvitePrice, getInvites, signUp} from "../reducers/actions";
 import WaitButton from "../Elements/WaitButton";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Button from "react-bootstrap/Button";
+import Dropdown from "react-bootstrap/Dropdown";
+import Modal from "react-bootstrap/Modal";
 
 function Invite() {
+    const [showMultipleModal, setShowMultipleModal] = useState(false);
+    const [invitesCount, setInvitesCount] = useState(1);
+
     const {state: {user}} = useStateValue();
     const {state: {invite}} = useStateValue();
     const {state: {invite: {inviteInfo}}} = useStateValue();
@@ -23,15 +30,65 @@ function Invite() {
             {invite.errorMessage}
         </div>}
 
+        <Modal id="multipleModal"
+               show={showMultipleModal}
+               onHide={_ => {
+                   setShowMultipleModal(false);
+               }} animation={true}>
+            <Modal.Header>
+                <Modal.Title>Multiple invites</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="form-group">
+                    <label htmlFor="exampleInputEmail1">Invites count</label>
+                    <input type="number" className="form-control" value={invitesCount}
+                           onChange={e => {
+                               setInvitesCount(Number(e.target.value));
+                           }}/>
+                </div>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button disabled={invite.inProcessCreation} variant="secondary" onClick={_ => {
+                    setShowMultipleModal(false);
+                }}>
+                    Cancel
+                </Button>
+                <Button disabled={invite.inProcessCreation} variant="primary" onClick={_ => {
+                    createInvite(invitesCount).then();
+                    setShowMultipleModal(false);
+                }}>
+                    Create invites
+                </Button>
+            </Modal.Footer>
+        </Modal>
+
         {user.balance.original !== null && invite.price > 0 && !isCanCreateInvite &&
-        <p>Your balance must be more than {invite.price} ETH to create invite</p>}
+        <p>Your balance must be more than {invite.priceWeb} ETH to create invite</p>}
         {isCanCreateInvite && invite.price > 0 && <p>Invite creation cost {invite.priceWeb} ETH</p>}
-        <WaitButton disabled={invite.inProcessCreation}>
-            <button disabled={!isCanCreateInvite} className="btn btn-primary" onClick={_ => {
-                createInvite(invite.price).then();
-            }}>Create invite
-            </button>
-        </WaitButton>
+
+        <Dropdown as={ButtonGroup} className="btn-block col-md-3" style={{padding: 0}}>
+            <WaitButton disabled={invite.inProcessCreation}>
+                <Button variant="primary"
+                        type="submit"
+                        className={"col-md-10"}
+                        disabled={!isCanCreateInvite}
+                        onClick={_ => {
+                            createInvite(1, invite.price).then();
+                        }}
+                >
+                    Create invite
+                </Button>
+            </WaitButton>
+
+            <Dropdown.Toggle className="" split variant="primary"
+                             disabled={!isCanCreateInvite || invite.inProcessCreation}/>
+
+            <Dropdown.Menu>
+                <Dropdown.Item onClick={e => {
+                    createInvite(5, invite.price).then();
+                }}>Create multiple</Dropdown.Item>
+            </Dropdown.Menu>
+        </Dropdown>
 
         {invite.createdInvites.length > 0 && <div className="mt-3">
             <h4>Created invites</h4>
