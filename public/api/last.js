@@ -224,6 +224,6 @@ class GetLoginApi {
 }
 
 if (window && window._onGetLoginApiLoaded) {
-    window._onGetLoginApiLoaded(window.getLoginApi);
+    window._onGetLoginApiLoaded(new GetLoginApi());
     delete window._onGetLoginApiLoaded;
 }
