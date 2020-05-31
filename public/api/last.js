@@ -27,7 +27,6 @@ class GetLoginApi {
     }
 
     _sendMessage(accessToken, method, params = null) {
-        //console.log('call ' + method);
         if (!this.iframe) {
             throw new Error('Empty iframe');
         }
@@ -94,6 +93,14 @@ class GetLoginApi {
         });
 
         return `${this.authUrl}?client_id=${appId}&response_type=id_token&redirect_uri=${redirectUrl}`;
+    }
+
+    resetInit() {
+        if (this.iframe) {
+            this.iframe = null;
+        }
+
+        this.isInitInProgress = false;
     }
 
     async init(appId, baseApiUrl, redirectUrl, accessToken = null) {
@@ -216,15 +223,7 @@ class GetLoginApi {
     }
 }
 
-// todo old init way. Check and optimize it with new way
-window.getLoginApi = new GetLoginApi();
-// new way
-// todo init when iframe loaded?
 if (window && window._onGetLoginApiLoaded) {
-    console.log('_onGetLoginApiLoaded found in this window');
     window._onGetLoginApiLoaded(window.getLoginApi);
     delete window._onGetLoginApiLoaded;
-} else {
-    console.log('_onGetLoginApiLoaded not found in this window');
-    console.log(window);
 }
