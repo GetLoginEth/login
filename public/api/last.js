@@ -178,7 +178,7 @@ class GetLoginApi {
         return true;
     }
 
-    async callContractMethod(address, method, ...params ) {
+    async callContractMethod(address, method, ...params) {
         const abi = this.getClientAbi();
         if (!abi) {
             throw new Error('Empty abi');
@@ -221,6 +221,10 @@ window.getLoginApi = new GetLoginApi();
 // new way
 // todo init when iframe loaded?
 if (window && window._onGetLoginApiLoaded) {
+    console.log('_onGetLoginApiLoaded found in this window');
     window._onGetLoginApiLoaded(window.getLoginApi);
     delete window._onGetLoginApiLoaded;
+} else {
+    console.log('_onGetLoginApiLoaded not found in this window');
+    console.log(window);
 }

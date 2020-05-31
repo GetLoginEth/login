@@ -30,7 +30,6 @@ export default class PluginReceiver {
     }
 
     _listener = (event) => {
-        //console.log(event);
         if (typeof event.data !== 'object' || event.data.app !== 'get_login') {
             return;
         }
@@ -39,7 +38,10 @@ export default class PluginReceiver {
         this.accessToken = event.data.accessToken;
 
         // todo IMPORTANT check url sender and check with stored in smart contract
+        // todo check iframe parent. Allow only parents from contract
         // todo check access_token and appId
+        // todo access_token should be not tx hash, but hash from some data signed by private key, because tx is public
+        // and can be compromised
         if (!event.data.method || !this.allowedMethods.includes(event.data.method)) {
             event.source.postMessage({
                 id: event.data.id,
@@ -48,6 +50,7 @@ export default class PluginReceiver {
             return;
         }
 
+        console.log('event', event.data);
         this[event.data.method](event.data.params)
             .then(result => {
                 event.source.postMessage({
