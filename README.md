@@ -30,10 +30,11 @@ where `appId` is your app id stored in step 3 of registration app instruction, `
 
 `accessToken` - is access token which you received early or `null`
 
-Add `<script src="https://swarm-gateways.net/bzz:/getlogin.eth/api/last.js"></script>` to footer
-                         
+Add `<script src="https://swarm-gateways.net/bzz:/getlogin.eth/api/last.js"></script>` to footer.
+    
+After loading the script, it will call the `window._onGetLoginApiLoaded` method and pass the GetLogin instance to it.                     
                            
-###Call built-in methods
+### Call built-in methods
 ```
 window.getLoginApi.getUserInfo()
     .then(data => alert(JSON.stringify(data)))
