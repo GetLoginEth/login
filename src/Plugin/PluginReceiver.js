@@ -17,8 +17,49 @@ export default class PluginReceiver {
             'callContractMethod',
             'sendTransaction',
             'logout',
-            'keccak256'
+            'keccak256',
+            'getPastEvents'
         ];
+    }
+
+    init(clientId = null, accessToken = null) {
+        const params = new URLSearchParams(window.location.search);
+
+        if (!clientId) {
+            clientId = params.get('client_id');
+        }
+
+        if (!clientId) {
+            throw new Error('Incorrect client_id');
+        }
+
+        if (!accessToken) {
+            accessToken = params.get('access_token');
+        }
+
+        if (!accessToken) {
+            throw new Error('Incorrect accessToken');
+        }
+
+        window.addEventListener('message', this._listener);
+        getAppSession(clientId)
+            .then(info => {
+                console.log(info);
+                let is_client_allowed = false;
+                let result = {
+                    type: 'get_login_init',
+                    client_id: clientId,
+                };
+
+                if (info && info.transactionHash === accessToken) {
+                    result.access_token = info.transactionHash;
+                    is_client_allowed = true;
+                }
+
+                result.is_client_allowed = is_client_allowed;
+
+                window.parent.postMessage(result, '*');
+            });
     }
 
     getWeb3() {
@@ -67,8 +108,14 @@ export default class PluginReceiver {
     };
 
     async keccak256({data}) {
-        console.log('data', data);
+        //console.log('data', data);
         return this.getWeb3().utils.keccak256(data);
+    }
+
+    async getPastEvents({abi, address, eventName, params}) {
+        const contract = new this.web3.eth.Contract(abi, address);
+
+        return contract.getPastEvents(eventName, params);
     }
 
     async getUserInfo() {
@@ -78,8 +125,7 @@ export default class PluginReceiver {
         };
     }
 
-    async sendTransaction(data) {
-        const {abi, address, method, txParams, params} = data;
+    async sendTransaction({abi, address, method, txParams, params}) {
         const app = await getAppSession(this.appId);
         if (!app) {
             throw new Error('Access token not found');
@@ -99,48 +145,9 @@ export default class PluginReceiver {
     async callContractMethod({abi, address, method, params}) {
         console.log(params);
         const contract = new this.web3.eth.Contract(abi, address);
+        const isEmptyParams = !params || params.length === 0;
 
-        return ((!params || params.length === 0) ? contract.methods[method]() : contract.methods[method](...params)).call();
-    }
-
-    init(clientId = null, accessToken = null) {
-        const params = new URLSearchParams(window.location.search);
-
-        if (!clientId) {
-            clientId = params.get('client_id');
-        }
-
-        if (!clientId) {
-            throw new Error('Incorrect client_id');
-        }
-
-        if (!accessToken) {
-            accessToken = params.get('access_token');
-        }
-
-        if (!accessToken) {
-            throw new Error('Incorrect accessToken');
-        }
-
-        window.addEventListener('message', this._listener);
-        getAppSession(clientId)
-            .then(info => {
-                console.log(info);
-                let is_client_allowed = false;
-                let result = {
-                    type: 'get_login_init',
-                    client_id: clientId,
-                };
-
-                if (info && info.transactionHash === accessToken) {
-                    result.access_token = info.transactionHash;
-                    is_client_allowed = true;
-                }
-
-                result.is_client_allowed = is_client_allowed;
-
-                window.parent.postMessage(result, '*');
-            });
+        return (isEmptyParams ? contract.methods[method]() : contract.methods[method](...params)).call();
     }
 
     async logout() {

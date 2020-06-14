@@ -214,12 +214,21 @@ class GetLoginApi {
         });
     }
 
-    async setOnLogout(func) {
-        this.onLogout = func;
-    }
-
     async keccak256(data) {
         return this._sendMessage(this.accessToken, 'keccak256', {data});
+    }
+
+    async getPastEvents(address, eventName, params) {
+        return this._sendMessage(this.accessToken, 'getPastEvents', {
+            abi: this.getClientAbi(),
+            address,
+            eventName,
+            params
+        });
+    }
+
+    async setOnLogout(func) {
+        this.onLogout = func;
     }
 }
 
