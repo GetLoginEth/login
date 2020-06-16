@@ -73,14 +73,14 @@ function Invite() {
                         className={"col-md-10"}
                         disabled={!isCanCreateInvite}
                         onClick={_ => {
-                            createInvite(1, invite.price).then();
+                            createInvite(1).then();
                         }}
                 >
                     Create invite
                 </Button>
             </WaitButton>
 
-            <Dropdown.Toggle className="" split variant="primary"
+            {/*<Dropdown.Toggle className="" split variant="primary"
                              disabled={!isCanCreateInvite || invite.inProcessCreation}/>
 
             <Dropdown.Menu>
@@ -88,7 +88,7 @@ function Invite() {
                     //createInvite(5, invite.price).then();
                     alert('Not implemented');
                 }}>Create multiple</Dropdown.Item>
-            </Dropdown.Menu>
+            </Dropdown.Menu>*/}
         </Dropdown>
 
         {invite.createdInvites.length > 0 && <div className="mt-3">

@@ -52,7 +52,7 @@ export default class Invite extends Logger {
         const wallet = createWallet(web3);
 
         this.log(INVITE_REGISTER_WALLET);
-        await this.contract.createInvite(wallet.address, sendBalance);
+        await this.contract.createInvites([wallet.address], sendBalance);
 
         return wallet;
     }
