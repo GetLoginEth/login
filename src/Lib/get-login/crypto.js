@@ -26,13 +26,31 @@ export default class crypto {
          *
          * @type {WebsocketProvider}
          */
-        this.provider = new Web3.providers.WebsocketProvider(this.config.websocketProviderUrl);
+        //this.provider = new Web3.providers.WebsocketProvider(this.config.websocketProviderUrl);
+        this.provider = null;
         /**
          *
          * @type {Web3}
          */
         this.web3 = new Web3(this.provider);
         this.publicKey = null;
+        this.refreshProvider(this.config.websocketProviderUrl);
+    }
+
+    refreshProvider(providerUrl) {
+        const self = this;
+
+        function retry() {
+            return setTimeout(() => {
+                self.refreshProvider(providerUrl);
+            }, 3000);
+        }
+
+        const provider = new Web3.providers.WebsocketProvider(providerUrl)
+        provider.on('end', () => retry());
+        self.web3.setProvider(provider);
+
+        return provider;
     }
 
     /**
