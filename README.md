@@ -64,6 +64,8 @@ window.getLoginApi.getUserInfo()
 `async setOnLogout(func)` - set callback when user logged out
 
 `async keccak256(data)` - get keccak256 hash from passed data
+
+`async getPastEvents(address, eventName, params)` - get events from contract
 ### Call dApp contract methods
 
 Set contract ABI once before calling dApp methods: `window.getLoginApi.setClientAbi(abi);`
