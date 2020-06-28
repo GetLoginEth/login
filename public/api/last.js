@@ -230,6 +230,10 @@ class GetLoginApi {
     async setOnLogout(func) {
         this.onLogout = func;
     }
+
+    async getAccessTokenBalance() {
+        return this._sendMessage(this.accessToken, 'getAccessTokenBalance');
+    }
 }
 
 if (window && window._onGetLoginApiLoaded) {

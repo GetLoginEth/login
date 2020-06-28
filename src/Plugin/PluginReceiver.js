@@ -1,5 +1,5 @@
 import {appLogoutLocal, getAppSession, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
-import sessionContract from "../Lib/get-login/sessionContract";
+import SessionContract from "../Lib/get-login/SessionContract";
 
 export default class PluginReceiver {
     /**
@@ -18,7 +18,8 @@ export default class PluginReceiver {
             'sendTransaction',
             'logout',
             'keccak256',
-            'getPastEvents'
+            'getPastEvents',
+            'getAccessTokenBalance'
         ];
     }
 
@@ -130,13 +131,9 @@ export default class PluginReceiver {
         if (!app) {
             throw new Error('Access token not found');
         }
-        /**
-         *
-         * @type {sessionContract}
-         */
-            // todo move 'rinkeby' to global scope
-            // const mainContract = new contract(this.web3, 'rinkeby', address, abi);
-        const mainContract = new sessionContract({web3: this.web3, network: 'rinkeby', address, abi});
+
+        // todo move 'rinkeby' to global scope
+        const mainContract = new SessionContract({web3: this.web3, network: 'rinkeby', address, abi});
         await mainContract.setPrivateKey(app.privateKey);
 
         return await mainContract.sendTx({method, params: txParams, settings: params});
@@ -152,5 +149,25 @@ export default class PluginReceiver {
 
     async logout() {
         return await appLogoutLocal(this.appId)
+    }
+
+    /**
+     * Get access token balance
+     * @returns {Promise<{balanceWei: string, balanceWeb: string}>}
+     */
+    async getAccessTokenBalance() {
+        const app = await getAppSession(this.appId);
+        if (!app) {
+            throw new Error('Access token not found');
+        }
+
+        const address = this.web3.eth.accounts.privateKeyToAccount(app.privateKey).address;
+        const balanceWei = await this.web3.eth.getBalance(address);
+        const balanceWeb = this.web3.utils.fromWei(balanceWei, 'ether');
+
+        return {
+            balanceWei,
+            balanceWeb
+        };
     }
 }

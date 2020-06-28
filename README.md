@@ -66,6 +66,8 @@ window.getLoginApi.getUserInfo()
 `async keccak256(data)` - get keccak256 hash from passed data
 
 `async getPastEvents(address, eventName, params)` - get events from contract
+
+`async getAccessTokenBalance()` - receive balance on access token
 ### Call dApp contract methods
 
 Set contract ABI once before calling dApp methods: `window.getLoginApi.setClientAbi(abi);`

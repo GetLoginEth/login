@@ -1,4 +1,4 @@
-export default class sessionContract {
+export default class SessionContract {
     constructor({web3, network, address, abi}) {
         this.address = address;
         this.abi = abi;
