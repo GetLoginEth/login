@@ -24,6 +24,10 @@ const DevelopersAppCreate = lazy(() => import('../DevelopersAppCreate'));
 const DevelopersAppEdit = lazy(() => import('../DevelopersAppEdit'));
 const Plugin = lazy(() => import('../Plugin'));
 const Invite = lazy(() => import('../Invite'));
+const allowedDomains = [
+    "getlogin.swarm-gateways.net",
+    "getlogin.localhost:3000"
+];
 
 function PrivateRoute({children, state, computedMatch, ...rest}) {
     //console.log(rest);
@@ -69,7 +73,22 @@ function NoMatch() {
     );
 }
 
+function NotAllowedDomain() {
+    return (
+        <div>
+            <h3>
+                Domain not allowed
+            </h3>
+            <p>Please use one of the listed domains:</p>
+            {allowedDomains.map((item, i) => <p key={i}><a href={`https://${item}`}>{item}</a></p>)}
+        </div>
+    );
+}
+
 function App() {
+    const isCorrectDomain = allowedDomains.includes(window.location.host);
+    //const pathPrefix="/:swarm_protocol?/:swarm_hash?";
+    const pathPrefix = "";
     return (
         <StateProvider initialState={initialState} reducer={reducer}>
             <StateContext.Consumer>
@@ -77,74 +96,78 @@ function App() {
                     //console.log(state);
                     return <Router>
 
-                        <Header isLoggedIn={state.user.isLoggedIn()}
-                                isCheckingAuth={state.user.isCheckingAuth()}
-                                username={state.user.username}
-                                balance={state.user.balance.web}/>
+                        {isCorrectDomain && <Header isLoggedIn={state.user.isLoggedIn()}
+                                                    isCheckingAuth={state.user.isCheckingAuth()}
+                                                    username={state.user.username}
+                                                    balance={state.user.balance.web}/>}
                         <main role="main">
                             <div className="container">
                                 <Suspense fallback={<Spinner/>}>
                                     <Switch>
-                                        <Route exact path="/:swarm_protocol?/:swarm_hash?/">
+                                        {!isCorrectDomain && <Route path="*">
+                                            <NotAllowedDomain/>
+                                        </Route>}
+
+                                        <Route exact path={`${pathPrefix}/`}>
                                             <Main/>
                                         </Route>
 
-                                        <Route path="/:swarm_protocol?/:swarm_hash?/privacy">
+                                        <Route path={`${pathPrefix}/privacy`}>
                                             <Privacy/>
                                         </Route>
 
-                                        <Route path="/:swarm_protocol?/:swarm_hash?/terms">
+                                        <Route path={`${pathPrefix}/terms`}>
                                             <Terms/>
                                         </Route>
 
-                                        <Route path="/:swarm_protocol?/:swarm_hash?/xplugin">
+                                        <Route path={`${pathPrefix}/xplugin`}>
                                             <Plugin/>
                                         </Route>
 
-                                        <LoginRoute path="/:swarm_protocol?/:swarm_hash?/login" state={state}>
+                                        <LoginRoute path={`${pathPrefix}/login`} state={state}>
                                             <Signin/>
                                         </LoginRoute>
 
-                                        <LoginRoute path="/:swarm_protocol?/:swarm_hash?/xsignup" state={state}>
+                                        <LoginRoute path={`${pathPrefix}/xsignup`} state={state}>
                                             <Signup/>
                                         </LoginRoute>
 
-                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/xsettings" state={state}>
+                                        <PrivateRoute path={`${pathPrefix}/xsettings`} state={state}>
                                             <Settings/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/xinvite" state={state}>
+                                        <PrivateRoute path={`${pathPrefix}/xinvite`} state={state}>
                                             <Invite/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/dashboard" state={state}>
+                                        <PrivateRoute path={`${pathPrefix}/dashboard`} state={state}>
                                             <Dashboard/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/logout" state={state}>
+                                        <PrivateRoute path={`${pathPrefix}/logout`} state={state}>
                                             <Logout/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/xauthorize" state={state}>
+                                        <PrivateRoute path={`${pathPrefix}/xauthorize`} state={state}>
                                             <Authorize/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute exact path="/:swarm_protocol?/:swarm_hash?/developers"
+                                        <PrivateRoute exact path={`${pathPrefix}/developers`}
                                                       state={state}>
                                             <Developers/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute exact path="/:swarm_protocol?/:swarm_hash?/developers-create"
+                                        <PrivateRoute exact path={`${pathPrefix}/developers-create`}
                                                       state={state}>
                                             <DevelopersAppCreate/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute exact path="/:swarm_protocol?/:swarm_hash?/developers-edit-:id"
+                                        <PrivateRoute exact path={`${pathPrefix}/developers-edit-:id`}
                                                       state={state}>
                                             <DevelopersAppEdit/>
                                         </PrivateRoute>
 
-                                        <PrivateRoute path="/:swarm_protocol?/:swarm_hash?/developers-:id"
+                                        <PrivateRoute path={`${pathPrefix}/developers-:id`}
                                                       state={state}>
                                             <DevelopersAppInfo/>
                                         </PrivateRoute>

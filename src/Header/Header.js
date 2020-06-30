@@ -6,9 +6,14 @@ import {Link, matchPath} from "react-router-dom";
 import {Button, NavDropdown} from "react-bootstrap";
 
 function Header({isLoggedIn, isCheckingAuth, username, balance}) {
-    const result = matchPath(window.location.pathname, {
+    /*const result = matchPath(window.location.pathname, {
         path: "/:swarm_protocol?/:swarm_hash?/:page"
+    });*/
+    const result = matchPath(window.location.pathname, {
+        path: "/:page"
     });
+
+    const page = result && result.params ? result.params.page : '';
 
     return (
         <header>
@@ -19,19 +24,23 @@ function Header({isLoggedIn, isCheckingAuth, username, balance}) {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         {isLoggedIn && <Fragment>
-                            <Link className={`nav-link ${result.params.page === 'xsettings' ? 'active' : ''}`}
-                                  to="./xsettings">Settings</Link>
-                            <Link className={`nav-link ${result.params.page === 'xinvite' ? 'active' : ''}`}
-                                  to="./xinvite">Invite</Link>
+                            <Link
+                                className={`nav-link ${page === 'xsettings' ? 'active' : ''}`}
+                                to="./xsettings">Settings</Link>
+                            <Link
+                                className={`nav-link ${page === 'xinvite' ? 'active' : ''}`}
+                                to="./xinvite">Invite</Link>
                         </Fragment>}
                     </Nav>
 
                     {!isCheckingAuth && <Nav className="ml-auto">
                         {!isLoggedIn && <>
-                            <Link className={`nav-link float-right ${result.params.page === 'login' ? 'active' : ''}`}
-                                  to="./login">Sign in</Link>
-                            <Link className={`nav-link ${result.params.page === 'xsignup' ? 'active' : ''}`}
-                                  to="./xsignup">Sign up</Link>
+                            <Link
+                                className={`nav-link float-right ${page === 'login' ? 'active' : ''}`}
+                                to="./login">Sign in</Link>
+                            <Link
+                                className={`nav-link ${page === 'xsignup' ? 'active' : ''}`}
+                                to="./xsignup">Sign up</Link>
                         </>}
 
                         {isLoggedIn && <NavDropdown title={username} id="user-dropdown">
