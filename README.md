@@ -10,8 +10,8 @@ Last project build hosted at [getlogin.eth](https://swarm-gateways.net/bzz:/getl
 
 ### Register your app in GetLogin smart contract
 
-1) Receive an invite (you can write to my email) and register account.
-2) Use page to manage your application data: https://swarm-gateways.net/bzz:/getlogin.eth/developers
+1) Receive an invite (you can write to my email: igor.shadurin@gmail.com) and register account.
+2) Use page to manage your application data: https://getlogin.swarm-gateways.net/
 
 ### Inject GetLogin to your dApp
 
@@ -20,7 +20,7 @@ Add code before footer:
 ```javascript
 window._onGetLoginApiLoaded = (instance) => {
     window.getLoginApi = instance;
-    instance.init(appId, 'https://swarm-gateways.net/bzz:/getlogin.eth/', redirectUrl, accessToken)
+    instance.init(appId, 'https://getlogin.swarm-gateways.net/', redirectUrl, accessToken)
     .then(data => {
         console.log(data);
     });
@@ -30,7 +30,7 @@ where `appId` is your app id stored in step 3 of registration app instruction, `
 
 `accessToken` - is access token which you received early or `null`
 
-Add `<script src="https://swarm-gateways.net/bzz:/getlogin.eth/api/last.js"></script>` to footer.
+Add `<script src="https://getlogin.swarm-gateways.net/api/last.js"></script>` to footer.
     
 After loading the script, it will call the `window._onGetLoginApiLoaded` method and pass the GetLogin instance to it.                     
                            
