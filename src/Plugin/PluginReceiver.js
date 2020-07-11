@@ -1,5 +1,6 @@
 import {appLogoutLocal, getAppSession, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
 import SessionContract from "../Lib/get-login/SessionContract";
+import {beautyBalance} from "../Lib/get-login/utils";
 
 export default class PluginReceiver {
     /**
@@ -163,7 +164,7 @@ export default class PluginReceiver {
 
         const address = this.web3.eth.accounts.privateKeyToAccount(app.privateKey).address;
         const balanceWei = await this.web3.eth.getBalance(address);
-        const balanceWeb = this.web3.utils.fromWei(balanceWei, 'ether');
+        const balanceWeb = beautyBalance(this.web3.utils.fromWei(balanceWei, 'ether'), 4);
 
         return {
             balanceWei,
