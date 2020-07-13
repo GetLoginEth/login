@@ -6,7 +6,10 @@ export default class SessionContract {
         this.network = network;
         this.privateKey = null;
         this.contract = null;
-        this.defaultSettings = {resolveMethod: 'transactionHash'};
+        this.defaultSettings = {
+            resolveMethod: 'transactionHash',
+            ether: '0'
+        };
     }
 
     setPrivateKey(privateKey) {
@@ -41,7 +44,7 @@ export default class SessionContract {
         let result = {
             from: this.account.address,
             to: this.address,
-            value: this.web3.utils.toWei('0', 'ether'),
+            value: this.web3.utils.toWei(settings.ether, 'ether'),
             gasLimit: 0,
             gasPrice: gasPrice,
             data
