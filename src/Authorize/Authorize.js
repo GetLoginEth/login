@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import './Authorize.css';
-import {allowApp, getAppSession, getAppInfo, getLocalUsernameHash} from "../reducers/actions";
+import {allowApp, getAppInfo, getAppSession, getLocalUsernameHash} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
 import WaitButton from "../Elements/WaitButton";
 import Spinner from "../Elements/Spinner";
@@ -8,6 +8,8 @@ import Spinner from "../Elements/Spinner";
 function Authorize() {
     const {state: {authorizeApp}} = useStateValue();
     const {state: {sessionApp}} = useStateValue();
+
+    const [isActionsEnabled, setIsActionsEnabled] = useState(null);
 
     const setRedirectUrl = (url) => {
         //console.log(url);
@@ -62,6 +64,11 @@ function Authorize() {
     }, [clientId]);
 
     useEffect(_ => {
+        // check is app info loaded and session not found
+        if (authorizeApp.id && !sessionApp.inProcess && sessionApp.errorMessage) {
+            setIsActionsEnabled(true);
+        }
+
         if (!authorizeApp || !authorizeApp.id || !sessionApp || !sessionApp.transactionHash) {
             return;
         }
@@ -69,8 +76,6 @@ function Authorize() {
         const usernameHash = getLocalUsernameHash();
         if (Array.isArray(authorizeApp.allowedUrls) && authorizeApp.allowedUrls.includes(redirectUri.href)) {
             successReturn(sessionApp.transactionHash, usernameHash);
-        } else {
-            //setIsShowForm(true);
         }
     }, [sessionApp, authorizeApp]);
 
@@ -106,7 +111,6 @@ function Authorize() {
     const isValidParams = isRedirectUri && isResponseType;
     const isUrlAllowed = isRedirectUri ? authorizeApp.allowedUrls.includes(redirectUri.href) : false;
 
-
     return <div className="Authorize">
         <h3 className="text-center">Authorization</h3>
 
@@ -123,13 +127,16 @@ function Authorize() {
 
                 {isValidParams && isUrlAllowed && <Fragment>
                     <WaitButton disabled={authorizeApp.isSessionCreating}>
-                        <button className="btn btn-success" onClick={onAllow}>
+                        <button className="btn btn-success"
+                                onClick={onAllow}
+                                disabled={isActionsEnabled !== true}>
                             Allow
                         </button>
                     </WaitButton>
 
-                    <button className="btn btn-danger float-right" onClick={onDecline}
-                            disabled={authorizeApp.isSessionCreating}>
+                    <button className="btn btn-danger float-right"
+                            onClick={onDecline}
+                            disabled={authorizeApp.isSessionCreating || isActionsEnabled !== true}>
                         Decline
                     </button>
                 </Fragment>}
