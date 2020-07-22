@@ -86,13 +86,6 @@ export default class Signin extends Logger {
         this.log(LOG_LOG_IN_DECODE_WALLET);
         await decryptWallet(web3, wallet, password);
 
-        // todo fast check is wallet associated with username?
-        // todo try to decode wallet with password
-
-        /*if (!await isUsernameRegistered(username)) {
-            throw new LoginError(CODE_USERNAME_NOT_FOUND);
-        }*/
-
         return true;
     }
 
@@ -107,8 +100,6 @@ export default class Signin extends Logger {
             throw new LoginError(CODE_USERNAME_NOT_FOUND);
         }
 
-        //this.log(LOG_LOG_IN_DECODE_WALLET);
-        // await decryptWallet(web3, wallet, password);
         const usernameHash = getUsernameHash(web3, username);
         await this.contract.getUserSession(usernameHash, address);
 

@@ -534,8 +534,7 @@ export const getInvitePrice = async () => {
     return callMethod(ACTION_GET_INVITE_PRICE, async () => {
         /*let invitePrice = await invite.getPrice();
         //let signupPrice = await signup.getPrice();
-        // todo get registration price (fails because permissions)
-        // todo cache this value
+        // todo get registration price (fails because permissions), cache this value
         // full cycle: create invite, register new user, send 10-100 simple txs
         const result = invitePrice * 1000;*/
         const result = 0.1;
@@ -561,7 +560,7 @@ export const callMethod = async (actionName, func, startData = null) => {
         result = await func();
         doDispatch(getStatus(actionName, STATUS_SUCCESS), result, startData);
     } catch (error) {
-        // todo not log error, but pass correct filenames to dispatch
+        // todo not log error, but pass correct filenames to dispatch or out data to some log plugin
         console.log(error);
         doDispatch(getStatus(actionName, STATUS_FAIL), error);
     }

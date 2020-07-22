@@ -315,7 +315,7 @@ export const reducer = (state, action) => {
             data = {inProcessClose: true, closeId: action.data.logId};
             return merge('mySessions', data);
         case getStatus(ACTION_CLOSE_SESSION, STATUS_SUCCESS):
-            // todo check. JSON.stringify/parse because object clones
+            // JSON.stringify/parse because object not correct clones
             let sessions = JSON.parse(JSON.stringify(state.mySessions.sessions));
             sessions = sessions.map(sourceItem => {
                 const item = {...sourceItem};

@@ -90,7 +90,7 @@ function Signup() {
         if (method === LOGIN_TREZOR) {
             return username.length < 3;
         } else {
-            // todo copy username password validation from sign in
+            // todo use username/password validation from sign in
             return username.length < 3 || password.length < 3 || (inviteData.length > 0 && !isCorrectInvite(inviteData)) || signup.inProcess || resetPasswordData.inProcess || (method === SIGN_UP_INVITE && !inviteData);
         }
     };
