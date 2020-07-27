@@ -18,10 +18,6 @@ class GetLoginApi {
         this.onLogout = null;
     }
 
-    isReady() {
-        return !!this.iframe;
-    }
-
     _randomUid() {
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
@@ -77,14 +73,36 @@ class GetLoginApi {
         }));
     }
 
+    /**
+     * Get is app ready to use
+     * @returns {boolean}
+     */
+    isReady() {
+        return !!this.iframe;
+    }
+
+    /**
+     * Set ABI for dApp that uses API
+     * @param abi
+     */
     setClientAbi(abi) {
         this.clientAbi = abi;
     }
 
+    /**
+     * Get ABI for dApp that uses API
+     * @returns {[]}
+     */
     getClientAbi() {
         return this.clientAbi;
     }
 
+    /**
+     * Get url for app authorization
+     * @param appId
+     * @param redirectUrl
+     * @returns {string}
+     */
     getAuthorizeUrl(appId = this.appId, redirectUrl = this.redirectUrl) {
         [appId, this.authUrl, redirectUrl].forEach(item => {
             if (!item) {
@@ -95,6 +113,9 @@ class GetLoginApi {
         return `${this.authUrl}?client_id=${appId}&response_type=id_token&redirect_uri=${redirectUrl}`;
     }
 
+    /**
+     * Reset initialization
+     */
     resetInit() {
         if (this.iframe) {
             this.iframe = null;
@@ -103,6 +124,14 @@ class GetLoginApi {
         this.isInitInProgress = false;
     }
 
+    /**
+     * Init application
+     * @param appId
+     * @param baseApiUrl
+     * @param redirectUrl
+     * @param accessToken
+     * @returns {Promise<{result: boolean, data: {}}>}
+     */
     async init(appId, baseApiUrl, redirectUrl, accessToken = null) {
         [appId, baseApiUrl, redirectUrl].forEach(item => {
             if (!item) {
@@ -172,10 +201,18 @@ class GetLoginApi {
         };
     }
 
+    /**
+     * Get current active user info
+     * @returns {Promise<unknown>}
+     */
     async getUserInfo() {
         return this._sendMessage(this.accessToken, 'getUserInfo');
     }
 
+    /**
+     * Logout
+     * @returns {Promise<boolean>}
+     */
     async logout() {
         await this._sendMessage(this.accessToken, 'logout');
         if (this.onLogout) {
@@ -185,6 +222,13 @@ class GetLoginApi {
         return true;
     }
 
+    /**
+     * Call smart contract method (read-only)
+     * @param address
+     * @param method
+     * @param params
+     * @returns {Promise<unknown>}
+     */
     async callContractMethod(address, method, ...params) {
         const abi = this.getClientAbi();
         if (!abi) {
@@ -199,6 +243,14 @@ class GetLoginApi {
         });
     }
 
+    /**
+     * Send transaction to smart contract
+     * @param address
+     * @param method
+     * @param txParams
+     * @param params
+     * @returns {Promise<unknown>}
+     */
     async sendTransaction(address, method, txParams, params) {
         const abi = this.getClientAbi();
         if (!abi) {
@@ -214,10 +266,22 @@ class GetLoginApi {
         });
     }
 
+    /**
+     * Return hashed data with keccak256 (using web3 lib)
+     * @param data
+     * @returns {Promise<string>}
+     */
     async keccak256(data) {
         return this._sendMessage(this.accessToken, 'keccak256', {data});
     }
 
+    /**
+     * Get past events from contract
+     * @param address
+     * @param eventName
+     * @param params
+     * @returns {Promise<unknown>}
+     */
     async getPastEvents(address, eventName, params) {
         return this._sendMessage(this.accessToken, 'getPastEvents', {
             abi: this.getClientAbi(),
@@ -227,10 +291,18 @@ class GetLoginApi {
         });
     }
 
-    async setOnLogout(func) {
+    /**
+     * Set logout callback function
+     * @param func
+     */
+    setOnLogout(func) {
         this.onLogout = func;
     }
 
+    /**
+     * Get current user access token balance
+     * @returns {Promise<string>}
+     */
     async getAccessTokenBalance() {
         return this._sendMessage(this.accessToken, 'getAccessTokenBalance');
     }
