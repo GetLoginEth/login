@@ -1,7 +1,7 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import './Invite.css';
 import {useStateValue} from "../reducers/state";
-import {createInvite, getInvite, getInvitePrice, getInvites, signUp} from "../reducers/actions";
+import {createInvite, getInvite, getInvitePrice, getInvites} from "../reducers/actions";
 import WaitButton from "../Elements/WaitButton";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
@@ -11,10 +11,13 @@ import Modal from "react-bootstrap/Modal";
 function Invite() {
     const [showMultipleModal, setShowMultipleModal] = useState(false);
     const [invitesCount, setInvitesCount] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const {state: {user}} = useStateValue();
     const {state: {invite}} = useStateValue();
     const {state: {invite: {inviteInfo}}} = useStateValue();
+
+    const invitesPerPage = 10;
 
     useEffect(_ => {
         getInvitePrice().then();
@@ -23,6 +26,11 @@ function Invite() {
 
     // todo get invite min value from global state
     const isCanCreateInvite = invite.price ? Number(user.balance.original) >= Number(invite.price) : false;
+    const pagesCount = Math.ceil(invite.invites.length / invitesPerPage);
+    const paginationPosition = (currentPage - 1) * invitesPerPage;
+    const paginationOffset = paginationPosition + invitesPerPage;
+    const filteredInvites = invite.invites.slice(paginationPosition, paginationOffset);
+
     return <Fragment>
         <h1>Invites</h1>
 
@@ -102,7 +110,7 @@ function Invite() {
             })}
         </div>}
 
-        {invite.invites.length > 0 && <div className="mt-3">
+        {filteredInvites.length > 0 && <div className="mt-3">
             <h4>Previously created invites</h4>
             <small>There are public addresses. You can not use it as invites</small>
 
@@ -115,7 +123,7 @@ function Invite() {
                 </thead>
                 <tbody>
 
-                {invite.invites.map((item, index) => {
+                {filteredInvites.map((item, index) => {
                     const inviteAddress = item.returnValues.inviteAddress;
                     const info = inviteInfo[inviteAddress];
 
@@ -136,6 +144,33 @@ function Invite() {
 
                 </tbody>
             </table>
+
+            <nav aria-label="Page navigation">
+                <ul className="pagination">
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button className="page-link" aria-label="Previous" onClick={_ => {
+                            setCurrentPage(1)
+                        }}>
+                            <span aria-hidden="true">&laquo;</span>
+                        </button>
+                    </li>
+                    {[...Array(pagesCount).keys()].map((i, key) =>
+                        <li key={key} className={`page-item ${currentPage === (i + 1) ? 'active' : ''}`}>
+                            <button className="page-link" onClick={_ => {
+                                setCurrentPage(i + 1)
+                            }}>{i + 1}</button>
+                        </li>
+                    )}
+
+                    <li className={`page-item ${currentPage === pagesCount ? 'disabled' : ''}`}>
+                        <button className="page-link" aria-label="Next" onClick={_ => {
+                            setCurrentPage(pagesCount)
+                        }}>
+                            <span aria-hidden="true">&raquo;</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
         </div>}
     </Fragment>;
 }
