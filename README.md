@@ -1,6 +1,12 @@
-## Available Scripts
+## GetLogin
 
 ### Description
+
+GetLogin is a Đapp for providing a decentralized single sign-on solution for Ethereum-base social applications with a familiar (Web2.0-style) onboarding experience that does not require Ether or even any experience with Ethereum.
+
+Initially, the user's account is protected by a user name and a password, but as the value of the account grows and the user becomes more familiar with Ethereum, it is possible to use a better protected Ethereum address (e.g. that of a hardware wallet) as the source of login credentials.
+
+GetLogin comes with an invitation system. The gas costs of new users are covered by those who invited them and the latter are also their first point of contact for social account recovery in case of lost or compromised credentials.
 
 GetLogin implements an [OpenID Connect](https://openid.net/) authentication through [OAuth 2](https://en.wikipedia.org/wiki/OAuth#OAuth_2.0) ([implicit flow](https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth) - client-side only).
 
