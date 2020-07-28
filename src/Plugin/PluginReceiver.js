@@ -133,8 +133,13 @@ export default class PluginReceiver {
             throw new Error('Access token not found');
         }
 
-        // todo move 'rinkeby' to global scope
-        const mainContract = new SessionContract({web3: this.web3, network: 'rinkeby', address, abi});
+        const mainContract = new SessionContract({
+            web3: this.web3,
+            //network: process.env.REACT_APP_NETWORK,
+            network: 'rinkeby',
+            address,
+            abi
+        });
         await mainContract.setPrivateKey(app.privateKey);
 
         return await mainContract.sendTx({method, params: txParams, settings: params});

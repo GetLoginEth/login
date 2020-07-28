@@ -22,8 +22,9 @@
     "web3": "^1.2.4"
   },
   "scripts": {
-    "start": "HTTPS=true react-scripts start",
-    "build": "react-scripts build",
+    "start": "HTTPS=true REACT_APP_NETWORK=rinkeby react-scripts start",
+    "build-rinkeby": "REACT_APP_NETWORK=rinkeby react-scripts build",
+    "build-mainnet": "REACT_APP_NETWORK=mainnet react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
