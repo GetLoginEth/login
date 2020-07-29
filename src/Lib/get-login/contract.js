@@ -486,4 +486,3 @@ export default class contract {
         }, allow.toString());
     }
 }
-
