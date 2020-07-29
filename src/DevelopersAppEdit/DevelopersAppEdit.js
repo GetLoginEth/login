@@ -28,7 +28,7 @@ function DevelopersAppEdit({computedMatch, location}) {
             console.log(formData);
             const {id, title, description, allowedUrls, allowedContracts} = formData;
             editApplication(id, title, description, allowedUrls, allowedContracts)
-                .then(data => {
+                .then(() => {
                     setRedirect(<Redirect to={{pathname: "./developers", state: {from: location}}}/>);
                 });
         }} initValues={app} isFormDisabled={myApps.inProcessEditing} isWaitButton={myApps.inProcessEditing}/>}

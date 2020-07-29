@@ -2115,6 +2115,13 @@ export default class contract {
         return this.web3.utils.toBN(result.gasPrice).mul(estimateGasBN);
     }
 
+    async sendTx(methodName, settings = null, ...params) {
+        let result = await this.prepareTx(methodName, settings, ...params);
+        await this.calculateEstimateGas(result, settings);
+
+        return this.signAndSendTx(result, settings);
+    }
+
     async signAndSendTx(result, settings) {
         result.nonce = await this.web3.eth.getTransactionCount(result.from);
         /**
@@ -2189,13 +2196,6 @@ export default class contract {
         }));
     }
 
-    async sendTx(methodName, settings = null, ...params) {
-        let result = await this.prepareTx(methodName, settings, ...params);
-        await this.calculateEstimateGas(result, settings);
-
-        return this.signAndSendTx(result, settings);
-    }
-
     async getUserInfo(usernameHash) {
         return this.callLogicMethod('getUserInfo', usernameHash);
     }
@@ -2209,7 +2209,9 @@ export default class contract {
     }
 
     async editApplication(id, title, description, allowedUrls = [], allowedContracts = []) {
-        return this.sendTx('editApplication', this.sendTxDefault, id, title, description, allowedUrls, allowedContracts);
+        return this.sendTx('editApplication',
+            {...this.sendTxDefault, resolveMethod: 'mined'},
+            id, title, description, allowedUrls, allowedContracts);
     }
 
     async deleteApplication(id) {
