@@ -1,11 +1,11 @@
 {
- "issuer": "https://swarm-gateways.net/bzz:/getlogin.eth/",
- "authorization_endpoint": "https://swarm-gateways.net/bzz:/getlogin.eth/xauthorize",
- "device_authorization_endpoint": "https://swarm-gateways.net/bzz:/getlogin.eth/xauthorize",
- "token_endpoint": "https://swarm-gateways.net/bzz:/getlogin.eth/xauthorize",
- "userinfo_endpoint": "https://swarm-gateways.net/bzz:/getlogin.eth/xauthorize",
- "revocation_endpoint": "https://swarm-gateways.net/bzz:/getlogin.eth/xauthorize",
- "jwks_uri": "https://swarm-gateways.net/bzz:/getlogin.eth/xauthorize",
+ "issuer": "https://getlogin.swarm-gateways.net/",
+ "authorization_endpoint": "https://getlogin.swarm-gateways.net/xauthorize",
+ "device_authorization_endpoint": "https://getlogin.swarm-gateways.net/xauthorize",
+ "token_endpoint": "https://getlogin.swarm-gateways.net/xauthorize",
+ "userinfo_endpoint": "https://getlogin.swarm-gateways.net/xauthorize",
+ "revocation_endpoint": "https://getlogin.swarm-gateways.net/xauthorize",
+ "jwks_uri": "https://getlogin.swarm-gateways.net/xauthorize",
  "response_types_supported": [
   "id_token"
  ],
