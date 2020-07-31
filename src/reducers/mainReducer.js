@@ -1,4 +1,4 @@
-import config from '../config';
+import {getConfig} from '../config';
 
 export const reducer = (state, action) => {
     console.log('dispatch', action);
@@ -470,7 +470,7 @@ export const initialState = {
         errorMessage: '',
         log: [],
     },
-    config: config
+    config: getConfig(process.env.REACT_APP_NETWORK)
 };
 
 export const STATUS_INIT = 'init';

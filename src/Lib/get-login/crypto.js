@@ -1,4 +1,4 @@
-import defaultConfig from '../../config';
+import {getConfig} from '../../config';
 import Web3 from 'web3';
 import {privateToPublic} from "ethereumjs-util";
 
@@ -19,14 +19,13 @@ export default class crypto {
         if (config) {
             this.config = config;
         } else {
-            this.config = defaultConfig;
+            this.config = getConfig('rinkeby');
         }
 
         /**
          *
          * @type {WebsocketProvider}
          */
-        //this.provider = new Web3.providers.WebsocketProvider(this.config.websocketProviderUrl);
         this.provider = null;
         /**
          *

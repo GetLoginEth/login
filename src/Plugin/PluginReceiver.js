@@ -135,8 +135,7 @@ export default class PluginReceiver {
 
         const mainContract = new SessionContract({
             web3: this.web3,
-            //network: process.env.REACT_APP_NETWORK,
-            network: 'rinkeby',
+            network: process.env.REACT_APP_NETWORK,
             address,
             abi
         });

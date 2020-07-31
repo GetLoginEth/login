@@ -55,8 +55,7 @@ import ChangePassword from "../Lib/get-login/changePassword";
     appUrl: 'https//swarm-gateways.net/bzz:/getlogin.eth'
 });*/
 
-//const currentNetwork = process.env.REACT_APP_NETWORK;
-const currentNetwork = 'rinkeby';
+const currentNetwork = process.env.REACT_APP_NETWORK;
 const smartContractAddress = defaultAddresses[currentNetwork];
 let cryptoInstance = crypto.getInstance();
 let contractInstance = new contract(cryptoInstance.web3, currentNetwork, smartContractAddress);
