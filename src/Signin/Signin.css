@@ -2,3 +2,8 @@
     margin-top: 20px;
 }
 
+.Signin-bg-image{
+    background: url(/img/signin.jpg);
+    background-position: center;
+    background-size: cover;
+}

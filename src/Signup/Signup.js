@@ -224,80 +224,110 @@ function Signup() {
                 </Form>
             </Modal>
 
-            <Form className="Signup col-md-4" onSubmit={onSubmit}>
-                <fieldset disabled={signup.inProcess}>
-                    <h1>Sign up / <Link to="./login">Sign in</Link></h1>
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-xl-10 col-lg-12 col-md-9">
+                        <div className="card o-hidden border-0 shadow-lg my-5">
+                            <div className="card-body p-0">
+                                <div className="row">
+                                    <div className="col-lg-6 d-none d-lg-block Signup-bg-image"/>
+                                    <div className="col-lg-6">
+                                        <div className="p-4">
 
-                    {signup.errorMessage && <div className="alert alert-danger" role="alert">
-                        {signup.errorMessage}
-                    </div>}
+                                            <h5 className="card-title">Sign up</h5>
 
-                    <Form.Group controlId="formBasicEmail">
-                        <Form.Control type="text"
-                                      name="username"
-                                      placeholder="Username"
-                                      onChange={e => setUsername(e.target.value)}
-                                      value={username}
-                        />
-                    </Form.Group>
+                                            <Form className="Signup" onSubmit={onSubmit}>
+                                                <fieldset disabled={signup.inProcess}>
+                                                    {/*<h1>Sign up / <Link to="./login">Sign in</Link></h1>*/}
 
-                    <Form.Group controlId="formBasicPassword" className={(method === LOGIN_TREZOR) ? "d-none" : ""}>
-                        <Form.Control type="password"
-                                      name="password"
-                                      placeholder="Password"
-                                      onChange={e => setPassword(e.target.value)}
-                                      value={password}
-                        />
-                    </Form.Group>
+                                                    {signup.errorMessage &&
+                                                    <div className="alert alert-danger" role="alert">
+                                                        {signup.errorMessage}
+                                                    </div>}
 
-                    <Form.Group controlId="formInvite" className={(method === SIGN_UP_INVITE) ? "" : "d-none"}>
-                        <Form.Control type="text"
-                                      name="invite"
-                                      placeholder="Invite"
-                                      onChange={e => setInviteData(e.target.value)}
-                                      value={inviteData}
-                        />
-                    </Form.Group>
+                                                    <Form.Group controlId="formBasicEmail">
+                                                        <Form.Control type="text"
+                                                                      name="username"
+                                                                      placeholder="Username"
+                                                                      onChange={e => setUsername(e.target.value)}
+                                                                      value={username}
+                                                        />
+                                                    </Form.Group>
 
-                    <Dropdown as={ButtonGroup} className="btn-block">
-                        <WaitButton disabled={signup.inProcess}>
-                            <Button variant="primary"
-                                    type="submit"
-                                    className={dropDown.length > 1 ? "col-md-10" : "col-md-12"}
-                                    disabled={isDisabled()}
-                            >
-                                Sign up with {getDropDownTitle(method)}
-                            </Button>
-                        </WaitButton>
+                                                    <Form.Group controlId="formBasicPassword"
+                                                                className={(method === LOGIN_TREZOR) ? "d-none" : ""}>
+                                                        <Form.Control type="password"
+                                                                      name="password"
+                                                                      placeholder="Password"
+                                                                      onChange={e => setPassword(e.target.value)}
+                                                                      value={password}
+                                                        />
+                                                    </Form.Group>
 
-                        {dropDown.length > 1 && <Dropdown.Toggle className="" split variant="primary"
-                                                                 id="dropdown-split-basic"/>}
+                                                    <Form.Group controlId="formInvite"
+                                                                className={(method === SIGN_UP_INVITE) ? "" : "d-none"}>
+                                                        <Form.Control type="text"
+                                                                      name="invite"
+                                                                      placeholder="Invite"
+                                                                      onChange={e => setInviteData(e.target.value)}
+                                                                      value={inviteData}
+                                                        />
+                                                    </Form.Group>
 
-                        {dropDown.length > 1 && <Dropdown.Menu>
-                            {dropDown.map(item => <Dropdown.Item
-                                key={item.key}
-                                onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
-                        </Dropdown.Menu>}
-                    </Dropdown>
+                                                    <Dropdown as={ButtonGroup} className="btn-block">
+                                                        <WaitButton disabled={signup.inProcess}>
+                                                            <Button variant="primary"
+                                                                    type="submit"
+                                                                    className={dropDown.length > 1 ? "col-md-10" : "col-md-12"}
+                                                                    disabled={isDisabled()}
+                                                            >
+                                                                Sign up with {getDropDownTitle(method)}
+                                                            </Button>
+                                                        </WaitButton>
 
-                    <WaitButton disabled={invite.info.inProcess}>
-                        <button
-                            type="button"
-                            disabled={!invite.info.isPossibleToRecover || !isCorrectInvite(inviteData)}
-                            className="btn btn-link"
-                            onClick={_ => {
-                                setShowRecoverModal(true);
-                            }}>
-                            Recover account
-                        </button>
-                    </WaitButton>
+                                                        {dropDown.length > 1 &&
+                                                        <Dropdown.Toggle className="" split variant="primary"
+                                                                         id="dropdown-split-basic"/>}
 
-                    {signup.log.length > 0 && <details className="mt-2">
-                        <summary>{signup.status}</summary>
-                        {signup.log.map((item, index) => <p key={index}>{item}</p>)}
-                    </details>}
-                </fieldset>
-            </Form>
+                                                        {dropDown.length > 1 && <Dropdown.Menu>
+                                                            {dropDown.map(item => <Dropdown.Item
+                                                                key={item.key}
+                                                                onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
+                                                        </Dropdown.Menu>}
+                                                    </Dropdown>
+
+                                                    <WaitButton disabled={invite.info.inProcess}>
+                                                        <button
+                                                            type="button"
+                                                            disabled={!invite.info.isPossibleToRecover || !isCorrectInvite(inviteData)}
+                                                            className="btn btn-link"
+                                                            onClick={_ => {
+                                                                setShowRecoverModal(true);
+                                                            }}>
+                                                            Recover account
+                                                        </button>
+                                                    </WaitButton>
+
+                                                    {signup.log.length > 0 && <details className="mt-2">
+                                                        <summary>{signup.status}</summary>
+                                                        {signup.log.map((item, index) => <p key={index}>{item}</p>)}
+                                                    </details>}
+                                                </fieldset>
+                                            </Form>
+                                            <hr/>
+                                            <div className="text-center d-flex justify-content-between">
+                                                <Link className="small" to="./login">Want to Sign in?</Link>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

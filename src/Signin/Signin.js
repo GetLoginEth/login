@@ -82,49 +82,82 @@ function Signin() {
                     signIn(LOGIN_TREZOR, username, null, null, {address, addressIndex}).then();
                 }}/>
 
-            <Form className="Signin col-md-4" onSubmit={onSubmit}>
-                <fieldset disabled={signin.inProcess}>
-                    <h1>Sign in / <Link to="./xsignup">Sign up</Link></h1>
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-xl-10 col-lg-12 col-md-9">
+                        <div className="card o-hidden border-0 shadow-lg my-5">
+                            <div className="card-body p-0">
+                                <div className="row">
+                                    <div className="col-lg-6 d-none d-lg-block Signin-bg-image"/>
+                                    <div className="col-lg-6">
+                                        <div className="p-4">
 
-                    {signin.errorMessage && <div className="alert alert-danger" role="alert">
-                        {signin.errorMessage}
-                    </div>}
+                                            <h5 className="card-title">Sign in</h5>
 
-                    <Form.Group controlId="formBasicEmail">
-                        <Form.Control type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}
-                                      value={username}/>
-                    </Form.Group>
+                                            <Form className="Signin " onSubmit={onSubmit}>
+                                                <fieldset disabled={signin.inProcess}>
+                                                    {/*<h1>Sign in / <Link to="./xsignup">Sign up</Link></h1>*/}
 
-                    <Form.Group controlId="formBasicPassword" className={(method === LOGIN_TREZOR) ? "d-none" : ""}>
-                        <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}
-                                      value={password}/>
-                    </Form.Group>
+                                                    {signin.errorMessage &&
+                                                    <div className="alert alert-danger" role="alert">
+                                                        {signin.errorMessage}
+                                                    </div>}
 
-                    <Dropdown as={ButtonGroup} className="btn-block">
-                        <WaitButton disabled={signin.inProcess}>
-                            <Button variant="primary"
-                                    type="submit"
-                                    className={dropDown.length > 1 ? "col-md-10" : "col-md-12"}
-                                    disabled={isDisabled()}
-                            >Sign in with {getDropDownTitle(method)}</Button>
-                        </WaitButton>
+                                                    <Form.Group controlId="formBasicEmail">
+                                                        <Form.Control type="text" placeholder="Username"
+                                                                      onChange={e => setUsername(e.target.value)}
+                                                                      value={username}/>
+                                                    </Form.Group>
 
-                        {dropDown.length > 1 && <Dropdown.Toggle className="" split variant="primary"
-                                                                 id="dropdown-split-basic"/>}
+                                                    <Form.Group controlId="formBasicPassword"
+                                                                className={(method === LOGIN_TREZOR) ? "d-none" : ""}>
+                                                        <Form.Control type="password" placeholder="Password"
+                                                                      onChange={e => setPassword(e.target.value)}
+                                                                      value={password}/>
+                                                    </Form.Group>
 
-                        {dropDown.length > 1 && <Dropdown.Menu>
-                            {dropDown.map(item => <Dropdown.Item
-                                key={item.key}
-                                onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
-                        </Dropdown.Menu>}
-                    </Dropdown>
+                                                    <Dropdown as={ButtonGroup} className="btn-block">
+                                                        <WaitButton disabled={signin.inProcess}>
+                                                            <Button variant="primary"
+                                                                    type="submit"
+                                                                    className={dropDown.length > 1 ? "col-md-10" : "col-md-12"}
+                                                                    disabled={isDisabled()}
+                                                            >Sign in with {getDropDownTitle(method)}</Button>
+                                                        </WaitButton>
 
-                    {signin.log.length > 0 && <details className="mt-2">
-                        <summary>{signin.status}</summary>
-                        {signin.log.map((item, index) => <p key={index}>{item}</p>)}
-                    </details>}
-                </fieldset>
-            </Form>
+                                                        {dropDown.length > 1 &&
+                                                        <Dropdown.Toggle className="" split variant="primary"
+                                                                         id="dropdown-split-basic"/>}
+
+                                                        {dropDown.length > 1 && <Dropdown.Menu>
+                                                            {dropDown.map(item => <Dropdown.Item
+                                                                key={item.key}
+                                                                onClick={e => onDropDownChange(item)}>{item.title}</Dropdown.Item>)}
+                                                        </Dropdown.Menu>}
+                                                    </Dropdown>
+
+                                                    {signin.log.length > 0 && <details className="mt-2">
+                                                        <summary>{signin.status}</summary>
+                                                        {signin.log.map((item, index) => <p key={index}>{item}</p>)}
+                                                    </details>}
+                                                </fieldset>
+                                            </Form>
+                                            <hr/>
+                                            <div className="text-center d-flex justify-content-between">
+                                                <Link className="small" to="./xsignup">Forgot Password?</Link>
+
+                                                <Link className="small" to="./xsignup">Create an Account!</Link>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
