@@ -9,7 +9,8 @@ import {
     ACTION_EDIT_MY_APP,
     ACTION_GET_BALANCE,
     ACTION_GET_INVITE,
-    ACTION_GET_INVITE_INFO, ACTION_GET_INVITE_PRICE,
+    ACTION_GET_INVITE_INFO,
+    ACTION_GET_INVITE_PRICE,
     ACTION_GET_INVITES,
     ACTION_GET_LOGIC_CONTRACT,
     ACTION_GET_MY_APPS,
@@ -42,13 +43,14 @@ import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD, LOGIN_WEB3_PROVIDER} from "
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
 import {beautyBalance, getUsernameHash, LOGIN_TREZOR, validateUserData} from "../Lib/get-login/utils";
-/*import TrezorConnect from 'trezor-connect';*/
 import crypto from "../Lib/get-login/crypto";
 import TrezorConnect from "../Lib/get-login/crypto";
-import contract, {defaultAddresses} from "../Lib/get-login/contract";
+import contract from "../Lib/get-login/contract";
 import Invite from "../Lib/get-login/invite";
 import Session from "../Lib/get-login/session";
 import ChangePassword from "../Lib/get-login/changePassword";
+import {getConfig} from "../config";
+/*import TrezorConnect from 'trezor-connect';*/
 
 /*TrezorConnect.manifest({
     email: 'igor.shadurin@gmail.com',
@@ -56,7 +58,7 @@ import ChangePassword from "../Lib/get-login/changePassword";
 });*/
 
 const currentNetwork = process.env.REACT_APP_NETWORK;
-const smartContractAddress = defaultAddresses[currentNetwork];
+const smartContractAddress = getConfig(currentNetwork).contractAddress;
 let cryptoInstance = crypto.getInstance();
 let contractInstance = new contract(cryptoInstance.web3, currentNetwork, smartContractAddress);
 let dispatch = null;

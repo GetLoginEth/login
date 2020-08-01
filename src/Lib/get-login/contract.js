@@ -3,11 +3,6 @@ import GetLoginLogic from '../../smart/build/contracts/GetLoginLogic.json';
 
 const ethereumjs = require('ethereumjs-tx').Transaction;
 
-export const defaultAddresses = {
-    "rinkeby": "0x304438f8b26ADE29187B2192E89a2f8cb61E871F",
-    "mainnet": ""
-};
-
 export const defaultLogicAbi = GetLoginLogic.abi;
 
 export default class contract {
