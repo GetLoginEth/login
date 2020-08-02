@@ -8,5 +8,9 @@ export const config = {
 };
 
 export function getConfig(network) {
+    if (!config[network]) {
+        throw new Error(`Config for this network not found: ${network}`);
+    }
+
     return config[network];
 }
