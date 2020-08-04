@@ -142,7 +142,14 @@ export const reducer = (state, action) => {
             return merge('user', {balance: action.data});
 
         case getStatus(ACTION_APP_INFO, STATUS_START):
-            data = {id: action.data, title: '', description: '', isAppLoading: true, errorMessage: ''};
+            data = {
+                id: action.data,
+                allowedUrls: [],
+                title: '',
+                description: '',
+                isAppLoading: true,
+                errorMessage: ''
+            };
             return merge('authorizeApp', data);
         case getStatus(ACTION_APP_INFO, STATUS_FAIL):
             data = {isAppLoading: false, errorMessage: action.data.message};

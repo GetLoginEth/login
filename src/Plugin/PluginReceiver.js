@@ -1,4 +1,4 @@
-import {appLogoutLocal, getAppSession, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
+import {appLogoutLocal, getAppInfo, getAppSession, getLocalUsername, getLocalUsernameHash} from "../reducers/actions";
 import SessionContract from "../Lib/get-login/SessionContract";
 import {beautyBalance} from "../Lib/get-login/utils";
 
@@ -10,6 +10,7 @@ export default class PluginReceiver {
     web3 = null;
     appId = null;
     accessToken = null;
+    allowedOriginUrls = [];
 
     constructor(web3) {
         this.web3 = web3;
@@ -24,7 +25,7 @@ export default class PluginReceiver {
         ];
     }
 
-    init(clientId = null, accessToken = null) {
+    async init(clientId = null, accessToken = null) {
         const params = new URLSearchParams(window.location.search);
 
         if (!clientId) {
@@ -44,24 +45,29 @@ export default class PluginReceiver {
         }
 
         window.addEventListener('message', this._listener);
-        getAppSession(clientId)
-            .then(info => {
-                console.log(info);
-                let is_client_allowed = false;
-                let result = {
-                    type: 'get_login_init',
-                    client_id: clientId,
-                };
+        try {
+            const appInfo = await getAppInfo(clientId);
+            this.allowedOriginUrls = appInfo.allowedUrls;
+            //console.log(appInfo);
+            const appSession = await getAppSession(clientId);
+            //console.log(appSession);
+            let is_client_allowed = false;
+            let result = {
+                type: 'get_login_init',
+                client_id: clientId,
+            };
 
-                if (info && info.transactionHash === accessToken) {
-                    result.access_token = info.transactionHash;
-                    is_client_allowed = true;
-                }
+            if (appSession && appSession.transactionHash === accessToken) {
+                result.access_token = appSession.transactionHash;
+                is_client_allowed = true;
+            }
 
-                result.is_client_allowed = is_client_allowed;
-
-                window.parent.postMessage(result, '*');
-            });
+            result.is_client_allowed = is_client_allowed;
+            // todo targetOrigin is specific domain?
+            window.parent.postMessage(result, '*');
+        } catch (e) {
+            // todo handle exception
+        }
     }
 
     getWeb3() {
@@ -72,16 +78,27 @@ export default class PluginReceiver {
         this.web3 = web3;
     }
 
-    _listener = (event) => {
+    _isUrlAllowed(url) {
+        return !!this.allowedOriginUrls.find(item => (new URL(item)).origin === url);
+    }
+
+    _listener = async (event) => {
         if (typeof event.data !== 'object' || event.data.app !== 'get_login') {
             return;
         }
 
         this.appId = event.data.appId;
         this.accessToken = event.data.accessToken;
+        if (!this._isUrlAllowed(event.origin)) {
+            const errorMessage = 'Event origin url not allowed. Action skipped.';
+            console.error(errorMessage);
+            event.source.postMessage({
+                id: event.data.id,
+                error: errorMessage
+            }, event.origin);
+            return;
+        }
 
-        // todo IMPORTANT check url sender and check with stored in smart contract
-        // todo check iframe parent. Allow only parents from contract
         // todo check access_token and appId
         // todo access_token should be not tx hash, but hash from some data signed by private key, because tx is public
         // and can be compromised
@@ -94,19 +111,18 @@ export default class PluginReceiver {
         }
 
         console.log('event', event.data);
-        this[event.data.method](event.data.params)
-            .then(result => {
-                event.source.postMessage({
-                    id: event.data.id,
-                    result
-                }, event.origin);
-            })
-            .catch(e => {
-                event.source.postMessage({
-                    id: event.data.id,
-                    error: 'Error on execution: ' + e.message,
-                }, event.origin);
-            });
+        try {
+            const result = await this[event.data.method](event.data.params);
+            event.source.postMessage({
+                id: event.data.id,
+                result
+            }, event.origin);
+        } catch (e) {
+            event.source.postMessage({
+                id: event.data.id,
+                error: 'Error on execution: ' + e.message,
+            }, event.origin);
+        }
     };
 
     async keccak256({data}) {
