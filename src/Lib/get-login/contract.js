@@ -1,9 +1,9 @@
-import GetLoginStorage from '../../smart/build/contracts/GetLoginStorage.json';
-import GetLoginLogic from '../../smart/build/contracts/GetLoginLogic.json';
+import GetLoginStorage from '../../smart/build/contracts/GetLoginStorage.out.json';
+import GetLoginLogic from '../../smart/build/contracts/GetLoginLogic.out.json';
 
 const ethereumjs = require('ethereumjs-tx').Transaction;
 
-export const defaultLogicAbi = GetLoginLogic.abi;
+export const defaultLogicAbi = GetLoginLogic;
 
 export default class contract {
     constructor(web3, network = 'rinkeby', storageContractAddress, abi = defaultLogicAbi) {
@@ -53,7 +53,7 @@ export default class contract {
         // method for external sign (trezor, web3 and etc)
         this.externalSign = null;
         this.externalAddress = null;
-        this.storageAbi = GetLoginStorage.abi;
+        this.storageAbi = GetLoginStorage;
     }
 
     async getLogicContractAddress() {

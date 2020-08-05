@@ -22,9 +22,9 @@
     "web3": "^1.2.4"
   },
   "scripts": {
-    "start": "HTTPS=true REACT_APP_NETWORK=rinkeby react-scripts start",
-    "build-rinkeby": "REACT_APP_NETWORK=rinkeby react-scripts build",
-    "build-mainnet": "REACT_APP_NETWORK=mainnet react-scripts build",
+    "start": "node split-contract-json.js && HTTPS=true REACT_APP_NETWORK=rinkeby react-scripts start",
+    "build-rinkeby": "node split-contract-json.js && REACT_APP_NETWORK=rinkeby react-scripts build",
+    "build-mainnet": "node split-contract-json.js && REACT_APP_NETWORK=mainnet react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
