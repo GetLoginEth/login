@@ -306,7 +306,9 @@ export default class contract {
     }
 
     async createApplication(title, description, allowedUrls = [], allowedContracts = []) {
-        return this.sendTx('createApplication', this.sendTxDefault, title, description, allowedUrls, allowedContracts);
+        return this.sendTx('createApplication',
+            {...this.sendTxDefault, resolveMethod: 'mined'},
+            title, description, allowedUrls, allowedContracts);
     }
 
     async editApplication(id, title, description, allowedUrls = [], allowedContracts = []) {

@@ -9,13 +9,16 @@ function Developers() {
     const {state: {myApps}} = useStateValue();
     const {state: {appsInfo}} = useStateValue();
 
-    useEffect(_ => {
-        getMyApps().then(data => {
+    useEffect(async _ => {
+        async function getApps() {
+            const data = await getMyApps();
             if (data) {
                 const ids = data.map(item => item.returnValues.appId);
                 getAppsInfo(ids).then();
             }
-        });
+        }
+
+        getApps().then();
     }, []);
 
     //console.log(appsInfo);

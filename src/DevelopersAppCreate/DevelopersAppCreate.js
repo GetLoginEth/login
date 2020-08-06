@@ -10,10 +10,6 @@ function DevelopersAppCreate({location}) {
 
     const [redirect, setRedirect] = useState(null);
 
-    useEffect(_ => {
-        //getAppsInfo([appId]).then();
-    }, []);
-
     // todo after creation and redirect display info about tx mining
     return <div className="DevelopersAppCreate">
         {redirect ? redirect : ''}
@@ -22,15 +18,13 @@ function DevelopersAppCreate({location}) {
             {myApps.errorMessage}
         </div>}
 
-        <DevelopersForm onSubmit={formData => {
+        <DevelopersForm onSubmit={async formData => {
             console.log(formData);
             const {title, description, allowedUrls, allowedContracts} = formData;
-            createApplication(title, description, allowedUrls, allowedContracts)
-                .then(data => {
-                    if (data) {
-                        setRedirect(<Redirect to={{pathname: "./developers", state: {from: location}}}/>);
-                    }
-                });
+            const data = await createApplication(title, description, allowedUrls, allowedContracts)
+            if (data) {
+                setRedirect(<Redirect to={{pathname: "./developers", state: {from: location}}}/>);
+            }
         }} isWaitButton={myApps.inProcessCreation} isFormDisabled={myApps.inProcessCreation}/>
     </div>;
 }
