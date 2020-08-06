@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import './DevelopersAppCreate.css';
 import {createApplication} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";

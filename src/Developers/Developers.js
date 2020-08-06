@@ -9,7 +9,7 @@ function Developers() {
     const {state: {myApps}} = useStateValue();
     const {state: {appsInfo}} = useStateValue();
 
-    useEffect(async _ => {
+    useEffect(_ => {
         async function getApps() {
             const data = await getMyApps();
             if (data) {
