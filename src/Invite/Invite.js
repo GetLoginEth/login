@@ -22,7 +22,7 @@ function Invite() {
     useEffect(_ => {
         getInvitePrice().then();
         getInvites(user.usernameHash).then();
-    }, []);
+    }, [user.usernameHash]);
 
     // todo get invite min value from global state
     const isCanCreateInvite = invite.price ? Number(user.balance.original) >= Number(invite.price) : false;

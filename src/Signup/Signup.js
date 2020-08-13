@@ -53,7 +53,7 @@ function Signup() {
             }*/
         }
         //setMethod(SIGN_UP_INVITE);
-    }, []);
+    }, [config.isTrezorEnabled]);
 
     useEffect(_ => {
         if (!isCorrectInvite(inviteData)) {

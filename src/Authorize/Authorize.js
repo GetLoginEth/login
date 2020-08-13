@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {Fragment, useCallback, useEffect, useState} from 'react';
 import './Authorize.css';
 import {allowApp, getAppInfo, getAppSession, getLocalUsernameHash} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
@@ -54,9 +54,9 @@ function Authorize() {
     const redirectUri = setRedirectUrl(params.get('redirect_uri'));
     const responseType = params.get('response_type');
 
-    const successReturn = (accessToken, usernameHash) => {
+    const successReturn = useCallback((accessToken, usernameHash) => {
         window.location.replace(`${redirectUri.toString()}#access_token=${accessToken}&user_id=${usernameHash}`);
-    };
+    }, [redirectUri]);
 
     useEffect(_ => {
         getAppSession(clientId).then();
@@ -77,7 +77,7 @@ function Authorize() {
         if (Array.isArray(authorizeApp.allowedUrls) && authorizeApp.allowedUrls.includes(redirectUri.href)) {
             successReturn(sessionApp.transactionHash, usernameHash);
         }
-    }, [sessionApp, authorizeApp]);
+    }, [sessionApp, authorizeApp, redirectUri.href, successReturn]);
 
     const onDecline = () => {
         window.location.replace(redirectUri.toString() + '#error=access_denied&error_reason=user_denied&error_description=User denied your request');

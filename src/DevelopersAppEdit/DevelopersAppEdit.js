@@ -16,7 +16,7 @@ function DevelopersAppEdit({computedMatch, location}) {
 
     useEffect(_ => {
         getAppsInfo([appId]).then();
-    }, []);
+    }, [appId]);
 
     return <div className="DevelopersAppEdit">
         {redirect ? redirect : ''}

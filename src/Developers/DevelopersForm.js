@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {useStateValue} from "../reducers/state";
 import WaitButton from "../Elements/WaitButton";
 
 function DevelopersForm({isFormDisabled = false, onSubmit = null, redirect = null, initValues = {}, isWaitButton = false, isShowSaveButton = true}) {
-    const {state: {myApps}} = useStateValue();
-
     const [id, setId] = useState('');
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');

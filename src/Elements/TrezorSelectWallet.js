@@ -24,7 +24,7 @@ function TrezorSelectWallet({id, isShow, onClose, onComplete, completeText = 'Sa
             setTrezorAddressIndex(address.index);
             setAddressIndex(address.index);
         }
-    }, [trezorAddresses]);
+    }, [trezorAddresses, trezorAddress, trezorAddressIndex]);
 
     return <Modal id={id} show={isShow} onHide={onClose} animation={true}>
         <Modal.Header closeButton>

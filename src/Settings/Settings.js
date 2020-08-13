@@ -94,7 +94,8 @@ function Settings() {
                         {item.returnValues.appId}
                     </th>
                     <td>
-                        <a target="_blank" href={`https://rinkeby.etherscan.io/tx/${item.transactionHash}`}>
+                        <a target="_blank" rel="noopener noreferrer"
+                           href={`https://rinkeby.etherscan.io/tx/${item.transactionHash}`}>
                             {item.transactionHash}
                         </a>
                     </td>

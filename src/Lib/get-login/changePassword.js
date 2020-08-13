@@ -1,13 +1,13 @@
 import Logger from "./logger";
-import {CODE_EMPTY_RESULT, CODE_UNKNOWN_METHOD, CODE_USERNAME_NOT_FOUND, LoginError} from "./login-error";
+import {CODE_EMPTY_RESULT, CODE_USERNAME_NOT_FOUND, LoginError} from "./login-error";
 import {
     createWallet,
     dataToV3Wallet,
-    decryptWallet, encryptWallet,
+    decryptWallet,
+    encryptWallet,
     filterUsername,
     getUsernameHash,
     isUsernameRegistered,
-    LOGIN_TREZOR,
     validatePassword,
     validateUsername
 } from "./utils";
