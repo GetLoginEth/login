@@ -8,7 +8,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
-import {LOGIN_TREZOR, validateInvite} from "../Lib/get-login/utils";
+import {LOGIN_METAMASK, LOGIN_TREZOR, validateInvite} from "../Lib/get-login/utils";
 import {ACTION_SIGNUP} from "../reducers/mainReducer";
 import WaitButton from "../Elements/WaitButton";
 import TrezorSelectWallet from "../Elements/TrezorSelectWallet";
@@ -30,6 +30,9 @@ function Signup() {
     ];
     if (config.isTrezorEnabled) {
         dropDown.push({key: LOGIN_TREZOR, title: 'Trezor'});
+    }
+    if (config.isMetamaskEnabled && typeof window.ethereum !== 'undefined') {
+        dropDown.push({key: LOGIN_METAMASK, title: 'Metamask'});
     }
 
     const [showTrezorModal, setShowTrezorModal] = useState(false);
@@ -70,6 +73,8 @@ function Signup() {
             // todo check username before interact with trezor
             setShowTrezorModal(true);
             getTrezorAddresses().then();
+        } else if (method === LOGIN_METAMASK) {
+            window.ethereum.request({ method: 'eth_requestAccounts' });
         } else {
             setShowSettingsModal(true);
             //await signUp(method, username, password, invite);

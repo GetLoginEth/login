@@ -7,6 +7,7 @@ export const PASSWORD_MIN_LENGTH = 3;
 export const PASSWORD_MAX_LENGTH = 300;
 
 export const LOGIN_WEB3 = 'login_web3';
+export const LOGIN_METAMASK = 'login_metamask';
 export const LOGIN_TREZOR = 'login_trezor';
 
 /*export const sleep = (ms) => {
