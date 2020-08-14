@@ -6,7 +6,7 @@ import {getTrezorAddresses, initPage, signIn} from "../reducers/actions";
 import {LOGIN_USERNAME_PASSWORD} from "../Lib/get-login/signin";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
-import {LOGIN_TREZOR, validatePassword, validateUsername} from "../Lib/get-login/utils";
+import {METHOD_TREZOR, validatePassword, validateUsername} from "../Lib/get-login/utils";
 import {ACTION_SIGNIN} from "../reducers/mainReducer";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import WaitButton from "../Elements/WaitButton";
@@ -26,7 +26,7 @@ function Signin() {
     ];
 
     if (config.isTrezorEnabled) {
-        dropDown.push({key: LOGIN_TREZOR, title: 'Trezor'});
+        dropDown.push({key: METHOD_TREZOR, title: 'Trezor'});
     }
 
     useEffect(() => {
@@ -37,7 +37,7 @@ function Signin() {
         let result = true;
         try {
             validateUsername(username);
-            if (method !== LOGIN_TREZOR) {
+            if (method !== METHOD_TREZOR) {
                 validatePassword(password);
             }
             result = false;
@@ -50,7 +50,7 @@ function Signin() {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        if (method === LOGIN_TREZOR) {
+        if (method === METHOD_TREZOR) {
             setShowModal(true);
             getTrezorAddresses().then();
         } else {
@@ -79,7 +79,7 @@ function Signin() {
                 }}
                 completeText="Sign in"
                 onComplete={(address, addressIndex) => {
-                    signIn(LOGIN_TREZOR, username, null, null, {address, addressIndex}).then();
+                    signIn(METHOD_TREZOR, username, null, null, {address, addressIndex}).then();
                 }}/>
 
             <div className="container">
@@ -110,7 +110,7 @@ function Signin() {
                                                     </Form.Group>
 
                                                     <Form.Group controlId="formBasicPassword"
-                                                                className={(method === LOGIN_TREZOR) ? "d-none" : ""}>
+                                                                className={(method === METHOD_TREZOR) ? "d-none" : ""}>
                                                         <Form.Control type="password" placeholder="Password"
                                                                       onChange={e => setPassword(e.target.value)}
                                                                       value={password}/>

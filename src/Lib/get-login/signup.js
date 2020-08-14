@@ -10,9 +10,9 @@ import {
     encryptWallet,
     filterUsername,
     getUsernameHash,
-    isUsernameRegistered,
-    LOGIN_TREZOR,
-    LOGIN_WEB3,
+    isUsernameRegistered, METHOD_INVITE,
+    METHOD_TREZOR,
+    METHOD_WEB3,
     validateInvite,
     validateMoreThanZero,
     validateUsername
@@ -29,8 +29,6 @@ export const LOG_SIGN_UP_CHECK_USERNAME = 'sign_up_check_username';
 export const LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE = 'sign_up_create_wallet_from_invite';
 export const LOG_SIGN_UP_CREATE_NEW_WALLET = 'sign_up_create_new_wallet';
 export const LOG_SIGN_UP_USER_REGISTRATION = 'sign_up_user_registration';
-
-export const SIGN_UP_INVITE = 'sign_up_invite';
 
 export default class Signup extends Logger {
     constructor(crypto, contract) {
@@ -167,12 +165,12 @@ export default class Signup extends Logger {
         // todo check is address registered (actual for trezor)
 
         switch (method) {
-            case SIGN_UP_INVITE:
+            case METHOD_INVITE:
                 result = await this._signUpInvite(username, password, invite, options.allowReset, onTransactionMined);
                 break;
-            case LOGIN_WEB3:
+            case METHOD_WEB3:
                 throw new LoginError(CODE_NOT_IMPLEMENTED);
-            case LOGIN_TREZOR:
+            case METHOD_TREZOR:
                 result = await this._signUpTrezor(username, options);
                 break;
             default:

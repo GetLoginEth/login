@@ -6,9 +6,10 @@ export const USERNAME_MAX_LENGTH = 30;
 export const PASSWORD_MIN_LENGTH = 3;
 export const PASSWORD_MAX_LENGTH = 300;
 
-export const LOGIN_WEB3 = 'login_web3';
-export const LOGIN_METAMASK = 'login_metamask';
-export const LOGIN_TREZOR = 'login_trezor';
+export const METHOD_WEB3 = 'method_web3';
+export const METHOD_METAMASK = 'method_metamask';
+export const METHOD_TREZOR = 'method_trezor';
+export const METHOD_INVITE = 'method_invite';
 
 /*export const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));

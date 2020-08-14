@@ -38,11 +38,11 @@ import {
     STATUS_START,
     STATUS_SUCCESS
 } from "./mainReducer";
-import Signup, {SIGN_UP_INVITE} from "../Lib/get-login/signup";
+import Signup from "../Lib/get-login/signup";
 import Signin, {LOGIN_DATA, LOGIN_USERNAME_PASSWORD, LOGIN_WEB3_PROVIDER} from "../Lib/get-login/signin";
 import {CODE_EMPTY_METHOD_PARAM, LoginError} from "../Lib/get-login/login-error";
 import {translate} from "../Lib/get-login/log-translation";
-import {beautyBalance, getUsernameHash, LOGIN_TREZOR, validateUserData} from "../Lib/get-login/utils";
+import {beautyBalance, getUsernameHash, METHOD_INVITE, METHOD_TREZOR, validateUserData} from "../Lib/get-login/utils";
 import crypto from "../Lib/get-login/crypto";
 import TrezorConnect from "../Lib/get-login/crypto";
 import contract from "../Lib/get-login/contract";
@@ -130,7 +130,7 @@ export const checkLocalCredentials = async () => {
         const data = getUserData();
         await validateUserData(data);
         let address;
-        if (data.type === LOGIN_TREZOR) {
+        if (data.type === METHOD_TREZOR) {
             const publicKey = localStorage.getItem('public_key');
             const addressIndex = localStorage.getItem('address_index');
             const path = `m/44'/60'/0'/0/${addressIndex}`;
@@ -207,8 +207,8 @@ export const signIn = async (method, username, password, wallet, options = {}) =
             setUserData(username, receivedWallet, LOGIN_USERNAME_PASSWORD);
         } else if (method === LOGIN_WEB3_PROVIDER) {
             setUserData(username, receivedWallet, LOGIN_WEB3_PROVIDER);
-        } else if (method === LOGIN_TREZOR) {
-            setUserData(username, null, LOGIN_TREZOR, options.address);
+        } else if (method === METHOD_TREZOR) {
+            setUserData(username, null, METHOD_TREZOR, options.address);
         } else {
             throw new Error('Not supported method for local storing');
         }
@@ -226,14 +226,14 @@ export const signUp = async (method, username, password = '', invite = '', optio
         }, options);
     });
 
-    if (result && [SIGN_UP_INVITE/*, LOGIN_WEB3, LOGIN_TREZOR*/].includes(method)) {
-        if (method === SIGN_UP_INVITE) {
+    if (result && [METHOD_INVITE/*, LOGIN_WEB3, LOGIN_TREZOR*/].includes(method)) {
+        if (method === METHOD_INVITE) {
             method = LOGIN_DATA;
         }
 
         setUserData(username, result.decryptedWallet, method);
-    } else if (result && method === LOGIN_TREZOR) {
-        setUserData(username, null, LOGIN_TREZOR, options.address);
+    } else if (result && method === METHOD_TREZOR) {
+        setUserData(username, null, METHOD_TREZOR, options.address);
     }
 
     await checkLocalCredentials();

@@ -5,10 +5,9 @@ import {getInviteInfo, getTrezorAddresses, initPage, resetPassword, signUp} from
 import Form from "react-bootstrap/Form";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import {SIGN_UP_INVITE} from "../Lib/get-login/signup";
 import {useStateValue} from "../reducers/state";
 import {Link} from "react-router-dom";
-import {LOGIN_METAMASK, LOGIN_TREZOR, validateInvite} from "../Lib/get-login/utils";
+import {METHOD_INVITE, METHOD_METAMASK, METHOD_TREZOR, validateInvite} from "../Lib/get-login/utils";
 import {ACTION_SIGNUP} from "../reducers/mainReducer";
 import WaitButton from "../Elements/WaitButton";
 import TrezorSelectWallet from "../Elements/TrezorSelectWallet";
@@ -18,44 +17,45 @@ function Signup() {
     const {state: {signup}} = useStateValue();
     const {state: {invite}} = useStateValue();
     const {state: {resetPasswordData}} = useStateValue();
+    const {state: {config}} = useStateValue();
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [inviteData, setInviteData] = useState('');
     const [method, setMethod] = useState('');
-    const {state: {config}} = useStateValue();
-
-    const dropDown = [
-        {key: SIGN_UP_INVITE, title: 'Invite'},
-        //{key: LOGIN_WEB3, title: 'Web3'},
-    ];
-    if (config.isTrezorEnabled) {
-        dropDown.push({key: LOGIN_TREZOR, title: 'Trezor'});
-    }
-    if (config.isMetamaskEnabled && typeof window.ethereum !== 'undefined') {
-        dropDown.push({key: LOGIN_METAMASK, title: 'Metamask'});
-    }
-
     const [showTrezorModal, setShowTrezorModal] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [showRecoverModal, setShowRecoverModal] = useState(false);
     const [allowResetPassword, setAllowResetPassword] = useState(true);
+    const [dropDown, setDropDown] = useState([
+        {key: METHOD_INVITE, title: 'Invite'}
+    ]);
+    const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false);
 
-    //console.log(errors);
+    useEffect(_ => {
+        setIsMetamaskInstalled(typeof window.ethereum !== 'undefined');
+        if (config.isTrezorEnabled) {
+            setDropDown(dropDown => [...dropDown, {key: METHOD_TREZOR, title: 'Trezor'}]);
+        }
+
+        if (config.isMetamaskEnabled && isMetamaskInstalled) {
+            setDropDown(dropDown => [...dropDown, {key: METHOD_METAMASK, title: 'Metamask'}]);
+        }
+    }, [isMetamaskInstalled, config.isTrezorEnabled, config.isMetamaskEnabled]);
 
     useEffect(() => {
         initPage(ACTION_SIGNUP);
 
         const invite = window.location.hash.replace('#', '');
         if (config.isTrezorEnabled && !isCorrectInvite(invite)) {
-            setMethod(LOGIN_TREZOR);
+            setMethod(METHOD_TREZOR);
         } else {
             setInviteData(invite);
-            setMethod(SIGN_UP_INVITE);
+            setMethod(METHOD_INVITE);
             /*if (isCorrectInvite(invite)) {
                 getInviteInfo(invite).then();
             }*/
         }
-        //setMethod(SIGN_UP_INVITE);
     }, [config.isTrezorEnabled]);
 
     useEffect(_ => {
@@ -66,15 +66,31 @@ function Signup() {
         getInviteInfo(inviteData).then();
     }, [inviteData]);
 
+    const signupWithMetamask = async () => {
+        const eth = window.ethereum;
+        try {
+            const data = await eth.request({method: 'eth_requestAccounts'});
+            if (!data || !data.length) {
+                throw new Error('Empty accounts data');
+            }
+
+            const wallet = data[0];
+            console.log(wallet);
+        } catch (e) {
+            // todo handle request cancelling
+            console.error(e)
+        }
+    };
+
     const onSubmit = async data => {
         data.preventDefault();
 
-        if (method === LOGIN_TREZOR) {
+        if (method === METHOD_TREZOR) {
             // todo check username before interact with trezor
             setShowTrezorModal(true);
             getTrezorAddresses().then();
-        } else if (method === LOGIN_METAMASK) {
-            window.ethereum.request({ method: 'eth_requestAccounts' });
+        } else if (method === METHOD_METAMASK) {
+            signupWithMetamask().then();
         } else {
             setShowSettingsModal(true);
             //await signUp(method, username, password, invite);
@@ -92,11 +108,11 @@ function Signup() {
         return result;
     };
     const isDisabled = () => {
-        if (method === LOGIN_TREZOR) {
+        if (method === METHOD_TREZOR) {
             return username.length < 3;
         } else {
             // todo use username/password validation from sign in
-            return username.length < 3 || password.length < 3 || (inviteData.length > 0 && !isCorrectInvite(inviteData)) || signup.inProcess || resetPasswordData.inProcess || (method === SIGN_UP_INVITE && !inviteData);
+            return username.length < 3 || password.length < 3 || (inviteData.length > 0 && !isCorrectInvite(inviteData)) || signup.inProcess || resetPasswordData.inProcess || (method === METHOD_INVITE && !inviteData);
         }
     };
     const onDropDownChange = (item) => {
@@ -111,6 +127,10 @@ function Signup() {
         }
     };
 
+    const getInviteClass = () => {
+        return (method === METHOD_INVITE || method === METHOD_METAMASK) ? "" : "d-none"
+    };
+
     return (
         <div className="row justify-content-center align-items-center">
             <TrezorSelectWallet
@@ -120,7 +140,7 @@ function Signup() {
                 }}
                 completeText="Sign up"
                 onComplete={(address, addressIndex) => {
-                    signUp(LOGIN_TREZOR, username, null, null, {address, addressIndex}).then();
+                    signUp(METHOD_TREZOR, username, null, null, {address, addressIndex}).then();
                 }}/>
 
             <Modal id="signupSettings"
@@ -260,7 +280,7 @@ function Signup() {
                                                     </Form.Group>
 
                                                     <Form.Group controlId="formBasicPassword"
-                                                                className={(method === LOGIN_TREZOR) ? "d-none" : ""}>
+                                                                className={(method === METHOD_TREZOR) ? "d-none" : ""}>
                                                         <Form.Control type="password"
                                                                       name="password"
                                                                       placeholder="Password"
@@ -269,8 +289,7 @@ function Signup() {
                                                         />
                                                     </Form.Group>
 
-                                                    <Form.Group controlId="formInvite"
-                                                                className={(method === SIGN_UP_INVITE) ? "" : "d-none"}>
+                                                    <Form.Group controlId="formInvite" className={getInviteClass()}>
                                                         <Form.Control type="text"
                                                                       name="invite"
                                                                       placeholder="Invite"

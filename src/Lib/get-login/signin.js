@@ -6,7 +6,7 @@ import {
     filterUsername,
     getUsernameHash,
     isUsernameRegistered,
-    LOGIN_TREZOR,
+    METHOD_TREZOR,
     validatePassword,
     validateUsername
 } from "./utils";
@@ -17,6 +17,7 @@ export const LOG_LOG_IN_CHECK_PASSWORD = 'log_in_check_password';
 export const LOG_LOG_IN_CHECK_WALLET = 'log_in_check_wallet';
 export const LOG_LOG_IN_DECODE_WALLET = 'log_in_decode_wallet';
 
+// todo move consts to utils.js and remove here
 export const LOGIN_USERNAME_PASSWORD = 'login_username_password';
 export const LOGIN_DATA = 'login_data';
 export const LOGIN_WEB3_PROVIDER = 'login_web3_provider';
@@ -125,7 +126,7 @@ export default class Signin extends Logger {
             case LOGIN_DATA:
                 result = await this._signInWalletPassword(username, password, wallet);
                 break;
-            case LOGIN_TREZOR:
+            case METHOD_TREZOR:
                 result = await this._signInTrezor(username, options.address);
                 break;
             default:
