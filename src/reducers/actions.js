@@ -221,9 +221,14 @@ export const signIn = async (method, username, password, wallet, options = {}) =
 export const signUp = async (method, username, password = '', invite = '', options = {}) => {
     /** @type {IInviteRegistration} */
     const result = await callMethod(ACTION_SIGNUP, async () => {
-        return await signup.signUp(method, username, password, invite, info => {
-            doDispatch(getStatus(ACTION_SIGNUP, STATUS_MINED), info);
-        }, options);
+        return await signup.signUp({
+            method,
+            username,
+            password,
+            invite,
+            onTransactionMined: (info) => doDispatch(getStatus(ACTION_SIGNUP, STATUS_MINED), info),
+            options
+        });
     });
 
     if (result && [METHOD_INVITE/*, LOGIN_WEB3, LOGIN_TREZOR*/].includes(method)) {

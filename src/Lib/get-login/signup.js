@@ -10,9 +10,10 @@ import {
     encryptWallet,
     filterUsername,
     getUsernameHash,
-    isUsernameRegistered, METHOD_INVITE,
+    isUsernameRegistered,
+    METHOD_INVITE,
+    METHOD_METAMASK,
     METHOD_TREZOR,
-    METHOD_WEB3,
     validateInvite,
     validateMoreThanZero,
     validateUsername
@@ -52,6 +53,30 @@ export default class Signup extends Logger {
          * @type {contract}
          */
         this.contract = contract;
+    }
+
+    async _signUpMetamask({username, password, invite, allowReset, onTransactionMined, address}) {
+        // todo separate and use validation from _signUpInvite
+
+        const transactionParameters = {
+            nonce: '0x00', // ignored by MetaMask
+            gasPrice: '0x09184e72a000', // customizable by user during MetaMask confirmation.
+            gas: '0x2710', // customizable by user during MetaMask confirmation.
+            to: '0x0000000000000000000000000000000000000000', // Required except during contract publications.
+            from: window.ethereum.selectedAddress, // must match user's active address.
+            value: '0x00', // Only required to send ether to the recipient from the initiating external account.
+            data: '0x7f7465737432000000000000000000000000000000000000000000000000000000600057', // Optional, but used for defining smart contract creation and interaction.
+            chainId: 3, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
+        };
+
+        // todo get chainId
+
+        // txHash is a hex string
+        // As with any RPC call, it may throw an error
+        const txHash = await window.ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [transactionParameters],
+        });
     }
 
     /**
@@ -146,30 +171,35 @@ export default class Signup extends Logger {
 
     /**
      *
-     * @param method
-     * @param username
-     * @param password
-     * @param invite
-     * @param onTransactionMined
-     * @param options
+     * @param params
      * @returns {Promise<IInviteRegistration>}
      */
-    async signUp(method, username, password = '', invite = '', onTransactionMined = null, options = {}) {
-        let result = null;
+    async signUp(params) {
+        const {method, username, password = '', invite = '', onTransactionMined = null, options = {}} = params;
 
+        // todo check required params before start
+        let result = null;
         this.log(LOG_SIGN_UP_CHECK_USERNAME);
         if (await isUsernameRegistered(this.contract, username)) {
             throw new LoginError(CODE_USERNAME_ALREADY_REGISTERED);
         }
 
-        // todo check is address registered (actual for trezor)
-
         switch (method) {
             case METHOD_INVITE:
                 result = await this._signUpInvite(username, password, invite, options.allowReset, onTransactionMined);
                 break;
-            case METHOD_WEB3:
-                throw new LoginError(CODE_NOT_IMPLEMENTED);
+            /*case METHOD_WEB3:
+                throw new LoginError(CODE_NOT_IMPLEMENTED);*/
+            case METHOD_METAMASK:
+                result = await this._signUpMetamask({
+                    username,
+                    password,
+                    invite,
+                    allowReset: options.allowReset,
+                    onTransactionMined,
+                    address: options.address
+                });
+                break;
             case METHOD_TREZOR:
                 result = await this._signUpTrezor(username, options);
                 break;
