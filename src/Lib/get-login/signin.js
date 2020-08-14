@@ -43,7 +43,7 @@ export default class Signin extends Logger {
      *
      * @param username
      * @param password
-     * @returns {Promise<boolean>}
+     * @returns {Promise<Account>}
      * @private
      */
     async _signInUsernamePassword(username, password) {
