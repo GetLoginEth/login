@@ -137,7 +137,7 @@ contract GetLoginLogic {
         require(isAddressRegistered(wallet), "Address not registered");
     }
 
-    function validateAddressAvailable(address wallet) public view {
+    function validateAddressNotRegistered(address wallet) public view {
         require(isAddressRegistered(wallet) == false, "Address already registered");
     }
 
@@ -201,6 +201,7 @@ contract GetLoginLogic {
         _setApplicationActive(appId, true);
     }
 
+    // todo check is required and tested? remove?
     function createUser(bytes32 usernameHash) public payable {
         _createUser(usernameHash, msg.sender);
     }
@@ -231,7 +232,8 @@ contract GetLoginLogic {
 
     function createUserFromInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, bool allowReset) public payable {
         validateInviteActive(msg.sender);
-        require(isAddressRegistered(walletAddress) == false, "Address already registered");
+        validateAddressNotRegistered(walletAddress);
+
         GetLoginStorage.InviteInfo memory invite = getLoginStorage.getInvite(msg.sender);
         _createUser(usernameHash, walletAddress);
         invite.isActive = false;
@@ -243,9 +245,20 @@ contract GetLoginLogic {
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
+    function createUserWithoutInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, bool allowReset) public payable {
+        // todo check in settings is possible create user without invite
+        // todo add possibility to register with invite + metamask?
+        validateAddressNotRegistered(walletAddress);
+
+        _createUser(usernameHash, walletAddress);
+        walletAddress.transfer(msg.value);
+        _setSettings(usernameHash, settingsInviteReset, allowReset ? "true" : "false");
+        getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
+    }
+
     function changePassword(address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, SessionData[] memory sessions) public payable {
         validateAddressRegistered(msg.sender);
-        validateAddressAvailable(walletAddress);
+        validateAddressNotRegistered(walletAddress);
         bytes32 usernameHash = getUsernameByAddress(msg.sender);
         getLoginStorage.setUsersAddressUsername(walletAddress, GetLoginStorage.Username({username : usernameHash, isActive : true}));
         // deactivate old wallet
