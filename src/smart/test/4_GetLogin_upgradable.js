@@ -4,7 +4,7 @@ const TestLogic = artifacts.require("./TestLogic.sol");
 const willFail = require("./exceptions.js").willFail;
 let getLoginLogic, getLoginStorage, testLogic;
 
-contract("GetLogin", async accounts => {
+contract("GetLogin upgradable", async accounts => {
     describe('Invite', async () => {
         before(async () => {
             getLoginLogic = await GetLoginLogic.deployed();

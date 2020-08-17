@@ -5,7 +5,7 @@ let getLoginLogic, getLoginStorage;
 const inviteAddress = '0x29162b583a872f369FfFda3f5e4705564c19901D';
 const invitePrivateKey = 'da15d48dde9893cbbac2818ee57d985b6f68712151fa65cdb69a735456e27332';
 
-contract("GetLogin", async accounts => {
+contract("GetLogin invite", async accounts => {
     describe('Invite', async () => {
         before(async () => {
             getLoginLogic = await GetLoginLogic.deployed();

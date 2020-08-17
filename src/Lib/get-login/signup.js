@@ -59,17 +59,20 @@ export default class Signup extends Logger {
         // todo separate and use validation from _signUpInvite
 
         const transactionParameters = {
-            nonce: '0x00', // ignored by MetaMask
-            gasPrice: '0x09184e72a000', // customizable by user during MetaMask confirmation.
-            gas: '0x2710', // customizable by user during MetaMask confirmation.
+            //nonce: '0x00', // ignored by MetaMask
+            //gasPrice: '0x09184e72a000', // customizable by user during MetaMask confirmation.
+            //gas: '0x2710', // customizable by user during MetaMask confirmation.
+            // todo logic smart contract address
             to: '0x0000000000000000000000000000000000000000', // Required except during contract publications.
-            from: window.ethereum.selectedAddress, // must match user's active address.
+            //from: window.ethereum.selectedAddress, // must match user's active address.
+            from: address, // must match user's active address.
+            // todo pass value to method
             value: '0x00', // Only required to send ether to the recipient from the initiating external account.
+            // todo gen data
             data: '0x7f7465737432000000000000000000000000000000000000000000000000000000600057', // Optional, but used for defining smart contract creation and interaction.
+            // todo get chainId from config
             chainId: 3, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
         };
-
-        // todo get chainId
 
         // txHash is a hex string
         // As with any RPC call, it may throw an error
@@ -77,6 +80,8 @@ export default class Signup extends Logger {
             method: 'eth_sendTransaction',
             params: [transactionParameters],
         });
+
+        console.log(txHash);
     }
 
     /**

@@ -3,7 +3,7 @@ const GetLoginStorage = artifacts.require("./GetLoginStorage.sol");
 const willFail = require("./exceptions.js").willFail;
 let getLoginLogic, getLoginStorage;
 
-contract("GetLogin", async accounts => {
+contract("GetLogin app", async accounts => {
     describe('App', async () => {
         before(async () => {
             getLoginLogic = await GetLoginLogic.deployed();

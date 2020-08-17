@@ -5,7 +5,7 @@ const willFail = require("./exceptions.js").willFail;
 let getLoginLogic, getLoginStorage, testLogic;
 const adminUsernameHash = web3.utils.keccak256('admin');
 
-contract("GetLogin", async accounts => {
+contract("GetLogin session", async accounts => {
     describe('Invite', async () => {
         before(async () => {
             getLoginLogic = await GetLoginLogic.deployed();

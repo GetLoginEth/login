@@ -38,7 +38,7 @@ const demoAccounts = {
     }
 };
 
-contract("GetLogin", async accounts => {
+contract("GetLogin user", async accounts => {
     describe('User', async () => {
         before(async () => {
             getLoginLogic = await GetLoginLogic.deployed();
