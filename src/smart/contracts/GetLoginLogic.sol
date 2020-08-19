@@ -110,10 +110,15 @@ contract GetLoginLogic {
         getLoginStorage.pushUserSession(usernameHash, wallet, sessionType, appId);
     }
 
-    function _setSettings(bytes32 usernameHash, string memory key, string memory value) private {
+    function _setUsersSettings(bytes32 usernameHash, string memory key, string memory value) private {
         // todo inspect is correct way
         bytes32 keyHash = keccak256(abi.encode(usernameHash, "_", key));
-        getLoginStorage.setSettings(keyHash, value);
+        getLoginStorage.setUsersSettings(keyHash, value);
+    }
+
+    function _setAppSettings( string memory key, string memory value) private {
+        bytes32 keyHash = keccak256(key);
+        getLoginStorage.setAppSettings(keyHash, value);
     }
 
     /* End of private methods */
@@ -242,7 +247,7 @@ contract GetLoginLogic {
         getLoginStorage.setInvite(msg.sender, invite);
         walletAddress.transfer(msg.value);
         //setInviteReset(allowReset);
-        _setSettings(usernameHash, settingsInviteReset, allowReset ? "true" : "false");
+        _setUsersSettings(usernameHash, settingsInviteReset, allowReset ? "true" : "false");
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
@@ -253,7 +258,7 @@ contract GetLoginLogic {
 
         _createUser(usernameHash, walletAddress);
         walletAddress.transfer(msg.value);
-        _setSettings(usernameHash, settingsInviteReset, allowReset ? "true" : "false");
+        _setUsersSettings(usernameHash, settingsInviteReset, allowReset ? "true" : "false");
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
@@ -305,7 +310,7 @@ contract GetLoginLogic {
 
     function setInviteReset(string memory value) public {
         bytes32 usernameHash = getUsernameByAddress(msg.sender);
-        _setSettings(usernameHash, settingsInviteReset, value);
+        _setUsersSettings(usernameHash, settingsInviteReset, value);
     }
 
     /* End of public methods */
@@ -374,14 +379,19 @@ contract GetLoginLogic {
         return SettingsData({inviteReset : getInviteReset(usernameHash)});
     }
 
-    function getSettings(bytes32 usernameHash, string memory key) public view returns (string memory) {
+    function getUsersSettings(bytes32 usernameHash, string memory key) public view returns (string memory) {
         // todo inspect is correct way / collisions possible
         bytes32 keyHash = keccak256(abi.encode(usernameHash, "_", key));
-        return getLoginStorage.getSettings(keyHash);
+        return getLoginStorage.getUsersSettings(keyHash);
+    }
+
+    function getAppSettings(string memory key) public view returns (string memory) {
+        bytes32 keyHash = keccak256(key);
+        return getLoginStorage.getAppSettings(keyHash);
     }
 
     function getInviteReset(bytes32 usernameHash) public view returns (string memory) {
-        return getSettings(usernameHash, settingsInviteReset);
+        return getUsersSettings(usernameHash, settingsInviteReset);
     }
 
     /* End of view methods */

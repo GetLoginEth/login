@@ -73,6 +73,7 @@ contract GetLoginStorage {
 
     mapping(bytes32 => UserInfo) public Users;
     mapping(bytes32 => string) public UsersSettings;
+    mapping(bytes32 => string) public AppSettings;
     mapping(address => Username) public UsersAddressUsername;
     mapping(bytes32 => UserSession[]) public UserSessions;
     mapping(address => InviteInfo) public Invites;
@@ -98,7 +99,7 @@ contract GetLoginStorage {
         emit EventAppCreated(creatorUsername, appId);
     }
 
-    function getUser(bytes32 usernameHash) public view returns (UserInfo memory){
+    function getUser(bytes32 usernameHash) public view returns (UserInfo memory) {
         return Users[usernameHash];
     }
 
@@ -106,15 +107,23 @@ contract GetLoginStorage {
         Users[usernameHash] = info;
     }
 
-    function getSettings(bytes32 key) public view returns (string memory){
+    function getUsersSettings(bytes32 key) public view returns (string memory) {
         return UsersSettings[key];
     }
 
-    function setSettings(bytes32 key, string memory value) onlyLogicAddress public {
+    function setUsersSettings(bytes32 key, string memory value) onlyLogicAddress public {
         UsersSettings[key] = value;
     }
 
-    function getUsersAddressUsername(address _address) public view returns (Username memory){
+    function getAppSettings(bytes32 key) public view returns (string memory) {
+        return AppSettings[key];
+    }
+
+    function setAppSettings(bytes32 key, string memory value) onlyLogicAddress public {
+        AppSettings[key] = value;
+    }
+
+    function getUsersAddressUsername(address _address) public view returns (Username memory) {
         return UsersAddressUsername[_address];
     }
 
@@ -122,7 +131,7 @@ contract GetLoginStorage {
         UsersAddressUsername[_address] = info;
     }
 
-    function getApplication(uint64 id) public view returns (Application memory){
+    function getApplication(uint64 id) public view returns (Application memory) {
         return Applications[id];
     }
 
@@ -154,7 +163,7 @@ contract GetLoginStorage {
         UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
     }
 
-    function getInvite(address _address) public view returns (InviteInfo memory){
+    function getInvite(address _address) public view returns (InviteInfo memory) {
         return Invites[_address];
     }
 
@@ -162,7 +171,7 @@ contract GetLoginStorage {
         Invites[_address] = data;
     }
 
-    function getUserSessions(bytes32 usernameHash) public view returns (UserSession[] memory){
+    function getUserSessions(bytes32 usernameHash) public view returns (UserSession[] memory) {
         return UserSessions[usernameHash];
     }
 }

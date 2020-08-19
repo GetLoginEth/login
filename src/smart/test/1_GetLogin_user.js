@@ -189,7 +189,7 @@ contract("GetLogin user", async accounts => {
             const usernameHash = web3.utils.keccak256('admin');
             const testString = "we5htw56hw45h45h4 q345 24q5 hw4 hw4 5h q45h 45";
             await getLoginLogic.setInviteReset(testString, {from: accounts[0]});
-            const data = await getLoginLogic.getSettings(usernameHash, "invite_reset");
+            const data = await getLoginLogic.getUsersSettings(usernameHash, "invite_reset");
             assert.equal(data, testString, "Incorrect data");
         });
 
