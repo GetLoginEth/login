@@ -185,11 +185,11 @@ contract("GetLogin user", async accounts => {
             // todo check address not available for registration and as invite
         });*/
 
-        it("Check settings set", async () => {
+        it("Check settings set (invite reset)", async () => {
             const usernameHash = web3.utils.keccak256('admin');
             const testString = "we5htw56hw45h45h4 q345 24q5 hw4 hw4 5h q45h 45";
             await getLoginLogic.setInviteReset(testString, {from: accounts[0]});
-            const data = await getLoginLogic.getUsersSettings(usernameHash, "invite_reset");
+            const data = await getLoginLogic.getInviteReset(usernameHash);
             assert.equal(data, testString, "Incorrect data");
         });
 

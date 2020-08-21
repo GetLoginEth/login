@@ -7,7 +7,8 @@ import './GetLoginStorage.sol';
 contract GetLoginLogic {
     GetLoginStorage public getLoginStorage;
     address public owner;
-    string settingsInviteReset = "invite_reset";
+    string public USER_IS_INVITE_RESET = "is_invite_reset";
+    string public APP_IS_SIGNUP_WITHOUT_INVITE = "is_signup_without_invite";
 
     struct SessionData
     {
@@ -35,6 +36,10 @@ contract GetLoginLogic {
         owner = _address;
     }
 
+    /*function setAppSettings(string memory key, string memory value) onlyOwner public {
+        _setAppSettings(key, value);
+    }*/
+
     function setStorageAddress(GetLoginStorage _address) onlyOwner public {
         getLoginStorage = _address;
     }
@@ -47,6 +52,7 @@ contract GetLoginLogic {
     function init() onlyOwner public {
         bytes32 usernameHash = keccak256('admin');
         GetLoginStorage.UserInfo memory info = getLoginStorage.getUser(usernameHash);
+        // init settings is admin not defined
         if (info.isActive != true) {
             _createUser(usernameHash, msg.sender);
             string[] memory allowedUrls;
@@ -55,6 +61,7 @@ contract GetLoginLogic {
             _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
             _addApplicationUrl(newAppId, 'https://localhost:3001/');
             _addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
+            //_setAppSettings(APP_IS_SIGNUP_WITHOUT_INVITE, "true");
         }
     }
 
@@ -116,8 +123,8 @@ contract GetLoginLogic {
         getLoginStorage.setUsersSettings(keyHash, value);
     }
 
-    function _setAppSettings( string memory key, string memory value) private {
-        bytes32 keyHash = keccak256(key);
+    function _setAppSettings(string memory key, string memory value) private {
+        bytes32 keyHash = keccak256(abi.encode(key));
         getLoginStorage.setAppSettings(keyHash, value);
     }
 
@@ -247,7 +254,7 @@ contract GetLoginLogic {
         getLoginStorage.setInvite(msg.sender, invite);
         walletAddress.transfer(msg.value);
         //setInviteReset(allowReset);
-        _setUsersSettings(usernameHash, settingsInviteReset, allowReset ? "true" : "false");
+        _setUsersSettings(usernameHash, USER_IS_INVITE_RESET, allowReset ? "true" : "false");
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
@@ -258,7 +265,7 @@ contract GetLoginLogic {
 
         _createUser(usernameHash, walletAddress);
         walletAddress.transfer(msg.value);
-        _setUsersSettings(usernameHash, settingsInviteReset, allowReset ? "true" : "false");
+        _setUsersSettings(usernameHash, USER_IS_INVITE_RESET, allowReset ? "true" : "false");
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
@@ -310,7 +317,7 @@ contract GetLoginLogic {
 
     function setInviteReset(string memory value) public {
         bytes32 usernameHash = getUsernameByAddress(msg.sender);
-        _setUsersSettings(usernameHash, settingsInviteReset, value);
+        _setUsersSettings(usernameHash, USER_IS_INVITE_RESET, value);
     }
 
     /* End of public methods */
@@ -380,18 +387,17 @@ contract GetLoginLogic {
     }
 
     function getUsersSettings(bytes32 usernameHash, string memory key) public view returns (string memory) {
-        // todo inspect is correct way / collisions possible
         bytes32 keyHash = keccak256(abi.encode(usernameHash, "_", key));
         return getLoginStorage.getUsersSettings(keyHash);
     }
 
     function getAppSettings(string memory key) public view returns (string memory) {
-        bytes32 keyHash = keccak256(key);
+        bytes32 keyHash = keccak256(abi.encode(key));
         return getLoginStorage.getAppSettings(keyHash);
     }
 
     function getInviteReset(bytes32 usernameHash) public view returns (string memory) {
-        return getUsersSettings(usernameHash, settingsInviteReset);
+        return getUsersSettings(usernameHash, USER_IS_INVITE_RESET);
     }
 
     /* End of view methods */
