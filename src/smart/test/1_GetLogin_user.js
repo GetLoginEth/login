@@ -35,7 +35,16 @@ const demoAccounts = {
         salt: "ced30ffc12299adfc4840edc8e115ca5c64ca3a94188f90f44a28c289d52a7df",
         mac: "cc9605f348a03229f851ca4f8675833872d53751d862340f80e06923d9698096",
         balance: '1'
-    }
+    },
+    createdWithoutInvite: {
+        address: "0x5Ae9B4E036ED43427B8AF0469c522a125ba12326",
+        privateKey: "0x00dd55d0d1560a1193d5da9021c3d0abfaa28385e45d306838244f2708558f08",
+        ciphertext: "8921585f68fcc3187340e22699c1eac8a3502eb88e4d0f5c9fa42ab449bf4107",
+        iv: "a16ba31d44edc5eb6370803e63e8bafe",
+        salt: "40f65bb94438fab76b2a4f98a951a3035c457d3654e183c1cd380ae036a7a086",
+        mac: "4d7481c56c41ae95a19536f5b3a5df3ca5746b1fe74a5f037fd188a29e01bc59",
+        balance: '1'
+    },
 };
 
 contract("GetLogin user", async accounts => {
@@ -106,11 +115,19 @@ contract("GetLogin user", async accounts => {
         it("Create user from invite", async () => {
             const usernameHash = web3.utils.keccak256('test_invite');
             const account = demoAccounts.createdWithInvite;
-            await getLoginLogic.createUserFromInvite(usernameHash, account.address, account.ciphertext, account.iv, account.salt, account.mac, false, {
-                from: demoAccounts.invite.address,
-                value: web3.utils.toWei(account.balance, "ether")
-            });
+            const checkInviteResetData = 'false';
+            await getLoginLogic.createUserFromInvite(usernameHash,
+                account.address,
+                account.ciphertext,
+                account.iv,
+                account.salt,
+                account.mac, checkInviteResetData === 'true', {
+                    from: demoAccounts.invite.address,
+                    value: web3.utils.toWei(account.balance, "ether")
+                });
 
+            const inviteReset = await getLoginLogic.getInviteReset(usernameHash);
+            assert.equal(inviteReset, checkInviteResetData, "Incorrect invite reset data");
             const userInfo = await getLoginLogic.getUserInfo(usernameHash);
             assert.equal(userInfo.username, usernameHash, "Incorrect username hash");
             assert.equal(userInfo.isActive, true, "User not found");
@@ -133,6 +150,26 @@ contract("GetLogin user", async accounts => {
             assert.equal(eventValues.iv, account.iv, "Incorrect iv");
             assert.equal(eventValues.salt, account.salt, "Incorrect salt");
             assert.equal(eventValues.mac, account.mac, "Incorrect mac");
+        });
+
+        it("Create user without invite", async () => {
+            // todo set app settings to disable registration without invitation
+            // todo check that registration fails
+            // todo enable registration
+            // todo check that reg ok
+            const account = demoAccounts.createdWithoutInvite;
+            const checkInviteResetData = 'false';
+            await getLoginLogic.setAppSignupWithoutInvite(false);
+            /*await willFail(getLoginLogic.createUserFromInvite(usernameHash,
+                account.address,
+                account.ciphertext,
+                account.iv,
+                account.salt,
+                account.mac, checkInviteResetData === 'true', {
+                    from: demoAccounts.invite.address,
+                    value: web3.utils.toWei(account.balance, "ether")
+                }), 'This address already used for invite');*/
+            await getLoginLogic.setAppSignupWithoutInvite(true);
         });
 
         it("Create invite with the same address", async () => {
@@ -191,6 +228,16 @@ contract("GetLogin user", async accounts => {
             await getLoginLogic.setInviteReset(testString, {from: accounts[0]});
             const data = await getLoginLogic.getInviteReset(usernameHash);
             assert.equal(data, testString, "Incorrect data");
+        });
+
+        // todo test createUserWithoutInvite
+        it("Check registration with invite app settings", async () => {
+            const testKey = 'MySuperKey';
+            const testValue = 'MySuperValue';
+            await getLoginLogic.setAppSettings(testKey, testValue);
+            const data = await getLoginLogic.getAppSettings(testKey);
+
+            assert.equal(data, testValue, "Incorrect data");
         });
 
         it("Reset with invite", async () => {

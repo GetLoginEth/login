@@ -36,9 +36,13 @@ contract GetLoginLogic {
         owner = _address;
     }
 
-    /*function setAppSettings(string memory key, string memory value) onlyOwner public {
+    function setAppSettings(string memory key, string memory value) onlyOwner public {
         _setAppSettings(key, value);
-    }*/
+    }
+
+    function setAppSignupWithoutInvite(bool val) onlyOwner public {
+        _setAppSettings(APP_IS_SIGNUP_WITHOUT_INVITE, val ? "true" : "false");
+    }
 
     function setStorageAddress(GetLoginStorage _address) onlyOwner public {
         getLoginStorage = _address;
@@ -61,7 +65,7 @@ contract GetLoginLogic {
             _addApplicationUrl(newAppId, 'https://localhost:3001/openid');
             _addApplicationUrl(newAppId, 'https://localhost:3001/');
             _addApplicationContract(newAppId, 0x9A0CDE760277DC3A4B2aC6E9D333Af45148eBb60);
-            //_setAppSettings(APP_IS_SIGNUP_WITHOUT_INVITE, "true");
+            _setAppSettings(APP_IS_SIGNUP_WITHOUT_INVITE, "true");
         }
     }
 
@@ -156,6 +160,10 @@ contract GetLoginLogic {
 
     function validateInviteAvailable(address wallet) public view {
         require(isInviteAddressUsed(wallet) == false, "This address already used for invite");
+    }
+
+    function validateSignupWithoutInvite() public view {
+        require(isSignupWithoutInvite() == false, "Not allowed signup without invite");
     }
     /* End validators */
 
@@ -253,14 +261,12 @@ contract GetLoginLogic {
         invite.registeredUsername = usernameHash;
         getLoginStorage.setInvite(msg.sender, invite);
         walletAddress.transfer(msg.value);
-        //setInviteReset(allowReset);
         _setUsersSettings(usernameHash, USER_IS_INVITE_RESET, allowReset ? "true" : "false");
         getLoginStorage.emitEventStoreWallet(usernameHash, walletAddress, ciphertext, iv, salt, mac);
     }
 
     function createUserWithoutInvite(bytes32 usernameHash, address payable walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac, bool allowReset) public payable {
-        // todo check in settings is possible create user without invite
-        // todo add possibility to register with invite + metamask?
+        validateSignupWithoutInvite();
         validateAddressNotRegistered(walletAddress);
 
         _createUser(usernameHash, walletAddress);
@@ -304,6 +310,7 @@ contract GetLoginLogic {
         require(invite.isActive == false, "Only inactive invite can reset password");
         // todo check is correct
         require(invite.registeredUsername != "", "Only invite with username can reset password");
+        // todo move keccak256(abi.encode("true")) to getInviteReset
         require(keccak256(abi.encode(getInviteReset(invite.registeredUsername))) == keccak256(abi.encode("true")), "Settings not allow reset password");
         getLoginStorage.setUsersAddressUsername(walletAddress, GetLoginStorage.Username({username : invite.registeredUsername, isActive : true}));
         walletAddress.transfer(msg.value);
@@ -398,6 +405,10 @@ contract GetLoginLogic {
 
     function getInviteReset(bytes32 usernameHash) public view returns (string memory) {
         return getUsersSettings(usernameHash, USER_IS_INVITE_RESET);
+    }
+
+    function isSignupWithoutInvite() public view returns (bool) {
+        return keccak256(abi.encode(getAppSettings(APP_IS_SIGNUP_WITHOUT_INVITE))) == keccak256(abi.encode("true"));
     }
 
     /* End of view methods */
