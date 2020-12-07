@@ -120,7 +120,9 @@ In the project directory, you can run:
 
 `yarn` - install dependencies
 
-`yarn build` - build project
+`yarn build-rinkeby` - build project for rinkeby
+
+`yarn build-mainnet` - build project for mainnet
 
 `yarn start` - start project locally
 
