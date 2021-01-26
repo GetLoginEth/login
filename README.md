@@ -126,3 +126,4 @@ In the project directory, you can run:
 
 `yarn start` - start project locally
 
+Donation accepted by ETH address getlogin.eth or 0xde442ceD045ae30e076597C428876782b42D24cC
