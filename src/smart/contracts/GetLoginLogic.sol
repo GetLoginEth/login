@@ -219,6 +219,7 @@ contract GetLoginLogic {
         }
 
         for (uint i = 0; i < invites.length; i++) {
+            // todo  invites[0] =>  invites[i]?
             address payable inviteAddress = invites[0];
             getLoginStorage.setInvite(inviteAddress, GetLoginStorage.InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsernameHash, registeredUsername : '', isActive : true}));
             if (val > 0) {
