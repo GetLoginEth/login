@@ -26,7 +26,8 @@
     "build-rinkeby": "node split-contract-json.js && REACT_APP_NETWORK=rinkeby react-scripts build",
     "build-mainnet": "node split-contract-json.js && REACT_APP_NETWORK=mainnet react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "rm -r /home/ubuntu/www/getlogin.org && mv ./build /home/ubuntu/www/getlogin.org"
   },
   "eslintConfig": {
     "extends": "react-app"
