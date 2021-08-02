@@ -3,7 +3,7 @@
 }
 
 .Signup-bg-image{
-    background: url(/img/signup.jpg);
+    background: url(../img/signup.jpg);
     background-position: center;
     background-size: cover;
 }
