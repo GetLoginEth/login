@@ -22,10 +22,8 @@
     "web3": "^1.2.4"
   },
   "scripts": {
-    "start": "node split-contract-json.js && HTTPS=true REACT_APP_NETWORK=rinkeby react-scripts start",
-    "build-rinkeby": "node split-contract-json.js && REACT_APP_NETWORK=rinkeby react-scripts build",
-    "build-mainnet": "node split-contract-json.js && REACT_APP_NETWORK=mainnet react-scripts build",
-    "build": "REACT_APP_NETWORK=rinkeby react-scripts build",
+    "start": "node split-contract-json.js && HTTPS=true react-scripts start",
+    "build": "node split-contract-json.js && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "rm -r /home/ubuntu/www/getlogin.org && mv ./build /home/ubuntu/www/getlogin.org"
@@ -44,5 +42,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^1.4.3",
+    "dotenv": "^10.0.0"
   }
 }

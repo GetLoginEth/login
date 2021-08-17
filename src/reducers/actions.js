@@ -58,9 +58,10 @@ import {getConfig} from "../config";
 });*/
 
 const currentNetwork = process.env.REACT_APP_NETWORK;
-const smartContractAddress = getConfig(currentNetwork).contractAddress;
+const storageContractAddress = getConfig(currentNetwork).storageContractNetwork.address;
+console.log('storageAddress', storageContractAddress);
 let cryptoInstance = crypto.getInstance();
-let contractInstance = new contract(cryptoInstance.web3, currentNetwork, smartContractAddress);
+let contractInstance = new contract(cryptoInstance.web3, currentNetwork, storageContractAddress);
 let dispatch = null;
 /**
  *
@@ -120,7 +121,7 @@ export const init = (dispatch) => {
     checkLocalCredentials().then();
     doDispatch(getStatus(ACTION_SELF_APP_INFO, STATUS_INIT), {
         network: currentNetwork,
-        smartContractAddress,
+        smartContractAddress: storageContractAddress,
         provider: cryptoInstance.config.websocketProviderUrl
     });
 };

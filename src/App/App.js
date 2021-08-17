@@ -24,7 +24,9 @@ const DevelopersAppCreate = lazy(() => import('../DevelopersAppCreate'));
 const DevelopersAppEdit = lazy(() => import('../DevelopersAppEdit'));
 const Plugin = lazy(() => import('../Plugin'));
 const Invite = lazy(() => import('../Invite'));
+// todo move it to .env
 const allowedDomains = [
+    "getlogin.org",
     "getlogin.swarm-gateways.net",
     "getlogin.localhost:3000"
 ];
@@ -77,7 +79,7 @@ function NotAllowedDomain() {
     return (
         <div>
             <h3>
-                Domain not allowed
+                Domain isn't allowed
             </h3>
             <p>Please use one of the listed domains:</p>
             {allowedDomains.map((item, i) => <p key={i}><a href={`https://${item}`}>{item}</a></p>)}

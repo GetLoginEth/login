@@ -19,7 +19,7 @@ export default class crypto {
         if (config) {
             this.config = config;
         } else {
-            this.config = getConfig('rinkeby');
+            this.config = getConfig(process.env.REACT_APP_NETWORK);
         }
 
         /**
@@ -33,7 +33,7 @@ export default class crypto {
          */
         this.web3 = new Web3(this.provider);
         this.publicKey = null;
-        this.refreshProvider(this.config.websocketProviderUrl);
+        this.refreshProvider(this.config.jsonRpcProvider);
     }
 
     refreshProvider(providerUrl) {
@@ -45,8 +45,11 @@ export default class crypto {
             }, 3000);
         }
 
-        const provider = new Web3.providers.WebsocketProvider(providerUrl)
-        provider.on('end', () => retry());
+        // const provider = new Web3.providers.WebsocketProvider(providerUrl)
+        console.log('providerUrl', providerUrl);
+        const provider = new Web3.providers.HttpProvider(providerUrl);
+        // todo check how track end event
+        // provider.on('end', () => retry());
         self.web3.setProvider(provider);
 
         return provider;

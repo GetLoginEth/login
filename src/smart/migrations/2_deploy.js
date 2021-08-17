@@ -1,16 +1,13 @@
 const GetLoginStorage = artifacts.require("GetLoginStorage");
 const GetLoginLogic = artifacts.require("GetLoginLogic");
-const Empty = artifacts.require("Empty");
 const TestLogic = artifacts.require("TestLogic");
 
-module.exports = function (deployer) {
-    deployer.deploy(GetLoginStorage).then(data => {
-        deployer.deploy(GetLoginLogic, data.address)
-            .then(data => {
-                //GetLoginStorage.setLogicAddress(data.address);
-            });
-    });
+module.exports = async function (deployer) {
+    await deployer.deploy(GetLoginStorage);
+    const storageInstance = await GetLoginStorage.deployed();
+    await deployer.deploy(GetLoginLogic, storageInstance.address);
+    const logicInstance = await GetLoginLogic.deployed();
+    await deployer.deploy(TestLogic);
 
-    deployer.deploy(Empty);
-    deployer.deploy(TestLogic);
+    await storageInstance.setLogicAddress(logicInstance.address);
 };

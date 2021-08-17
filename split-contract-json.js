@@ -12,6 +12,9 @@ files.forEach(item => {
     }
 
     const json = JSON.parse(fs.readFileSync(file, 'utf8'));
-    fs.writeFileSync(fileOut, JSON.stringify(json.abi));
+    fs.writeFileSync(fileOut, JSON.stringify({
+        abi: json.abi,
+        networks: json.networks,
+    }));
 });
 

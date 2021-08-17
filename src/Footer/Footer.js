@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 function Footer({buildDate}) {
     return (
         <footer className="footer text-center text-sm-left">
-            <span className="text-muted">© 2020 Company, Inc. · <Link to="./privacy">
+            <span className="text-muted">© 2021 GetLogin.org · <Link to="./privacy">
                 Privacy
             </Link> · <Link
                 to="./terms">Terms</Link> · <Link to="./developers">

@@ -3,7 +3,7 @@ import GetLoginLogic from '../../smart/build/contracts/GetLoginLogic.out.json';
 
 const ethereumjs = require('ethereumjs-tx').Transaction;
 
-export const defaultLogicAbi = GetLoginLogic;
+export const defaultLogicAbi = GetLoginLogic.abi;
 
 export default class contract {
     constructor(web3, network = 'rinkeby', storageContractAddress, abi = defaultLogicAbi) {
@@ -53,7 +53,7 @@ export default class contract {
         // method for external sign (trezor, web3 and etc)
         this.externalSign = null;
         this.externalAddress = null;
-        this.storageAbi = GetLoginStorage;
+        this.storageAbi = GetLoginStorage.abi;
     }
 
     async getLogicContractAddress() {
@@ -61,7 +61,7 @@ export default class contract {
             const storageContract = new this.web3.eth.Contract(this.storageAbi, this.storageContractAddress);
             const logicAddress = await storageContract.methods.logicAddress().call();
             console.log('logicAddress', logicAddress);
-            if (!logicAddress) {
+            if (!logicAddress || logicAddress === '0x0000000000000000000000000000000000000000') {
                 throw new Error("Logic contract not found");
             }
 

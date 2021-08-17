@@ -28,9 +28,10 @@ export default class Invite extends Logger {
         const isInviteReset = await this.contract.getInviteReset(data.registeredUsername);
         data.isPossibleToRecover = false;
         data.balanceEth = this.crypto.web3.utils.fromWei(await this.crypto.web3.eth.getBalance(account.address));
-        if (changePasswordInstance) {
-            data.recoveryPriceEth = await changePasswordInstance.getEstimatePriceResetPassword(invitePrivateKey);
-        }
+        // todo G1 - commented because Revert error
+        // if (changePasswordInstance) {
+        //     data.recoveryPriceEth = await changePasswordInstance.getEstimatePriceResetPassword(invitePrivateKey);
+        // }
 
         if (isInviteReset) {
             data.isPossibleToRecover = !data.isActive && data.registeredUsername !== '0x0000000000000000000000000000000000000000000000000000000000000000';

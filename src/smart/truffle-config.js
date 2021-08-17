@@ -1,28 +1,5 @@
-/**
- * Use this file to configure your truffle project. It's seeded with some
- * common settings for different networks and features like migrations,
- * compilation and testing. Uncomment the ones you need or modify
- * them to suit your project as necessary.
- *
- * More information about configuration can be found at:
- *
- * truffleframework.com/docs/advanced/configuration
- *
- * To deploy via Infura you'll need a wallet provider (like truffle-hdwallet-provider)
- * to sign your transactions before they're sent to a remote public node. Infura accounts
- * are available for free at: infura.io/register.
- *
- * You'll also need a mnemonic - the twelve word phrase the wallet uses to generate
- * public/private key pairs. If you're publishing your code to GitHub make sure you load this
- * phrase from a file you've .gitignored so it doesn't accidentally become public.
- *
- */
-
-// const HDWalletProvider = require('truffle-hdwallet-provider');
-// const infuraKey = "fj4jll3k.....";
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+require('dotenv').config();
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
     /**
@@ -75,6 +52,30 @@ module.exports = {
         // network_id: 2111,   // This network is yours, in the cloud.
         // production: true    // Treats this network as if it was a public net. (default: false)
         // }
+        poa: {
+            provider: function () {
+                // return new HDWalletProvider(process.env.PRIVATE_KEY, "https://sokol.poa.network")
+                return new HDWalletProvider({
+                    privateKeys: [process.env.PRIVATE_KEY],
+                    providerOrUrl: "https://sokol.poa.network"
+                })
+            },
+            network_id: 77,
+            gas: 12500000,
+            gasPrice: 1000000000
+        },
+        xdai: {
+            provider: function () {
+                return new HDWalletProvider({
+                    privateKeys: [process.env.PRIVATE_KEY],
+                    providerOrUrl: "https://dai.poa.network"
+                })
+            },
+            network_id: 100,
+            // gas: 500000,
+            gas: 12500000,
+            gasPrice: 1000000000
+        },
     },
 
     // Set default mocha options here, use special reporters etc.
