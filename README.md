@@ -115,6 +115,18 @@ One important param is `resolveMethod`. Values of this param can be:
 
 `transactionHash` - when tx sent (fast)
 
+### Deploying smart contracts
+
+`cd src/smart`
+
+Create `.env` file with private key.
+
+`truffle deploy --reset --network poa`
+
+or
+
+`truffle deploy --reset --network xdai`
+
 ### Building project
 In the project directory, you can run:
 

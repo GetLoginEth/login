@@ -11,8 +11,12 @@ const logicStorage = JSON.parse(fs.readFileSync('../src/smart/build/contracts/Ge
 
 //https://rpc.xdaichain.com/
 //100
+
+
 const chainId = 77;
 const provider = new providers.JsonRpcProvider('https://sokol.poa.network');
+// const chainId = 100;
+// const provider = new providers.JsonRpcProvider('https://rpc.xdaichain.com');
 const signer = new ethers.Wallet(privateKey).connect(provider);
 const dataAddress = dataStorage.networks[chainId].address;
 // const dataContractInstance = new ethers.Contract(dataAddress, dataStorage.abi, signer);
@@ -24,6 +28,7 @@ const inviteEth = ethers.utils.parseEther(ethHumanPrice);
 async function run() {
     let estimateGasLimit;
 
+    console.log('chainId', chainId);
     console.log('Signer address', signer.address);
     console.log('dataAddress', dataAddress);
     console.log('logicAddress', logicAddress);
