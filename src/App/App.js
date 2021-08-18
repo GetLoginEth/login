@@ -101,7 +101,9 @@ function App() {
                         {isCorrectDomain && <Header isLoggedIn={state.user.isLoggedIn()}
                                                     isCheckingAuth={state.user.isCheckingAuth()}
                                                     username={state.user.username}
-                                                    balance={state.user.balance.web}/>}
+                                                    balance={state.user.balance.web}
+                                                    currency={state.user.balance.currency}
+                        />}
                         <main role="main">
                             <div className="container">
                                 <Suspense fallback={<Spinner/>}>

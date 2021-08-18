@@ -58,7 +58,8 @@ import {getConfig} from "../config";
 });*/
 
 const currentNetwork = process.env.REACT_APP_NETWORK;
-const storageContractAddress = getConfig(currentNetwork).storageContractNetwork.address;
+const envConfig = getConfig(currentNetwork);
+const storageContractAddress = envConfig.storageContractNetwork.address;
 console.log('storageAddress', storageContractAddress);
 let cryptoInstance = crypto.getInstance();
 let contractInstance = new contract(cryptoInstance.web3, currentNetwork, storageContractAddress);
@@ -185,7 +186,7 @@ export const getWalletBalance = async (wallet) => {
         const data = await cryptoInstance.web3.eth.getBalance(wallet);
         const original = cryptoInstance.web3.utils.fromWei(data);
         const web = beautyBalance(original);
-        return {original, web};
+        return {original, web, currency: envConfig.currency};
     }, wallet);
 };
 

@@ -3,9 +3,9 @@ import './Header.css';
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import {Link, matchPath} from "react-router-dom";
-import {Button, NavDropdown} from "react-bootstrap";
+import {NavDropdown} from "react-bootstrap";
 
-function Header({isLoggedIn, isCheckingAuth, username, balance}) {
+function Header({isLoggedIn, isCheckingAuth, username, balance, currency}) {
     /*const result = matchPath(window.location.pathname, {
         path: "/:swarm_protocol?/:swarm_hash?/:page"
     });*/
@@ -43,9 +43,10 @@ function Header({isLoggedIn, isCheckingAuth, username, balance}) {
                                 to="./xsignup">Sign up</Link>
                         </>}
 
-                        {isLoggedIn && <NavDropdown title={username} id="user-dropdown">
-                            <Button className="dropdown-item disabled"
-                                    disabled={true}>{!balance ? '...' : balance} ETH</Button>
+                        {isLoggedIn && <NavDropdown title="Profile" id="user-dropdown">
+                            <NavDropdown.Item disabled>{username}</NavDropdown.Item>
+                            <NavDropdown.Item disabled>{!balance ? '...' : balance} {currency}</NavDropdown.Item>
+                            <NavDropdown.Divider/>
                             <Link to="./logout" className="dropdown-item">Logout</Link>
                         </NavDropdown>}
                     </Nav>}
