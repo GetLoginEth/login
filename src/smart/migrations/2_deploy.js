@@ -10,4 +10,6 @@ module.exports = async function (deployer) {
     await deployer.deploy(TestLogic);
 
     await storageInstance.setLogicAddress(logicInstance.address);
+    // await logicInstance.setStorageAddress(storageInstance.address);
+    await logicInstance.init();
 };

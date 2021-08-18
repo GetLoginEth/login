@@ -1,11 +1,11 @@
-pragma solidity ^0.6.4;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.7;
 
 contract GetLoginStorage {
     address public owner;
     address public logicAddress;
 
-    constructor () public {
+    constructor () {
         owner = msg.sender;
     }
 

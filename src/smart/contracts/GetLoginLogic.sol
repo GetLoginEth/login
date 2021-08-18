@@ -1,5 +1,5 @@
-pragma solidity ^0.6.4;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.7;
 
 import './GetLoginStorage.sol';
 
@@ -38,7 +38,7 @@ contract GetLoginLogic {
         getLoginStorage = _address;
     }
 
-    constructor(GetLoginStorage _getLoginStorage) public {
+    constructor(GetLoginStorage _getLoginStorage) {
         owner = msg.sender;
         getLoginStorage = _getLoginStorage;
     }
@@ -219,8 +219,7 @@ contract GetLoginLogic {
         }
 
         for (uint i = 0; i < invites.length; i++) {
-            // todo  invites[0] =>  invites[i]?
-            address payable inviteAddress = invites[0];
+            address payable inviteAddress = invites[i];
             getLoginStorage.setInvite(inviteAddress, GetLoginStorage.InviteInfo({inviteAddress : inviteAddress, creatorUsername : creatorUsernameHash, registeredUsername : '', isActive : true}));
             if (val > 0) {
                 inviteAddress.transfer(val);

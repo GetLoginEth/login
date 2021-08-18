@@ -1,6 +1,5 @@
-pragma solidity ^0.6.1;
-pragma experimental ABIEncoderV2;
-
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.7;
 
 import './GetLoginStorage.sol';
 
@@ -21,7 +20,7 @@ contract TestLogic {
         getLoginStorage = _address;
     }
 
-    constructor(/*GetLoginStorage _getLoginStorage*/) public {
+    constructor(/*GetLoginStorage _getLoginStorage*/) {
         owner = msg.sender;
         /*getLoginStorage = _getLoginStorage;*/
     }
