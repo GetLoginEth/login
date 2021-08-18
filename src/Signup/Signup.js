@@ -15,6 +15,7 @@ import TrezorSelectWallet from "../Elements/TrezorSelectWallet";
 import Modal from "react-bootstrap/Modal";
 
 function Signup() {
+    const {state: {app}} = useStateValue();
     const {state: {signup}} = useStateValue();
     const {state: {invite}} = useStateValue();
     const {state: {resetPasswordData}} = useStateValue();
@@ -169,7 +170,7 @@ function Signup() {
                     resetPassword(inviteData, username, password).then();
                 }}>
                     <Modal.Body>
-                        <p>Invite actual balance: {invite.info.balanceEth} ETH</p>
+                        <p>Invite actual balance: {invite.info.balanceEth} {app.currency}</p>
                         <p>Invite address: {invite.info.inviteAddress}</p>
 
                         {invite.info.balanceEth >= invite.info.recoveryPriceEth && <>

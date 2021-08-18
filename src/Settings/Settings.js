@@ -48,7 +48,7 @@ function Settings() {
         <p>Username: {user.username}</p>
         <p>Username hash: {user.usernameHash}</p>
         <p>Account address: {user.wallet.address}</p>
-        <p>Balance: {user.balance.original}</p>
+        <p>Balance: {user.balance.original} {app.currency}</p>
 
         <fieldset disabled={settings.inProcess}>
             <div className="form-group form-check">
@@ -131,7 +131,7 @@ function Settings() {
             <p>Smart contract address (logic): {app.smartContractLogicAddress}</p>
             <p>Network: {app.network}</p>
             <p>Provider: {config.websocketProviderUrl}</p>
-            <p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>
+            {/*<p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>*/}
         </details>
 
         {(getLocalType() === LOGIN_DATA || getLocalType() === LOGIN_USERNAME_PASSWORD) && <details>

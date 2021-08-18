@@ -13,6 +13,7 @@ function Invite() {
     const [invitesCount, setInvitesCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
 
+    const {state: {app}} = useStateValue();
     const {state: {user}} = useStateValue();
     const {state: {invite}} = useStateValue();
     const {state: {invite: {inviteInfo}}} = useStateValue();
@@ -71,8 +72,8 @@ function Invite() {
         </Modal>
 
         {user.balance.original !== null && invite.price > 0 && !isCanCreateInvite &&
-        <p>Your balance must be more than {invite.priceWeb} ETH to create invite</p>}
-        {isCanCreateInvite && invite.price > 0 && <p>Invite creation cost {invite.priceWeb} ETH</p>}
+        <p>Your balance must be more than {invite.priceWeb} {app.currency} to create invite</p>}
+        {isCanCreateInvite && invite.price > 0 && <p>Invite creation cost {invite.priceWeb} {app.currency}</p>}
 
         <Dropdown as={ButtonGroup} className="btn-block col-md-3" style={{padding: 0}}>
             <WaitButton disabled={invite.inProcessCreation}>

@@ -121,6 +121,7 @@ export const init = (dispatch) => {
     password.setLogger(getLogger(ACTION_CHANGE_PASSWORD));
     checkLocalCredentials().then();
     doDispatch(getStatus(ACTION_SELF_APP_INFO, STATUS_INIT), {
+        currency: envConfig.currency,
         network: currentNetwork,
         smartContractAddress: storageContractAddress,
         provider: cryptoInstance.config.websocketProviderUrl
@@ -186,7 +187,7 @@ export const getWalletBalance = async (wallet) => {
         const data = await cryptoInstance.web3.eth.getBalance(wallet);
         const original = cryptoInstance.web3.utils.fromWei(data);
         const web = beautyBalance(original);
-        return {original, web, currency: envConfig.currency};
+        return {original, web};
     }, wallet);
 };
 

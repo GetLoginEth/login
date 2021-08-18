@@ -419,6 +419,7 @@ export const initialState = {
         provider: '',
         smartContractAddress: '',
         smartContractLogicAddress: '',
+        currency: ''
     },
     authorizeApp: {
         id: null,
