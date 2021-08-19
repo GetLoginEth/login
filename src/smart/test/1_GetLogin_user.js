@@ -44,8 +44,9 @@ contract("GetLogin", async accounts => {
             getLoginLogic = await GetLoginLogic.deployed();
             getLoginStorage = await GetLoginStorage.deployed();
 
-            await getLoginStorage.setLogicAddress(getLoginLogic.address);
-            await getLoginLogic.init();
+            // todo hidden because optimized deploy process
+            // await getLoginStorage.setLogicAddress(getLoginLogic.address);
+            // await getLoginLogic.init();
 
             for (const key in demoAccounts) {
                 const account = demoAccounts[key];

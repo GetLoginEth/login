@@ -144,7 +144,7 @@ function Signin() {
                                             </Form>
                                             <hr/>
                                             <div className="text-center d-flex justify-content-between">
-                                                <Link className="small" to="./xsignup">Forgot Password?</Link>
+                                                <Link className="small" to="./xsignup?forgot=1">Forgot Password?</Link>
 
                                                 <Link className="small" to="./xsignup">Create an Account!</Link>
                                             </div>

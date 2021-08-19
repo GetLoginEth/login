@@ -5,7 +5,7 @@ import Navbar from "react-bootstrap/Navbar";
 import {Link, matchPath} from "react-router-dom";
 import {NavDropdown} from "react-bootstrap";
 
-function Header({isLoggedIn, isCheckingAuth, username, balance, currency}) {
+function Header({isLoggedIn, isCheckingAuth, username, balance, app}) {
     /*const result = matchPath(window.location.pathname, {
         path: "/:swarm_protocol?/:swarm_hash?/:page"
     });*/
@@ -45,7 +45,8 @@ function Header({isLoggedIn, isCheckingAuth, username, balance, currency}) {
 
                         {isLoggedIn && <NavDropdown title="Profile" id="user-dropdown">
                             <NavDropdown.Item disabled>{username}</NavDropdown.Item>
-                            <NavDropdown.Item disabled>{!balance ? '...' : balance} {currency}</NavDropdown.Item>
+                            <NavDropdown.Item disabled>{!balance.web ? '...' : balance.web} {app.currency}</NavDropdown.Item>
+                            <NavDropdown.Item disabled>{!balance.bzzWeb ? '...' : balance.bzzWeb} {app.bzz.name}</NavDropdown.Item>
                             <NavDropdown.Divider/>
                             <Link to="./logout" className="dropdown-item">Logout</Link>
                         </NavDropdown>}

@@ -13,6 +13,7 @@ import {ACTION_SIGNUP} from "../reducers/mainReducer";
 import WaitButton from "../Elements/WaitButton";
 import TrezorSelectWallet from "../Elements/TrezorSelectWallet";
 import Modal from "react-bootstrap/Modal";
+import queryString from 'query-string';
 
 function Signup() {
     const {state: {app}} = useStateValue();
@@ -24,6 +25,9 @@ function Signup() {
     const [inviteData, setInviteData] = useState('');
     const [method, setMethod] = useState('');
     const {state: {config}} = useStateValue();
+
+    const pageParams = queryString.parse(window.location.search);
+    const isRecovery = pageParams.forgot === '1';
 
     const dropDown = [
         {key: SIGN_UP_INVITE, title: 'Invite'},
@@ -203,7 +207,7 @@ function Signup() {
                         {invite.info.balanceEth < invite.info.recoveryPriceEth &&
                         <>
                             <p className="text-danger">Not enough balance to recover</p>
-                            <p>To recover your account you must have at least {invite.info.recoveryPriceEth} ETH.</p>
+                            <p>To recover your account you must have at least {invite.info.recoveryPriceEth} {app.currency}.</p>
                         </>}
                     </Modal.Body>
                     <Modal.Footer>
@@ -235,7 +239,7 @@ function Signup() {
                                     <div className="col-lg-6">
                                         <div className="p-4">
 
-                                            <h5 className="card-title">Sign up</h5>
+                                            <h5 className="card-title">{isRecovery ? 'Account recovery' : 'Sign up'}</h5>
 
                                             <Form className="Signup" onSubmit={onSubmit}>
                                                 <fieldset disabled={signup.inProcess}>
@@ -246,24 +250,24 @@ function Signup() {
                                                         {signup.errorMessage}
                                                     </div>}
 
-                                                    <Form.Group controlId="formBasicEmail">
+                                                    {!isRecovery && <Form.Group controlId="formBasicEmail">
                                                         <Form.Control type="text"
                                                                       name="username"
                                                                       placeholder="Username"
                                                                       onChange={e => setUsername(e.target.value)}
                                                                       value={username}
                                                         />
-                                                    </Form.Group>
+                                                    </Form.Group>}
 
-                                                    <Form.Group controlId="formBasicPassword"
-                                                                className={(method === LOGIN_TREZOR) ? "d-none" : ""}>
+                                                    {!isRecovery && <Form.Group controlId="formBasicPassword"
+                                                                                className={(method === LOGIN_TREZOR) ? "d-none" : ""}>
                                                         <Form.Control type="password"
                                                                       name="password"
                                                                       placeholder="Password"
                                                                       onChange={e => setPassword(e.target.value)}
                                                                       value={password}
                                                         />
-                                                    </Form.Group>
+                                                    </Form.Group>}
 
                                                     <Form.Group controlId="formInvite"
                                                                 className={(method === SIGN_UP_INVITE) ? "" : "d-none"}>
@@ -276,7 +280,7 @@ function Signup() {
                                                     </Form.Group>
 
                                                     <Dropdown as={ButtonGroup} className="btn-block">
-                                                        <WaitButton disabled={signup.inProcess}>
+                                                        {!isRecovery && <WaitButton disabled={signup.inProcess}>
                                                             <Button variant="primary"
                                                                     type="submit"
                                                                     className={dropDown.length > 1 ? "col-md-10" : "col-md-12"}
@@ -284,7 +288,19 @@ function Signup() {
                                                             >
                                                                 Sign up with {getDropDownTitle(method)}
                                                             </Button>
-                                                        </WaitButton>
+                                                        </WaitButton>}
+
+                                                        {isRecovery && <WaitButton disabled={invite.info.inProcess}>
+                                                            <Button variant="primary"
+                                                                    type="button"
+                                                                    onClick={() => setShowRecoverModal(true)}
+                                                                    className={dropDown.length > 1 ? "col-md-10" : "col-md-12"}
+                                                                    // disabled={isDisabled()}
+                                                                    disabled={!invite.info.isPossibleToRecover || !isCorrectInvite(inviteData)}
+                                                            >
+                                                                Recover account
+                                                            </Button>
+                                                        </WaitButton>}
 
                                                         {dropDown.length > 1 &&
                                                         <Dropdown.Toggle className="" split variant="primary"
@@ -297,17 +313,17 @@ function Signup() {
                                                         </Dropdown.Menu>}
                                                     </Dropdown>
 
-                                                    <WaitButton disabled={invite.info.inProcess}>
-                                                        <button
-                                                            type="button"
-                                                            disabled={!invite.info.isPossibleToRecover || !isCorrectInvite(inviteData)}
-                                                            className="btn btn-link"
-                                                            onClick={_ => {
-                                                                setShowRecoverModal(true);
-                                                            }}>
-                                                            Recover account
-                                                        </button>
-                                                    </WaitButton>
+                                                    {/*<WaitButton disabled={invite.info.inProcess}>*/}
+                                                    {/*    <button*/}
+                                                    {/*        type="button"*/}
+                                                    {/*        disabled={!invite.info.isPossibleToRecover || !isCorrectInvite(inviteData)}*/}
+                                                    {/*        className="btn btn-link"*/}
+                                                    {/*        onClick={_ => {*/}
+                                                    {/*            setShowRecoverModal(true);*/}
+                                                    {/*        }}>*/}
+                                                    {/*        Recover account*/}
+                                                    {/*    </button>*/}
+                                                    {/*</WaitButton>*/}
 
                                                     {signup.log.length > 0 && <details className="mt-2">
                                                         <summary>{signup.status}</summary>

@@ -63,7 +63,7 @@ function Settings() {
                     <label className="form-check-label" htmlFor="allowReset">
                         Allow password reset
                         <br/>
-                        <small>Anyone who has your invite will be able to reset your password</small>
+                        <small>If checked, anyone who has your invite will be able to reset your password</small>
                     </label>
                 </WaitButton>
             </div>

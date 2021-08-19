@@ -50,6 +50,8 @@ import Invite from "../Lib/get-login/invite";
 import Session from "../Lib/get-login/session";
 import ChangePassword from "../Lib/get-login/changePassword";
 import {getConfig} from "../config";
+import tokenData from "../smart-bzz/build/contracts/Token.out.json";
+import {ethers, providers} from "ethers";
 /*import TrezorConnect from 'trezor-connect';*/
 
 /*TrezorConnect.manifest({
@@ -63,6 +65,10 @@ const storageContractAddress = envConfig.storageContractNetwork.address;
 console.log('storageAddress', storageContractAddress);
 let cryptoInstance = crypto.getInstance();
 let contractInstance = new contract(cryptoInstance.web3, currentNetwork, storageContractAddress);
+
+const provider = new providers.JsonRpcProvider(envConfig.jsonRpcProvider);
+const bzzContract = new ethers.Contract(envConfig.bzz.address, tokenData.abi, provider);
+
 let dispatch = null;
 /**
  *
@@ -122,6 +128,7 @@ export const init = (dispatch) => {
     checkLocalCredentials().then();
     doDispatch(getStatus(ACTION_SELF_APP_INFO, STATUS_INIT), {
         currency: envConfig.currency,
+        bzz: envConfig.bzz,
         network: currentNetwork,
         smartContractAddress: storageContractAddress,
         provider: cryptoInstance.config.websocketProviderUrl
@@ -186,8 +193,13 @@ export const getWalletBalance = async (wallet) => {
     return callMethod(ACTION_GET_BALANCE, async () => {
         const data = await cryptoInstance.web3.eth.getBalance(wallet);
         const original = cryptoInstance.web3.utils.fromWei(data);
-        const web = beautyBalance(original);
-        return {original, web};
+        const web = beautyBalance(original, 4);
+
+        const bzzBalance = await bzzContract.balanceOf(wallet);
+        const bzzOriginal = cryptoInstance.web3.utils.fromWei(bzzBalance.toString());
+        const bzzWeb = beautyBalance(bzzOriginal, 4);
+
+        return {original, web, bzzOriginal, bzzWeb};
     }, wallet);
 };
 

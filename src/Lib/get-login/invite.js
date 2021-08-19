@@ -32,6 +32,7 @@ export default class Invite extends Logger {
         // if (changePasswordInstance) {
         //     data.recoveryPriceEth = await changePasswordInstance.getEstimatePriceResetPassword(invitePrivateKey);
         // }
+        data.recoveryPriceEth = '0.001';
 
         if (isInviteReset) {
             data.isPossibleToRecover = !data.isActive && data.registeredUsername !== '0x0000000000000000000000000000000000000000000000000000000000000000';
