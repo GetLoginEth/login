@@ -95,7 +95,7 @@ function Settings() {
                     </th>
                     <td>
                         <a target="_blank" rel="noopener noreferrer"
-                           href={`https://rinkeby.etherscan.io/tx/${item.transactionHash}`}>
+                           href={`${app.explorerUrl}${item.transactionHash}`}>
                             {item.transactionHash}
                         </a>
                     </td>

@@ -129,6 +129,7 @@ export const init = (dispatch) => {
     doDispatch(getStatus(ACTION_SELF_APP_INFO, STATUS_INIT), {
         currency: envConfig.currency,
         bzz: envConfig.bzz,
+        explorerUrl: envConfig.explorerUrl,
         network: currentNetwork,
         smartContractAddress: storageContractAddress,
         provider: cryptoInstance.config.websocketProviderUrl
