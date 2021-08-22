@@ -46,7 +46,7 @@ function Header({isLoggedIn, isCheckingAuth, username, balance, app}) {
                         {isLoggedIn && <NavDropdown title="Profile" id="user-dropdown">
                             <NavDropdown.Item disabled>{username}</NavDropdown.Item>
                             <NavDropdown.Item disabled>{!balance.web ? '...' : balance.web} {app.currency}</NavDropdown.Item>
-                            <NavDropdown.Item disabled>{!balance.bzzWeb ? '...' : balance.bzzWeb} {app.bzz.name}</NavDropdown.Item>
+                            <NavDropdown.Item disabled>{!balance.bzzWeb ? '...' : balance.bzzWeb} {app?.bzz?.name}</NavDropdown.Item>
                             <NavDropdown.Divider/>
                             <Link to="./logout" className="dropdown-item">Logout</Link>
                         </NavDropdown>}
