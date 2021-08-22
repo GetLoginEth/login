@@ -102,7 +102,6 @@ function App() {
                                                     isCheckingAuth={state.user.isCheckingAuth()}
                                                     username={state.user.username}
                                                     balance={state.user.balance}
-                                                    app={state.app}
                         />}
                         <main role="main">
                             <div className="container">

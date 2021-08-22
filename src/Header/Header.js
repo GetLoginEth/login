@@ -4,8 +4,10 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import {Link, matchPath} from "react-router-dom";
 import {NavDropdown} from "react-bootstrap";
+import {useStateValue} from "../reducers/state";
 
-function Header({isLoggedIn, isCheckingAuth, username, balance, app}) {
+function Header({isLoggedIn, isCheckingAuth, username, balance}) {
+    const {state: {app}} = useStateValue();
     /*const result = matchPath(window.location.pathname, {
         path: "/:swarm_protocol?/:swarm_hash?/:page"
     });*/
