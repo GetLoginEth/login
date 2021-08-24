@@ -349,7 +349,7 @@ export const reducer = (state, action) => {
         case getStatus(ACTION_GET_INVITE_PRICE, STATUS_FAIL):
             return merge('invite', {errorMessage: action.data});
         case getStatus(ACTION_GET_INVITE_PRICE, STATUS_SUCCESS):
-            return merge('invite', {price: action.data.price, priceWeb: action.data.priceWeb,});
+            return merge('invite', {...action.data});
         case getStatus(ACTION_GET_INVITE_PRICE, STATUS_COMPLETE):
             return merge('invite', {inProcessReceivePrice: false});
 

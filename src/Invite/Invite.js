@@ -7,11 +7,15 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import Modal from "react-bootstrap/Modal";
+import {beautyBalance} from "../Lib/get-login/utils";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 function Invite() {
     const [showMultipleModal, setShowMultipleModal] = useState(false);
     const [invitesCount, setInvitesCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
+    const [additionalBalanceEth, setAdditionalBalanceEth] = useState('0');
+    const [additionalBalanceBzz, setAdditionalBalanceBzz] = useState('0');
 
     const {state: {app}} = useStateValue();
     const {state: {user}} = useStateValue();
@@ -20,13 +24,16 @@ function Invite() {
 
     const invitesPerPage = 10;
 
+    const inviteTotalPrice = Number(invite.priceTotal) + Number(additionalBalanceEth);
+    const inviteTotalPriceWeb = beautyBalance(inviteTotalPrice, 4);
+
     useEffect(_ => {
         getInvitePrice().then();
         getInvites(user.usernameHash).then();
     }, [user.usernameHash]);
 
     // todo get invite min value from global state
-    const isCanCreateInvite = invite.price ? Number(user.balance.original) >= Number(invite.price) : false;
+    const isCanCreateInvite = invite.priceTotal ? Number(user.balance.original) >= Number(invite.priceTotal) : false;
     const pagesCount = Math.ceil(invite.invites.length / invitesPerPage);
     const paginationPosition = (currentPage - 1) * invitesPerPage;
     const paginationOffset = paginationPosition + invitesPerPage;
@@ -71,9 +78,62 @@ function Invite() {
             </Modal.Footer>
         </Modal>
 
-        {user.balance.original !== null && invite.price > 0 && !isCanCreateInvite &&
-        <p>Your balance must be more than {invite.priceWeb} {app.currency} to create invite</p>}
-        {isCanCreateInvite && invite.price > 0 && <p>Invite creation cost {invite.priceWeb} {app.currency}</p>}
+        {user.balance.original !== null && invite.priceTotal > 0 && !isCanCreateInvite &&
+        <p>Your balance must be more than <strong>{inviteTotalPriceWeb} {app.currency}</strong> to create invite</p>}
+
+        {isCanCreateInvite && invite.priceTotal > 0 &&
+        <div>
+            <p>
+                Will be spent ~
+                <OverlayTrigger
+                    placement="right"
+                    delay={{show: 250, hide: 400}}
+                    overlay={<Tooltip id="button-tooltip">
+                        Creation: {invite.priceCreationWeb} {app.currency}<br/>
+                        Invitee signup: {invite.priceSignupWeb} {app.currency}<br/>
+                        Basic spends: {invite.priceBasicSpendsWeb} {app.currency}<br/>
+                        Additional spends: {additionalBalanceEth} {app.currency}<br/>
+                        {additionalBalanceBzz} {app.bzz.name}
+                    </Tooltip>}
+                >
+                    <strong>{inviteTotalPriceWeb} {app.currency}</strong>
+                </OverlayTrigger>
+            </p>
+
+            <label>Additional spends for invite</label>
+            <div className="input-group mb-3">
+                <div className="input-group-prepend">
+                    <span className="input-group-text">{app.currency}</span>
+                </div>
+                <input type="text" className="form-control"
+                       value={additionalBalanceEth}
+                       onChange={e => {
+                           const value = parseFloat(e.target.value);
+                           if (!isNaN(value) && value >= 0) {
+                               setAdditionalBalanceEth(e.target.value);
+                           } else {
+                               setAdditionalBalanceEth('0');
+                           }
+                       }}/>
+            </div>
+
+            <div className="input-group mb-3">
+                <div className="input-group-prepend">
+                    <span className="input-group-text">{app.bzz.name}</span>
+                </div>
+                <input type="text" className="form-control"
+                       value={additionalBalanceBzz}
+                       onChange={e => {
+                           const value = parseFloat(e.target.value);
+                           if (!isNaN(value) && value >= 0) {
+                               setAdditionalBalanceBzz(e.target.value);
+                           } else {
+                               setAdditionalBalanceBzz('0');
+                           }
+                       }}/>
+            </div>
+        </div>
+        }
 
         <Dropdown as={ButtonGroup} className="btn-block col-md-3" style={{padding: 0}}>
             <WaitButton disabled={invite.inProcessCreation}>
@@ -82,7 +142,12 @@ function Invite() {
                         className={"col-md-10"}
                         disabled={!isCanCreateInvite}
                         onClick={_ => {
-                            createInvite(1).then();
+                            const message = additionalBalanceBzz > 0 ?
+                                `Really create? ${inviteTotalPriceWeb} ${app.currency} + ${additionalBalanceBzz} ${app.bzz.name} will be spent`
+                                : `Really create? ${inviteTotalPriceWeb} ${app.currency} will be spent`;
+                            if (window.confirm(message)) {
+                                createInvite(inviteTotalPrice, additionalBalanceBzz).then();
+                            }
                         }}
                 >
                     Create invite

@@ -23,12 +23,17 @@ import {IInviteRegistration} from "./interfaces";
 import TrezorConnect from "../../Lib/get-login/crypto";
 
 import HdKey from "ethereumjs-wallet/hdkey";
+import {ethers, providers} from "ethers";
+import tokenData from "../../smart-bzz/build/contracts/Token.out.json";
+import {getConfig} from "../../config";
 
 export const LOG_SIGN_UP_CHECK_FUNDS = 'sign_up_check_funds';
 export const LOG_SIGN_UP_CHECK_USERNAME = 'sign_up_check_username';
 export const LOG_SIGN_UP_CREATE_WALLET_FROM_INVITE = 'sign_up_create_wallet_from_invite';
 export const LOG_SIGN_UP_CREATE_NEW_WALLET = 'sign_up_create_new_wallet';
 export const LOG_SIGN_UP_USER_REGISTRATION = 'sign_up_user_registration';
+export const LOG_SIGN_UP_BZZ_APPROVE = 'sign_up_bzz_approve';
+export const LOG_SIGN_UP_BZZ_TRANSFER = 'sign_up_bzz_transfer';
 
 export const SIGN_UP_INVITE = 'sign_up_invite';
 
@@ -69,6 +74,12 @@ export default class Signup extends Logger {
     async _signUpInvite(username, password, invite, allowReset, onTransactionMined) {
         const {web3} = this.crypto;
 
+        const currentNetwork = process.env.REACT_APP_NETWORK;
+        const envConfig = getConfig(currentNetwork);
+        const provider = new providers.JsonRpcProvider(envConfig.jsonRpcProvider);
+        const signer = new ethers.Wallet(invite).connect(provider);
+        const bzzContract = new ethers.Contract(envConfig.bzz.address, tokenData.abi, signer);
+
         username = filterUsername(username);
         const usernameHash = getUsernameHash(web3, username);
         validateInvite(invite);
@@ -90,9 +101,20 @@ export default class Signup extends Logger {
         const decryptedWallet = createWallet(web3);
         const encryptedWallet = encryptWallet(decryptedWallet, password);
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
+        const address = '0x' + encryptedWallet.address;
+
+        this.log(LOG_SIGN_UP_BZZ_APPROVE);
+        const bzzBalance = await bzzContract.balanceOf(inviteWallet.address);
+        let tx = await bzzContract.approve(address, bzzBalance);
+        await tx.wait();
+
+        this.log(LOG_SIGN_UP_BZZ_TRANSFER);
+        await bzzContract.transfer(address, bzzBalance);
+        await tx.wait();
+
         const info = await this.contract.createUserFromInvite(
             usernameHash,
-            '0x' + encryptedWallet.address,
+            address,
             encryptedWallet.crypto.ciphertext,
             encryptedWallet.crypto.cipherparams.iv,
             encryptedWallet.crypto.kdfparams.salt,

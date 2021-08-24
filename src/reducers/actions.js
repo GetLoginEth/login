@@ -67,7 +67,12 @@ let cryptoInstance = crypto.getInstance();
 let contractInstance = new contract(cryptoInstance.web3, currentNetwork, storageContractAddress);
 
 const provider = new providers.JsonRpcProvider(envConfig.jsonRpcProvider);
-const bzzContract = new ethers.Contract(envConfig.bzz.address, tokenData.abi, provider);
+/**
+ *
+ * @type {Contract}
+ */
+// todo read-only version, but later create new instance with signer. check it and optimize
+let bzzContract = new ethers.Contract(envConfig.bzz.address, tokenData.abi, provider);
 
 let dispatch = null;
 /**
@@ -117,7 +122,7 @@ export const init = (dispatch) => {
     // todo move init to lib class?
     signup = new Signup(cryptoInstance, contractInstance);
     signin = new Signin(cryptoInstance, contractInstance);
-    invite = new Invite(cryptoInstance, contractInstance);
+    invite = new Invite(cryptoInstance, contractInstance, bzzContract);
     session = new Session(cryptoInstance, contractInstance);
     password = new ChangePassword(cryptoInstance, contractInstance, session, invite);
     signup.setLogger(getLogger(ACTION_SIGNUP));
@@ -167,8 +172,11 @@ export const checkLocalCredentials = async () => {
                 return result.payload;
             }, address);
         } else {
+            const signer = new ethers.Wallet(data.wallet.privateKey).connect(provider);
             await contractInstance.setPrivateKey(data.wallet.privateKey);
             cryptoInstance.setAccount(data.wallet.privateKey);
+            bzzContract = new ethers.Contract(envConfig.bzz.address, tokenData.abi, signer);
+            invite.setTokenContract(bzzContract);
             address = data.wallet.address;
         }
 
@@ -197,7 +205,7 @@ export const getWalletBalance = async (wallet) => {
         const web = beautyBalance(original, 4);
 
         const bzzBalance = await bzzContract.balanceOf(wallet);
-        const bzzOriginal = cryptoInstance.web3.utils.fromWei(bzzBalance.toString());
+        const bzzOriginal = ethers.utils.formatUnits(bzzBalance.toString(), 16);
         const bzzWeb = beautyBalance(bzzOriginal, 4);
 
         return {original, web, bzzOriginal, bzzWeb};
@@ -449,8 +457,8 @@ export const getInvite = async (address) => {
     return callMethod(ACTION_GET_INVITE, async () => await contractInstance.getInvite(address));
 };
 
-export const createInvite = async (sendBalance) => {
-    return callMethod(ACTION_CREATE_INVITE, async () => await invite.createInvite(sendBalance));
+export const createInvite = async (sendBalance, sendBzz) => {
+    return callMethod(ACTION_CREATE_INVITE, async () => await invite.createInvite(sendBalance, sendBzz));
 };
 
 export const changePassword = async (username, oldPassword, newPassword) => {
@@ -554,10 +562,30 @@ export const getInvitePrice = async () => {
         //let signupPrice = await signup.getPrice();
         // todo get registration price (fails because permissions), cache this value
         // full cycle: create invite, register new user, send 10-100 simple txs
-        const result = invitePrice * 1000;*/
-        const result = 0.1;
+        const priceCreation = invitePrice * 1000;*/
 
-        return {price: result, priceWeb: beautyBalance(result, 4)};
+        // price for the creator
+        const priceCreation = 0.01;
+        // price for invitee
+        const priceSignup = 0.01;
+        // basic spends for invitee ~10 sing ups
+        const priceBasicSpends = 0.1;
+        // total without additional funds
+        const priceTotal = priceCreation + priceSignup + priceBasicSpends;
+
+        return {
+            priceCreation: priceCreation,
+            priceCreationWeb: beautyBalance(priceCreation, 4),
+
+            priceSignup: priceSignup,
+            priceSignupWeb: beautyBalance(priceSignup, 4),
+
+            priceBasicSpends: priceBasicSpends,
+            priceBasicSpendsWeb: beautyBalance(priceBasicSpends, 4),
+
+            priceTotal: priceTotal,
+            priceTotalWeb: beautyBalance(priceTotal, 4),
+        };
     });
 };
 
