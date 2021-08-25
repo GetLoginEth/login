@@ -35,6 +35,7 @@ contract GetLoginStorage {
     {
         // todo define a uniform variable name
         bytes32 username;
+        address mainAddress;
         bool isActive;
     }
 
@@ -97,7 +98,7 @@ contract GetLoginStorage {
         emit EventAppCreated(creatorUsername, appId);
     }
 
-    function getUser(bytes32 usernameHash) public view returns (UserInfo memory){
+    function getUser(bytes32 usernameHash) public view returns (UserInfo memory) {
         return Users[usernameHash];
     }
 

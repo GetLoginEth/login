@@ -10,33 +10,31 @@ GetLogin comes with an invitation system. The gas costs of new users are covered
 
 GetLogin implements an [OpenID Connect](https://openid.net/) authentication through [OAuth 2](https://en.wikipedia.org/wiki/OAuth#OAuth_2.0) ([implicit flow](https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth) - client-side only).
 
-Last project build hosted at [getlogin.eth](https://swarm-gateways.net/bzz:/getlogin.eth/).
+Last project build hosted at [getlogin.org](https://getlogin.org).
 
 [![ETHCC2020 - Daniel Nagy: "Decentralized User Account Management"](http://i3.ytimg.com/vi/vX3F4QyQRw8/maxresdefault.jpg)](https://www.youtube.com/watch?v=vX3F4QyQRw8)
 
 ### Register your app in GetLogin smart contract
 
 1) Receive an invite (you can write to my email: igor.shadurin@gmail.com) and register account.
-2) Use page to manage your application data: https://getlogin.swarm-gateways.net/
+2) Use page to manage your application data: https://getlogin.org/
 
 ### Inject GetLogin to your dApp
 
 Add code before footer: 
 
 ```javascript
-window._onGetLoginApiLoaded = (instance) => {
+window._onGetLoginApiLoaded = async instance => {
     window.getLoginApi = instance;
-    instance.init(appId, 'https://getlogin.swarm-gateways.net/', redirectUrl, accessToken)
-    .then(data => {
-        console.log(data);
-    });
+    const data = await instance.init(appId, 'https://getlogin.org/', redirectUrl, accessToken)
+    console.log(data);
 }
 ``` 
 where `appId` is your app id stored in step 3 of registration app instruction, `redirectUrl` is your app url.
 
 `accessToken` - is access token which you received early or `null`
 
-Add `<script src="https://getlogin.swarm-gateways.net/api/last.js"></script>` to footer.
+Add `<script src="https://getlogin.org/api/last.js"></script>` to footer.
     
 After loading the script, it will call the `window._onGetLoginApiLoaded` method and pass the GetLogin instance to it.                     
                            
@@ -127,15 +125,18 @@ or
 
 `truffle deploy --reset --network xdai`
 
+or for development
+
+`truffle deploy --reset --network development`
+
+Do the same with `src/smart-bzz` folder. This folder contains implementation of BZZ token.
+
 ### Building project
+
 In the project directory, you can run:
 
 `yarn` - install dependencies
 
-`yarn build-rinkeby` - build project for rinkeby
-
-`yarn build-mainnet` - build project for mainnet
+`yarn build` - build project
 
 `yarn start` - start project locally
-
-Donation accepted by ETH address getlogin.eth or 0xde442ceD045ae30e076597C428876782b42D24cC

@@ -44,10 +44,6 @@ contract("GetLogin", async accounts => {
             getLoginLogic = await GetLoginLogic.deployed();
             getLoginStorage = await GetLoginStorage.deployed();
 
-            // todo hidden because optimized deploy process
-            // await getLoginStorage.setLogicAddress(getLoginLogic.address);
-            // await getLoginLogic.init();
-
             for (const key in demoAccounts) {
                 const account = demoAccounts[key];
                 if ("privateKey" in account && "address" in account) {
@@ -70,6 +66,16 @@ contract("GetLogin", async accounts => {
             const app = await getLoginLogic.getUserInfo(usernameHash);
 
             assert.equal(app.isActive, true, "Admin not created");
+        });
+
+        it("Disabled signup without invite", async () => {
+            await willFail(getLoginLogic.setGlobalOnlyInvites("true", {from: accounts[1]}), 'Caller is not the owner');
+            await getLoginLogic.setGlobalOnlyInvites("true", {from: accounts[0]});
+
+            const usernameHash = web3.utils.keccak256('igor');
+            await willFail(getLoginLogic.createUser(usernameHash, {from: accounts[1]}), 'Not allowed to signup without invite');
+
+            await getLoginLogic.setGlobalOnlyInvites("false", {from: accounts[0]});
         });
 
         it("Is possible to create user with the same hash again", async () => {
