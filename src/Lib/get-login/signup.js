@@ -105,12 +105,14 @@ export default class Signup extends Logger {
 
         this.log(LOG_SIGN_UP_BZZ_APPROVE);
         const bzzBalance = await bzzContract.balanceOf(inviteWallet.address);
-        let tx = await bzzContract.approve(address, bzzBalance);
-        await tx.wait();
+        if (bzzBalance.toString() !== '0') {
+            let tx = await bzzContract.approve(address, bzzBalance);
+            await tx.wait();
 
-        this.log(LOG_SIGN_UP_BZZ_TRANSFER);
-        await bzzContract.transfer(address, bzzBalance);
-        await tx.wait();
+            this.log(LOG_SIGN_UP_BZZ_TRANSFER);
+            await bzzContract.transfer(address, bzzBalance);
+            await tx.wait();
+        }
 
         const info = await this.contract.createUserFromInvite(
             usernameHash,

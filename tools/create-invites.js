@@ -22,7 +22,7 @@ const dataAddress = dataStorage.networks[chainId].address;
 // const dataContractInstance = new ethers.Contract(dataAddress, dataStorage.abi, signer);
 const logicAddress = logicStorage.networks[chainId].address;
 
-const ethHumanPrice = '0.001';
+const ethHumanPrice = '0.01'; // in reality poa ~0.007 (without bzz transfer)
 const inviteEth = ethers.utils.parseEther(ethHumanPrice);
 
 async function run() {
@@ -41,10 +41,10 @@ async function run() {
     const logicContractInstance = new ethers.Contract(logicAddress, logicStorage.abi, signer);
 
     const addresses = [
-        '0x52D974Bf887e8A26bACFA39c73E61c35A4299065'
+        // '0x52D974Bf887e8A26bACFA39c73E61c35A4299065'
         // '0x80C7062a672585106aE963065BDc6bee60bC8830',
         // '0xE0325606237A4833222b3681a392e372Ec3cd1FF',
-        // '0xb6209075afC93a824B6C7398e8fF19cD5248A884',
+        '0xb6209075afC93a824B6C7398e8fF19cD5248A884',
         // '0x90c3b13DA8a5bd92e08F3441F6D585F26276938d',
         // '0x7E82C2Fa0Bac7928D71C2759E3506F123B19f195',
         // '0x156B9f91F1971a8b7df69f9D7Db40Bfa03BB58aE',
