@@ -48,6 +48,9 @@ export default class Session extends Logger {
         this.log(SESSION_REGISTER_WALLET);
         console.log('my public key', this.crypto.getPublicKey());
         //const encrypted = await EthCrypto.encryptWithPublicKey(this.crypto.getPublicKey(), wallet.privateKey);
+        // todo the reason why we couldn't use Trezor master[0] directly. It is not allows encrypting. For trezor
+        // and other hard wallet we should somehow create recoverable master[1] key from master[0] for managing sessions
+        // or just invent new sessions system :)
         const encrypted = await this.encryptWithPublicKey(this.crypto.getPublicKey(), wallet.privateKey);
         const createdSession = await this.contract.createAppSession(appId, wallet.address, encrypted.iv, encrypted.ephemPublicKey, encrypted.ciphertext, encrypted.mac, sendBalance);
 

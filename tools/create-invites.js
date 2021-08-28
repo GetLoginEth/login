@@ -41,7 +41,7 @@ async function run() {
     const logicContractInstance = new ethers.Contract(logicAddress, logicStorage.abi, signer);
 
     const addresses = [
-        // '0x52D974Bf887e8A26bACFA39c73E61c35A4299065'
+        '0x52D974Bf887e8A26bACFA39c73E61c35A4299065'
         // '0x80C7062a672585106aE963065BDc6bee60bC8830',
         // '0xE0325606237A4833222b3681a392e372Ec3cd1FF',
         // '0xb6209075afC93a824B6C7398e8fF19cD5248A884',
@@ -54,7 +54,7 @@ async function run() {
         // '0xCAdf89166078720759041c593BB25BF0E225Fc12',
         // '0x1F40A39f561dC5064cf8a1dECc8E537E0847ac49',
         // '0x00796673A4f4440FD55ed32e3900262F49A4e859'
-        '0xC648bC79eE66bb92A5E43E8Aa3D98f830a31fb8d'
+        // '0xC648bC79eE66bb92A5E43E8Aa3D98f830a31fb8d'
     ];
     const txParams = {
         // todo calc sum for each invite

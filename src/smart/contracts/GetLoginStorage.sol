@@ -82,6 +82,7 @@ contract GetLoginStorage {
         logicAddress = _address;
     }
 
+    // todo is salt required? compare with EventAppSession. Unify params order
     function emitEventStoreWallet(bytes32 username, address walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) onlyLogicAddress public {
         emit EventStoreWallet(username, walletAddress, ciphertext, iv, salt, mac);
     }
@@ -150,6 +151,7 @@ contract GetLoginStorage {
         delete Applications[id].allowedContracts[index];
     }
 
+    // todo check why do we need it?
     function pushUserSession(bytes32 usernameHash, address wallet, uint8 sessionType, uint64 appId) onlyLogicAddress public {
         UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
     }
