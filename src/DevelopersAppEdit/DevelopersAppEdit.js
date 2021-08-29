@@ -20,17 +20,24 @@ function DevelopersAppEdit({computedMatch, location}) {
 
     return <div className="DevelopersAppEdit">
         {redirect ? redirect : ''}
+
         <h1 className="text-center">Edit app</h1>
+
         {myApps.errorMessage && <div className="alert alert-danger" role="alert">
             {myApps.errorMessage}
         </div>}
-        {app && <DevelopersForm onSubmit={formData => {
+
+        {app && <DevelopersForm onSubmit={async formData => {
             console.log(formData);
             const {id, title, description, allowedUrls, allowedContracts} = formData;
-            editApplication(id, title, description, allowedUrls, allowedContracts)
-                .then(() => {
-                    setRedirect(<Redirect to={{pathname: "./developers", state: {from: location}}}/>);
-                });
+            const isAllHttps = allowedUrls.every(item => item.indexOf('https://') === 0);
+            if (!isAllHttps) {
+                alert('Allowed only https url for allowed URLs. Please fix it and try again');
+                return;
+            }
+
+            await editApplication(id, title, description, allowedUrls, allowedContracts);
+            setRedirect(<Redirect to={{pathname: "./developers", state: {from: location}}}/>);
         }} initValues={app} isFormDisabled={myApps.inProcessEditing} isWaitButton={myApps.inProcessEditing}/>}
     </div>;
 }

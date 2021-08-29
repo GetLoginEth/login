@@ -40,9 +40,10 @@ export default class PluginReceiver {
             accessToken = params.get('access_token');
         }
 
-        if (!accessToken) {
-            throw new Error('Incorrect accessToken');
-        }
+        // access token could be empty when app auth first time
+        // if (!accessToken) {
+        //     throw new Error('Incorrect accessToken');
+        // }
 
         window.addEventListener('message', this._listener);
         try {
