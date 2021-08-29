@@ -315,3 +315,4 @@ export class GetLoginApi {
 // } else if (window) {
 //     window._getLoginInstance = GLInstance;
 // }
+window._getLoginApi = GetLoginApi;
