@@ -8,6 +8,7 @@ export class GetLoginApi {
         this.iframe = null;
         this.isInitInProgress = false;
         this.accessToken = '';
+        this.usernameHash = '';
         this.clientAbi = [];
 
         /**
@@ -194,6 +195,7 @@ export class GetLoginApi {
         await waitFrameLoaded();
 
         this.accessToken = answerData.access_token;
+        this.usernameHash = answerData.username_hash;
 
         return {
             result: true,

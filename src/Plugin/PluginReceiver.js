@@ -64,6 +64,7 @@ export default class PluginReceiver {
             }
 
             result.is_client_allowed = is_client_allowed;
+            result.username_hash = getLocalUsernameHash();
             // todo targetOrigin is specific domain?
             window.parent.postMessage(result, '*');
         } catch (e) {
