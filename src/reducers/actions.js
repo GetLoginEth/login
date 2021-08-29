@@ -369,12 +369,13 @@ export const getAppsInfo = async (appIds) => {
     }, appIds);
 };
 
-export const allowApp = async (appId) => {
+export const allowApp = async (appId, sendBalance = '0.01') => {
     return await callMethod(ACTION_ALLOW_APP, async () => {
-        const sessionInfo = await session.createSession(appId);
+        const sessionInfo = await session.createSession(appId, sendBalance);
 
         return setRawAccessToken(appId, {
             transactionHash: sessionInfo.createdSession,
+            address: sessionInfo.wallet.address,
             privateKey: sessionInfo.wallet.privateKey
         });
     }, {appId});

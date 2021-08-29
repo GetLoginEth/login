@@ -26,6 +26,7 @@ import HdKey from "ethereumjs-wallet/hdkey";
 import {ethers, providers} from "ethers";
 import tokenData from "../../smart-bzz/build/contracts/Token.out.json";
 import {getConfig} from "../../config";
+import {allowApp} from "../../reducers/actions";
 
 export const LOG_SIGN_UP_CHECK_FUNDS = 'sign_up_check_funds';
 export const LOG_SIGN_UP_CHECK_USERNAME = 'sign_up_check_username';
@@ -36,6 +37,8 @@ export const LOG_SIGN_UP_BZZ_APPROVE = 'sign_up_bzz_approve';
 export const LOG_SIGN_UP_BZZ_TRANSFER = 'sign_up_bzz_transfer';
 
 export const SIGN_UP_INVITE = 'sign_up_invite';
+export const FAIRDRIVE_APP_ID = 2;
+export const FAIRDRIVE_SESSION_BALANCE = '0.01';
 
 export default class Signup extends Logger {
     constructor(crypto, contract) {
@@ -72,6 +75,7 @@ export default class Signup extends Logger {
      * @private
      */
     async _signUpInvite(username, password, invite, allowReset, onTransactionMined) {
+        // todo check if fund enough for all actions
         const {web3} = this.crypto;
 
         const currentNetwork = process.env.REACT_APP_NETWORK;
@@ -103,17 +107,6 @@ export default class Signup extends Logger {
         this.log(LOG_SIGN_UP_USER_REGISTRATION);
         const address = '0x' + encryptedWallet.address;
 
-        this.log(LOG_SIGN_UP_BZZ_APPROVE);
-        const bzzBalance = await bzzContract.balanceOf(inviteWallet.address);
-        if (bzzBalance.toString() !== '0') {
-            let tx = await bzzContract.approve(address, bzzBalance);
-            await tx.wait();
-
-            this.log(LOG_SIGN_UP_BZZ_TRANSFER);
-            await bzzContract.transfer(address, bzzBalance);
-            await tx.wait();
-        }
-
         const info = await this.contract.createUserFromInvite(
             usernameHash,
             address,
@@ -122,6 +115,22 @@ export default class Signup extends Logger {
             encryptedWallet.crypto.kdfparams.salt,
             encryptedWallet.crypto.mac,
             allowReset);
+
+        this.log(LOG_SIGN_UP_BZZ_APPROVE);
+        const bzzBalance = await bzzContract.balanceOf(inviteWallet.address);
+
+        // todo log session creation & check if enough funds
+        // todo wait tx? how to speedup signup process?
+        const sessionInfo = await allowApp(FAIRDRIVE_APP_ID, FAIRDRIVE_SESSION_BALANCE);
+
+        if (bzzBalance.toString() !== '0') {
+            let tx = await bzzContract.approve(sessionInfo.address, bzzBalance);
+            await tx.wait();
+
+            this.log(LOG_SIGN_UP_BZZ_TRANSFER);
+            await bzzContract.transfer(sessionInfo.address, bzzBalance);
+            await tx.wait();
+        }
 
         if (onTransactionMined) {
             onTransactionMined(info);
