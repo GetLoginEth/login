@@ -1,4 +1,4 @@
-class GetLoginApi {
+export class GetLoginApi {
     constructor() {
         this.appId = null;
         this.baseUrl = null;
@@ -308,7 +308,10 @@ class GetLoginApi {
     }
 }
 
-if (window && window._onGetLoginApiLoaded) {
-    window._onGetLoginApiLoaded(new GetLoginApi());
-    delete window._onGetLoginApiLoaded;
-}
+// const GLInstance = new GetLoginApi();
+// if (window && window._onGetLoginApiLoaded) {
+//     window._onGetLoginApiLoaded(GLInstance);
+//     delete window._onGetLoginApiLoaded;
+// } else if (window) {
+//     window._getLoginInstance = GLInstance;
+// }

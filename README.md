@@ -24,11 +24,13 @@ Last project build hosted at [getlogin.org](https://getlogin.org).
 Add code before footer: 
 
 ```javascript
+<script>
 window._onGetLoginApiLoaded = async instance => {
     window.getLoginApi = instance;
     const data = await instance.init(appId, 'https://getlogin.org/', redirectUrl, accessToken)
     console.log(data);
 }
+</script>
 ``` 
 where `appId` is your app id stored in step 3 of registration app instruction, `redirectUrl` is your app url.
 
