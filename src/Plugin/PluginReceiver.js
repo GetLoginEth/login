@@ -59,6 +59,7 @@ export default class PluginReceiver {
             };
 
             if (appSession && appSession.transactionHash === accessToken) {
+                result.address = appSession.address;
                 result.access_token = appSession.transactionHash;
                 is_client_allowed = true;
             }

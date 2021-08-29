@@ -64,6 +64,7 @@ export default class Session extends Logger {
         }
 
         encryptedSession.privateKey = await this.decryptWithPrivateKey(this.crypto.getAccount().privateKey, encryptedSession.returnValues);
+        encryptedSession.address = this.crypto.web3.eth.accounts.privateKeyToAccount(encryptedSession.privateKey).address;
 
         return encryptedSession;
     }

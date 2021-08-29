@@ -9,6 +9,7 @@ export class GetLoginApi {
         this.isInitInProgress = false;
         this.accessToken = '';
         this.usernameHash = '';
+        this.address = '';
         this.clientAbi = [];
 
         /**
@@ -196,6 +197,7 @@ export class GetLoginApi {
 
         this.accessToken = answerData.access_token;
         this.usernameHash = answerData.username_hash;
+        this.address = answerData.address;
 
         return {
             result: true,

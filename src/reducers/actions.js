@@ -417,7 +417,8 @@ const setRawAccessToken = (appId, rawTokenInfo) => {
     const allTokens = getAllAccessTokens();
     allTokens[appId] = {
         privateKey: rawTokenInfo.privateKey,
-        transactionHash: rawTokenInfo.transactionHash
+        transactionHash: rawTokenInfo.transactionHash,
+        address: rawTokenInfo.address
     };
     saveAllAccessTokens(allTokens);
 
