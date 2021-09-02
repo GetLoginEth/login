@@ -110,6 +110,9 @@ export default class PluginReceiver {
             return;
         }
 
+        console.log('event', event.data);
+        console.log('allowedMethods', this.allowedMethods);
+
         // todo check access_token and appId
         // todo access_token should be not tx hash, but hash from some data signed by private key, because tx is public
         // and can be compromised
@@ -121,7 +124,6 @@ export default class PluginReceiver {
             return;
         }
 
-        console.log('event', event.data);
         try {
             const result = await this[event.data.method](event.data.params);
             event.source.postMessage({
