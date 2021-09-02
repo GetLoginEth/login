@@ -214,6 +214,14 @@ export class GetLoginApi {
     }
 
     /**
+     * Get session wallet balances
+     * @returns {Promise<unknown>}
+     */
+    async getSessionBalances() {
+        return this._sendMessage(this.accessToken, 'getSessionBalances');
+    }
+
+    /**
      * Logout
      * @returns {Promise<boolean>}
      */

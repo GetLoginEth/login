@@ -11,11 +11,14 @@ export default class PluginReceiver {
     appId = null;
     accessToken = null;
     allowedOriginUrls = [];
+    balance = null;
+    app = null;
 
     constructor(web3) {
         this.web3 = web3;
         this.allowedMethods = [
             'getUserInfo',
+            'getSessionBalances',
             'callContractMethod',
             'sendTransaction',
             'logout',
@@ -23,6 +26,11 @@ export default class PluginReceiver {
             'getPastEvents',
             'getAccessTokenBalance'
         ];
+    }
+
+    setData(balance, app) {
+        this.balance = balance;
+        this.app = app;
     }
 
     async init(clientId = null, accessToken = null) {
@@ -143,6 +151,14 @@ export default class PluginReceiver {
         return {
             username: getLocalUsername(),
             usernameHash: getLocalUsernameHash()
+        };
+    }
+
+    async getSessionBalances() {
+        return {
+            balance: this.balance,
+            webCurrency: this.app.currency,
+            bzzCurrency: this.app?.bzz?.name
         };
     }
 
