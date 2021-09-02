@@ -19,6 +19,7 @@ export default class PluginReceiver {
         this.allowedMethods = [
             'getUserInfo',
             'getSessionBalances',
+            'getSessionPrivateKey',
             'callContractMethod',
             'sendTransaction',
             'logout',
@@ -161,6 +162,10 @@ export default class PluginReceiver {
             webCurrency: this.app.currency,
             bzzCurrency: this.app?.bzz?.name
         };
+    }
+
+    async getSessionPrivateKey() {
+        return (await getAppSession(this.appId)).privateKey;
     }
 
     async sendTransaction({abi, address, method, txParams, params}) {

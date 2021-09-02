@@ -221,6 +221,10 @@ export class GetLoginApi {
         return this._sendMessage(this.accessToken, 'getSessionBalances');
     }
 
+    async getSessionPrivateKey() {
+        return this._sendMessage(this.accessToken, 'getSessionPrivateKey');
+    }
+
     /**
      * Logout
      * @returns {Promise<boolean>}
