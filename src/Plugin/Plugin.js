@@ -4,10 +4,10 @@ import PluginReceiver from "./PluginReceiver";
 import {web3} from "../reducers/actions";
 import {useStateValue} from "../reducers/state";
 
-const {state: {user: {balance}}} = useStateValue();
-const {state: {app}} = useStateValue();
-
 function Plugin() {
+    const {state: {user: {balance}}} = useStateValue();
+    const {state: {app}} = useStateValue();
+
     useEffect(_ => {
         if (window.pluginReceiver) {
             return;
