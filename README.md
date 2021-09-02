@@ -21,33 +21,52 @@ Last project build hosted at [getlogin.org](https://getlogin.org).
 
 ### Inject GetLogin to your dApp
 
-Add code before footer: 
+Add this code to the app. If user authorize your app, you could use `GLInstance` to call GetLogin methods.
 
 ```javascript
 <script>
-window._onGetLoginApiLoaded = async instance => {
-    window.getLoginApi = instance;
-    const data = await instance.init(appId, 'https://getlogin.org/', redirectUrl, accessToken)
-    console.log(data);
-}
+    let GLInstance = null;
+    const APP_ID = 2;
+    const setAccessToken = token => {
+        localStorage.setItem('access_token', token);
+    };
+
+    const getAccessToken = () => {
+        return localStorage.getItem('access_token');
+    };
+    
+    const script = document.createElement('script');
+    script.src = `https://getlogin.org/api/last.js`;
+    script.async = true;
+    script.type = 'module';
+    script.onload = async () => {
+        const instance = new window._getLoginApi();
+        GLInstance = instance;
+        const result = await GLInstance.init(APP_ID, 'https://getlogin.org/', window.location.origin, getAccessToken());
+        console.log('result', result);
+        if (result.data.is_client_allowed) {
+            console.log('User allowed this app, you could call some methods');
+        } else {
+            console.log('App currently not allowed by user');
+        }
+    };
+
+    document.body.appendChild(script);
 </script>
 ``` 
-where `appId` is your app id stored in step 3 of registration app instruction, `redirectUrl` is your app url.
+where `APP_ID` is your app which created here https://getlogin.org/developers
 
-`accessToken` - is access token which you received early or `null`
-
-Add `<script src="https://getlogin.org/api/last.js"></script>` to footer.
-    
-After loading the script, it will call the `window._onGetLoginApiLoaded` method and pass the GetLogin instance to it.                     
-                           
 ### Call built-in methods
 ```
-window.getLoginApi.getUserInfo()
-    .then(data => alert(JSON.stringify(data)))
-    .catch(e => alert(e));
+const data = GLInstance.getUserInfo();
+alert(JSON.stringify(data));
 ```
 
 `getUserInfo()` - get current user information
+
+`getSessionBalances()` - get session wallet balances (xDai, xBzz)
+
+`getSessionPrivateKey()` - get session wallet private key
 
 `isReady()` - check is iframe ready
 
@@ -59,48 +78,38 @@ window.getLoginApi.getUserInfo()
 
 `resetInit()` - reset iframe
 
-`async init(appId, baseApiUrl, redirectUrl, accessToken = null)` - init GetLogin. This promise return object `{authorize_url: string, is_client_allowed: boolean, client_id: int, type: "get_login_init"}`. `is_client_allowed` - is user authorized your dApp, if false - show `authorize_url` for authorization.
+`init(appId, baseApiUrl, redirectUrl, accessToken = null)` - init GetLogin. This promise return object `{authorize_url: string, is_client_allowed: boolean, client_id: int, type: "get_login_init"}`. `is_client_allowed` - is user authorized your dApp, if false - show `authorize_url` for authorization.
 
 `logout()` - logout user from your dApp
 
-`async callContractMethod(address, method, ...params)` - call dApp contract method (read-only)
+`callContractMethod(address, method, ...params)` - call dApp contract method (read-only)
 
-`async sendTransaction(address, method, txParams, params)` - send transaction to your dApp contract
+`sendTransaction(address, method, txParams, params)` - send transaction to your dApp contract
 
-`async setOnLogout(func)` - set callback when user logged out
+`setOnLogout(func)` - set callback when user logged out
 
-`async keccak256(data)` - get keccak256 hash from passed data
+`keccak256(data)` - get keccak256 hash from passed data
 
-`async getPastEvents(address, eventName, params)` - get events from contract
+`getPastEvents(address, eventName, params)` - get events from contract
 
-`async getAccessTokenBalance()` - receive balance on access token
+`getAccessTokenBalance()` - receive balance on access token
 ### Call dApp contract methods
 
 Set contract ABI once before calling dApp methods: `window.getLoginApi.setClientAbi(abi);`
 
-Call getNotes method which defined in your dapp contract: 
+Call getNotes method which defined in your dApp contract: 
 
 ```javascript
-window.getLoginApi.callContractMethod(address, 'getNotes', usernameHash)
-.then(data => {
-    console.log(data);
-})
-.catch(e => {
-    console.log(e);
-});
+const data = await GLInstance.callContractMethod(address, 'getNotes', usernameHash)
+console.log(data);
 ```
 
-`address` is your dapp address
+`address` is your dApp address
 
-Send transaction to your dapp contract: 
+Send transaction to your dApp contract: 
 ```javascript
-window.getLoginApi.sendTransaction(address, 'createNote', [noteText], {resolveMethod: 'mined'})
-.then(data => {
-    console.log(data);
-})
-.catch(e => {
-    console.log(e);
-});
+const data = await GLInstance.sendTransaction(address, 'createNote', [noteText], {resolveMethod: 'mined'})
+console.log(data);
 ```
 
 `address` is your dapp address.
@@ -142,3 +151,7 @@ In the project directory, you can run:
 `yarn build` - build project
 
 `yarn start` - start project locally
+
+### App examples
+
+Reward system created with React - https://github.com/GetLoginEth/reward-system

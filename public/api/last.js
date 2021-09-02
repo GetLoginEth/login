@@ -221,6 +221,10 @@ export class GetLoginApi {
         return this._sendMessage(this.accessToken, 'getSessionBalances');
     }
 
+    /**
+     * Get private key of session wallet
+     * @returns {Promise<unknown>}
+     */
     async getSessionPrivateKey() {
         return this._sendMessage(this.accessToken, 'getSessionPrivateKey');
     }
