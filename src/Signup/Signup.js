@@ -40,7 +40,7 @@ function Signup() {
     const [showTrezorModal, setShowTrezorModal] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [showRecoverModal, setShowRecoverModal] = useState(false);
-    const [allowResetPassword, setAllowResetPassword] = useState(true);
+    const [allowResetPassword, setAllowResetPassword] = useState(false);
 
     //console.log(errors);
 
