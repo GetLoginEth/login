@@ -42,4 +42,22 @@ user's account, converts them into stamps and stores them on the server along wi
 In the example https://github.com/GetLoginEth/reward-system you could see how to receive session private key (w3) which
 contains some xDai and xBzz that available only for current application.
 
-##  
+## How to integrate GetLogin to FairOS or any backend?
+
+Binding process
+
+1) User login to FairOS
+2) User create a request for GetLogin account binding
+3) FairOS create some random data to sign which only correct for current FairOS user
+4) User sign this data with his GetLogin account via web or any other way
+5) User send signed data and his username to the server
+6) Server get actual address (w1) for received username from GetLogin contract
+7) If the data signed with w1, then FairOS bind GetLogin username to the current FairOS account
+
+Login process
+
+1) User choose login process via GetLogin in FairOS login options
+2) FairOS ask GetLogin username, create some random data for this username and send it to the user
+3) User should sign this data via web, Metamask or hard wallet and send it back to the server
+4) Server will get w1 with GetLogin contract and validate signed data
+5) If data signed correctly then the server should give access to the user
