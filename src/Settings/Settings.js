@@ -105,7 +105,7 @@ function Settings() {
                         <WaitButton disabled={mySessions.inProcessClose && mySessions.closeId === item.id}>
                             <button disabled={item.returnValues.iv === ''} className="btn btn-danger btn-sm"
                                     onClick={_ => {
-                                        if (window.confirm('Really close?')) {
+                                        if (window.confirm('Really close? Tokens stored in this session will be lost. Move tokens before closing the session.')) {
                                             closeSession(item.returnValues.appId, item.id).then();
                                         }
                                     }}>Close

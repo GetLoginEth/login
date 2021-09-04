@@ -93,6 +93,7 @@ export default class Session extends Logger {
     async closeSession(appId, usernameHash, etherBackAddress) {
         const decryptedSession = await this.getSessionInfo(appId, usernameHash);
         const account = await this.crypto.getAccountFromInvite(decryptedSession.privateKey);
+        // todo move eth funds in one tx. separated tx only for tokens
         this.moveFunds(account, etherBackAddress).catch(_ => {
         });
         return this.contract.createEmptyAppSession(appId);
