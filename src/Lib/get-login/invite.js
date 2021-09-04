@@ -78,6 +78,7 @@ export default class Invite extends Logger {
 
             this.log(INVITE_TRANSFER_BZZ);
             await this.tokenContract.transfer(wallet.address, amount);
+            await tx.wait();
         }
 
         return wallet;

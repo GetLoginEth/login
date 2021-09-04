@@ -389,7 +389,7 @@ export default class contract {
     }
 
     async createInvites(wallets, balanceEther) {
-        return this.sendTx('createInvite', {...this.sendTxDefault, balanceEther}, wallets);
+        return this.sendTx('createInvite', {...this.sendTxDefault, balanceEther, resolveMethod: 'mined'}, wallets);
     }
 
     async createAppSession(appId, address, iv, ephemPublicKey, ciphertext, mac, balanceEther) {
