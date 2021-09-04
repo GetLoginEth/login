@@ -4,6 +4,8 @@ pragma solidity ^0.8.7;
 contract GetLoginStorage {
     address public owner;
     address public logicAddress;
+    uint256 public users;
+    uint256 public invites;
 
     constructor () {
         owner = msg.sender;
@@ -19,10 +21,20 @@ contract GetLoginStorage {
         _;
     }
 
+    // store encrypted wallet assigned to user
     event EventStoreWallet(bytes32 indexed username, address indexed walletAddress, string ciphertext, string iv, string salt, string mac);
+    // store just address that assigned to user (in case Metamask and etc)
+    event EventStoreWallet(bytes32 indexed username, address indexed walletAddress);
+    // event created with inviteAddress
     event EventInviteCreated(bytes32 indexed creatorUsername, address inviteAddress);
+    // store encrypted app session
     event EventAppSession(uint64 indexed appId, bytes32 indexed username, string iv, string ephemPublicKey, string ciphertext, string mac);
+    // store just address that assigned to session and stored somewhere else
+    event EventAppSession(uint64 indexed appId, bytes32 indexed username, address sessionAddress);
+    // new dev app created
     event EventAppCreated(bytes32 indexed creatorUsername, uint64 indexed appId);
+    // user created
+    event EventUserCreated(bytes32 indexed username);
 
     struct Username
     {
@@ -82,89 +94,108 @@ contract GetLoginStorage {
         logicAddress = _address;
     }
 
-    // todo is salt required? compare with EventAppSession. Unify params order
-    function emitEventStoreWallet(bytes32 username, address walletAddress, string memory ciphertext, string memory iv, string memory salt, string memory mac) onlyLogicAddress public {
-        emit EventStoreWallet(username, walletAddress, ciphertext, iv, salt, mac);
+    function emitEventStoreWallet(bytes32 _username, address _walletAddress, string memory _ciphertext, string memory _iv, string memory _salt, string memory _mac) onlyLogicAddress public {
+        emit EventStoreWallet(_username, _walletAddress, _ciphertext, _iv, _salt, _mac);
     }
 
-    function emitEventInviteCreated(bytes32 creatorUsername, address inviteAddress) onlyLogicAddress public {
-        emit EventInviteCreated(creatorUsername, inviteAddress);
+    function emitEventStoreWallet(bytes32 _username, address _walletAddress) onlyLogicAddress public {
+        emit EventStoreWallet(_username, _walletAddress);
     }
 
-    function emitEventAppSession(uint64 appId, bytes32 username, string memory iv, string memory ephemPublicKey, string memory ciphertext, string memory mac) onlyLogicAddress public {
-        emit EventAppSession(appId, username, iv, ephemPublicKey, ciphertext, mac);
+    function emitEventInviteCreated(bytes32 _creatorUsername, address _inviteAddress) onlyLogicAddress public {
+        emit EventInviteCreated(_creatorUsername, _inviteAddress);
     }
 
-    function emitEventAppCreated(bytes32 creatorUsername, uint64 appId) onlyLogicAddress public {
-        emit EventAppCreated(creatorUsername, appId);
+    function emitEventAppSession(uint64 _appId, bytes32 _username, string memory _iv, string memory _ephemPublicKey, string memory _ciphertext, string memory _mac) onlyLogicAddress public {
+        emit EventAppSession(_appId, _username, _iv, _ephemPublicKey, _ciphertext, _mac);
     }
 
-    function getUser(bytes32 usernameHash) public view returns (UserInfo memory) {
-        return Users[usernameHash];
+    function emitEventSimpleAppSession(uint64 _appId, bytes32 _username, address _sessionAddress) onlyLogicAddress public {
+        emit EventAppSession(_appId, _username, _sessionAddress);
     }
 
-    function setUser(bytes32 usernameHash, UserInfo memory info) onlyLogicAddress public {
-        Users[usernameHash] = info;
+    function emitEventAppCreated(bytes32 _creatorUsername, uint64 _appId) onlyLogicAddress public {
+        emit EventAppCreated(_creatorUsername, _appId);
     }
 
-    function getSettings(bytes32 key) public view returns (string memory){
-        return UsersSettings[key];
+    function emitEventUserCreated(bytes32 _username) onlyLogicAddress public {
+        emit EventUserCreated(_username);
     }
 
-    function setSettings(bytes32 key, string memory value) onlyLogicAddress public {
-        UsersSettings[key] = value;
+    function getUser(bytes32 _usernameHash) public view returns (UserInfo memory) {
+        return Users[_usernameHash];
     }
 
-    function getUsersAddressUsername(address _address) public view returns (Username memory){
+    function setUser(bytes32 _usernameHash, UserInfo memory _info) onlyLogicAddress public {
+        Users[_usernameHash] = _info;
+    }
+
+    function getSettings(bytes32 _key) public view returns (string memory) {
+        return UsersSettings[_key];
+    }
+
+    function setSettings(bytes32 _key, string memory _value) onlyLogicAddress public {
+        UsersSettings[_key] = _value;
+    }
+
+    function getUsersAddressUsername(address _address) public view returns (Username memory) {
         return UsersAddressUsername[_address];
     }
 
-    function setUsersAddressUsername(address _address, Username memory info) onlyLogicAddress public {
-        UsersAddressUsername[_address] = info;
+    function setUsersAddressUsername(address _address, Username memory _info) onlyLogicAddress public {
+        UsersAddressUsername[_address] = _info;
     }
 
-    function getApplication(uint64 id) public view returns (Application memory){
-        return Applications[id];
+    function getApplication(uint64 _id) public view returns (Application memory) {
+        return Applications[_id];
     }
 
-    function setApplication(uint64 id, Application memory data) onlyLogicAddress public {
-        Applications[id] = data;
+    function setApplication(uint64 _id, Application memory _data) onlyLogicAddress public {
+        Applications[_id] = _data;
     }
 
     function incrementApplicationId() onlyLogicAddress public {
         applicationId++;
     }
 
-    function pushApplicationUrl(uint64 id, string memory url) onlyLogicAddress public {
-        Applications[id].allowedUrls.push(url);
+    function incrementUsers() onlyLogicAddress public {
+        users++;
     }
 
-    function pushApplicationContract(uint64 id, address wallet) onlyLogicAddress public {
-        Applications[id].allowedContracts.push(wallet);
+    function incrementInvites() onlyLogicAddress public {
+        invites++;
     }
 
-    function deleteApplicationUrl(uint64 id, uint index) onlyLogicAddress public {
-        delete Applications[id].allowedUrls[index];
+    function pushApplicationUrl(uint64 _id, string memory _url) onlyLogicAddress public {
+        Applications[_id].allowedUrls.push(_url);
     }
 
-    function deleteApplicationContract(uint64 id, uint index) onlyLogicAddress public {
-        delete Applications[id].allowedContracts[index];
+    function pushApplicationContract(uint64 _id, address _wallet) onlyLogicAddress public {
+        Applications[_id].allowedContracts.push(_wallet);
+    }
+
+    function deleteApplicationUrl(uint64 _id, uint _index) onlyLogicAddress public {
+        delete Applications[_id].allowedUrls[_index];
+    }
+
+    function deleteApplicationContract(uint64 _id, uint _index) onlyLogicAddress public {
+        delete Applications[_id].allowedContracts[_index];
     }
 
     // todo check why do we need it?
-    function pushUserSession(bytes32 usernameHash, address wallet, uint8 sessionType, uint64 appId) onlyLogicAddress public {
-        UserSessions[usernameHash].push(UserSession({username : usernameHash, wallet : wallet, sessionType : sessionType, appId : appId}));
+    function pushUserSession(bytes32 _usernameHash, address _wallet, uint8 _sessionType, uint64 _appId) onlyLogicAddress public {
+        UserSessions[_usernameHash].push(UserSession({username : _usernameHash, wallet : _wallet, sessionType : _sessionType, appId : _appId}));
     }
 
-    function getInvite(address _address) public view returns (InviteInfo memory){
+    function getInvite(address _address) public view returns (InviteInfo memory) {
         return Invites[_address];
     }
 
-    function setInvite(address _address, InviteInfo memory data) onlyLogicAddress public {
-        Invites[_address] = data;
+    function setInvite(address _address, InviteInfo memory _data) onlyLogicAddress public {
+        Invites[_address] = _data;
     }
 
-    function getUserSessions(bytes32 usernameHash) public view returns (UserSession[] memory){
-        return UserSessions[usernameHash];
+    function getUserSessions(bytes32 _usernameHash) public view returns (UserSession[] memory) {
+        return UserSessions[_usernameHash];
     }
 }
