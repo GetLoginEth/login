@@ -15,10 +15,10 @@ const tokenData = JSON.parse(fs.readFileSync('../src/smart-bzz/build/contracts/T
 //100
 
 
-const chainId = 77;
-const provider = new providers.JsonRpcProvider('https://sokol.poa.network');
-// const chainId = 100;
-// const provider = new providers.JsonRpcProvider('https://rpc.xdaichain.com');
+// const chainId = 77;
+// const provider = new providers.JsonRpcProvider('https://sokol.poa.network');
+const chainId = 100;
+const provider = new providers.JsonRpcProvider('https://rpc.xdaichain.com');
 const signer = new ethers.Wallet(privateKey).connect(provider);
 const dataAddress = dataStorage.networks[chainId].address;
 // const dataContractInstance = new ethers.Contract(dataAddress, dataStorage.abi, signer);
