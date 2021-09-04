@@ -44,98 +44,9 @@ function Settings() {
     }, []);
 
     return <Fragment>
-        <h1 className="mt-3">Settings</h1>
-        <p>Username: {user.username}</p>
-        <p>Username hash: {user.usernameHash}</p>
-        <p>Account address: {user.wallet.address}</p>
-        <p>Balance: {user.balance.original} {app.currency}</p>
-
-        <fieldset disabled={settings.inProcess}>
-            <div className="form-group form-check">
-                <input id="allowReset" type="checkbox" className="form-check-input"
-                       checked={settings.inviteReset === "true"}
-                       onChange={e => {
-                           if (window.confirm('This action send transaction to network. Confirm?')) {
-                               setInviteReset(e.target.checked).then();
-                           }
-                       }}/>
-                <WaitButton disabled={settings.inProcess}>
-                    <label className="form-check-label" htmlFor="allowReset">
-                        Allow password reset
-                        <br/>
-                        <small>If checked, anyone who has your invite will be able to reset your password</small>
-                    </label>
-                </WaitButton>
-            </div>
-        </fieldset>
-
-        {/*<button className="btn btn-primary" onClick={_ => {
-            test();
-        }}>Test
-        </button>*/}
-        <hr/>
-        <h1>My sessions</h1>
-
-        {mySessions.inProcessReceiving && <Spinner/>}
-
-        {mySessions.sessions.length > 0 && <table className="table table-bordered">
-            <thead>
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Tx hash</th>
-                <th scope="col">Manage</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            {mySessions.sessions.map((item, i) =>
-                <tr key={i}>
-                    <th scope="row">
-                        {item.returnValues.appId}
-                    </th>
-                    <td>
-                        <a target="_blank" rel="noopener noreferrer"
-                           href={`${app.explorerUrl}${item.transactionHash}`}>
-                            {item.transactionHash}
-                        </a>
-                    </td>
-                    <td>
-                        {item.returnValues.iv.length === 0 && <p>Session closed</p>}
-                        {item.returnValues.iv.length > 0 &&
-                        <WaitButton disabled={mySessions.inProcessClose && mySessions.closeId === item.id}>
-                            <button disabled={item.returnValues.iv === ''} className="btn btn-danger btn-sm"
-                                    onClick={_ => {
-                                        if (window.confirm('Really close? Tokens stored in this session will be lost. Move tokens before closing the session.')) {
-                                            closeSession(item.returnValues.appId, item.id).then();
-                                        }
-                                    }}>Close
-                            </button>
-                        </WaitButton>}
-                    </td>
-                </tr>
-            )}
-
-            {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <tr>
-                <td colSpan="7">
-                    <div className="empty">No results found.</div>
-                </td>
-            </tr>}
-
-            </tbody>
-        </table>}
-        <hr/>
-        <details>
-            <summary>App info</summary>
-
-            <p>Smart contract address (data): {app.smartContractAddress}</p>
-            <p>Smart contract address (logic): {app.smartContractLogicAddress}</p>
-            <p>Network: {app.network}</p>
-            <p>Provider: {config.websocketProviderUrl}</p>
-            {/*<p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>*/}
-        </details>
-
-        {(getLocalType() === LOGIN_DATA || getLocalType() === LOGIN_USERNAME_PASSWORD) && <details>
-            <summary>Change password</summary>
+        {(getLocalType() === LOGIN_DATA || getLocalType() === LOGIN_USERNAME_PASSWORD) &&
+        <Fragment>
+            <h1>Change password</h1>
 
             {password.errorMessage && <div className="alert alert-danger" role="alert">
                 {password.errorMessage}
@@ -190,7 +101,106 @@ function Settings() {
                     <p>{password.status}</p>
                 </fieldset>
             </form>
-        </details>}
+        </Fragment>}
+
+        <details>
+            <summary>Profile info</summary>
+
+            <p>Username: {user.username}</p>
+            <p>Username hash: {user.usernameHash}</p>
+            <p>Account address: {user.wallet.address}</p>
+            <p>Balance: {user.balance.original} {app.currency}</p>
+
+            <fieldset disabled={settings.inProcess}>
+                <div className="form-group form-check">
+                    <input id="allowReset" type="checkbox" className="form-check-input"
+                           checked={settings.inviteReset === "true"}
+                           onChange={e => {
+                               if (window.confirm('This action send transaction to network. Confirm?')) {
+                                   setInviteReset(e.target.checked).then();
+                               }
+                           }}/>
+                    <WaitButton disabled={settings.inProcess}>
+                        <label className="form-check-label" htmlFor="allowReset">
+                            Allow password reset
+                            <br/>
+                            <small>If checked, anyone who has your invite will be able to reset your password</small>
+                        </label>
+                    </WaitButton>
+                </div>
+            </fieldset>
+        </details>
+
+        {/*<button className="btn btn-primary" onClick={_ => {
+            test();
+        }}>Test
+        </button>*/}
+        <hr/>
+
+        <details>
+            <summary>My sessions</summary>
+
+            {mySessions.inProcessReceiving && <Spinner/>}
+
+            {mySessions.sessions.length > 0 && <table className="table table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Tx hash</th>
+                    <th scope="col">Manage</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {mySessions.sessions.map((item, i) =>
+                    <tr key={i}>
+                        <th scope="row">
+                            {item.returnValues.appId}
+                        </th>
+                        <td>
+                            <a target="_blank" rel="noopener noreferrer"
+                               href={`${app.explorerUrl}${item.transactionHash}`}>
+                                {item.transactionHash}
+                            </a>
+                        </td>
+                        <td>
+                            {item.returnValues.iv.length === 0 && <p>Session closed</p>}
+                            {item.returnValues.iv.length > 0 &&
+                            <WaitButton disabled={mySessions.inProcessClose && mySessions.closeId === item.id}>
+                                <button disabled={item.returnValues.iv === ''} className="btn btn-danger btn-sm"
+                                        onClick={_ => {
+                                            if (window.confirm('Really close? Tokens stored in this session will be lost. Move tokens before closing the session.')) {
+                                                closeSession(item.returnValues.appId, item.id).then();
+                                            }
+                                        }}>Close
+                                </button>
+                            </WaitButton>}
+                        </td>
+                    </tr>
+                )}
+
+                {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <tr>
+                    <td colSpan="7">
+                        <div className="empty">No results found.</div>
+                    </td>
+                </tr>}
+
+                </tbody>
+            </table>}
+        </details>
+
+        <hr/>
+        <details>
+            <summary>App info</summary>
+
+            <p>Smart contract address (data): {app.smartContractAddress}</p>
+            <p>Smart contract address (logic): {app.smartContractLogicAddress}</p>
+            <p>Network: {app.network}</p>
+            {/*<p>Provider: {config.websocketProviderUrl}</p>*/}
+            {/*<p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>*/}
+        </details>
+
+
 
     </Fragment>;
 }
