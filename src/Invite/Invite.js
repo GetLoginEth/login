@@ -60,6 +60,7 @@ function Invite() {
                 <a className={`nav-link ${page === 'created_invites' ? 'active' : ''}`} href=""
                    onClick={e => {
                        e.preventDefault();
+                       getInvites(user.usernameHash).then();
                        setPage('created_invites');
                    }
                    }>Created invites</a>
@@ -230,7 +231,7 @@ function Invite() {
         {page === 'created_invites' && <Fragment>
             {/*<h4>Created invites</h4>*/}
 
-            {filteredInvites.length > 0 && <div className="mt-3">
+            <div className="mt-3">
                 {/*<small>There are public addresses. You can not use it as invites</small>*/}
 
                 <table className="table table-bordered">
@@ -243,7 +244,11 @@ function Invite() {
                     </thead>
                     <tbody>
 
-                    {filteredInvites.map((item, index) => {
+                    {filteredInvites.length === 0 && <tr>
+                        <td colspan="2">...</td>
+                    </tr>}
+
+                    {filteredInvites.length > 0 && filteredInvites.map((item, index) => {
                         const inviteAddress = item.returnValues.inviteAddress;
                         const info = inviteInfo[inviteAddress];
 
@@ -306,7 +311,7 @@ function Invite() {
                         </li>
                     </ul>
                 </nav>
-            </div>}
+            </div>
 
         </Fragment>}
 
