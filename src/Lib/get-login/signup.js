@@ -123,14 +123,14 @@ export default class Signup extends Logger {
         // todo wait tx? how to speedup signup process?
         // const sessionInfo = await allowApp(FAIRDRIVE_APP_ID, FAIRDRIVE_SESSION_BALANCE);
         //
-        // if (bzzBalance.toString() !== '0') {
-        //     let tx = await bzzContract.approve(sessionInfo.address, bzzBalance);
-        //     await tx.wait();
-        //
-        //     this.log(LOG_SIGN_UP_BZZ_TRANSFER);
-        //     await bzzContract.transfer(sessionInfo.address, bzzBalance);
-        //     await tx.wait();
-        // }
+        if (bzzBalance.toString() !== '0') {
+            let tx = await bzzContract.approve(sessionInfo.address, bzzBalance);
+            await tx.wait();
+
+            this.log(LOG_SIGN_UP_BZZ_TRANSFER);
+            await bzzContract.transfer(sessionInfo.address, bzzBalance);
+            await tx.wait();
+        }
 
         if (onTransactionMined) {
             onTransactionMined(info);
