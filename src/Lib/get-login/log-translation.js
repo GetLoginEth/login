@@ -1,4 +1,5 @@
 import {
+    LOG_SIGN_UP_BZZ_APPROVE, LOG_SIGN_UP_BZZ_TRANSFER,
     LOG_SIGN_UP_CHECK_FUNDS,
     LOG_SIGN_UP_CHECK_USERNAME,
     LOG_SIGN_UP_CREATE_NEW_WALLET,
@@ -30,6 +31,8 @@ export const translation = {
     [SESSION_REGISTER_WALLET]: 'Storing session in blockchain',
     [LOG_CHANGE_PASSWORD]: 'Change password',
     [LOG_CREATE_NEW_WALLET]: 'Create new wallet',
+    [LOG_SIGN_UP_BZZ_APPROVE]: 'BZZ preparing',
+    [LOG_SIGN_UP_BZZ_TRANSFER]: 'BZZ transfer',
 };
 
 export const translate = (message) => {

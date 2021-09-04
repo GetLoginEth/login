@@ -399,9 +399,9 @@ export default class contract {
         }, appId, address, iv, ephemPublicKey, ciphertext, mac);
     }
 
-    async createEmptyAppSession(appId) {
-        return this.createAppSession(appId, '0x0000000000000000000000000000000000000000', '', '', '', '', '0');
-    }
+    // async createEmptyAppSession(appId) {
+    //     return this.createAppSession(appId, '0x0000000000000000000000000000000000000000', '', '', '', '', '0');
+    // }
 
     async getSession(appId, username) {
         const storageContract = await this.getStorageContract();
@@ -481,5 +481,11 @@ export default class contract {
         return await this.sendTx('setInviteReset', {
             ...this.sendTxDefault
         }, allow.toString());
+    }
+
+    async closeAppSession(appId) {
+        return await this.sendTx('closeAppSession', {
+            ...this.sendTxDefault
+        }, appId);
     }
 }

@@ -90,18 +90,18 @@ async function run() {
         });
 
         console.log('Tx sent. Hash', invites.hash);
-        const result = await invites.wait();
+        await invites.wait();
 
         // todo this loop isn't ok for mass tx (too slow). Use SWARM practice to send mass ERC20 txs
-        for (let i = 0; i < addresses.length; i++) {
-            const address = addresses[i];
-            console.log(`Approve ${bzzInviteSumHuman} BZZ for ${address}...`);
-            let tx = await bzzInstance.approve(address, bzzInviteSum);
-            await tx.wait();
-            console.log(`Send ${bzzInviteSumHuman} BZZ to ${address}...`);
-            tx = await bzzInstance.transfer(address, bzzInviteSum);
-            await tx.wait();
-        }
+        // for (let i = 0; i < addresses.length; i++) {
+        //     const address = addresses[i];
+        //     console.log(`Approve ${bzzInviteSumHuman} BZZ for ${address}...`);
+        //     let tx = await bzzInstance.approve(address, bzzInviteSum);
+        //     await tx.wait();
+        //     console.log(`Send ${bzzInviteSumHuman} BZZ to ${address}...`);
+        //     tx = await bzzInstance.transfer(address, bzzInviteSum);
+        //     await tx.wait();
+        // }
         console.log('Complete!');
     } catch (e) {
         console.log('Error while waiting', e);

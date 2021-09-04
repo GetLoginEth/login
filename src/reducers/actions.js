@@ -371,6 +371,7 @@ export const getAppsInfo = async (appIds) => {
 
 export const allowApp = async (appId, sendBalance = '0.01') => {
     return await callMethod(ACTION_ALLOW_APP, async () => {
+        // todo check session creation in case when incorrect `appId`
         const sessionInfo = await session.createSession(appId, sendBalance);
 
         return setRawAccessToken(appId, {
