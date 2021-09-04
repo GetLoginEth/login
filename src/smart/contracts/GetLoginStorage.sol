@@ -41,6 +41,7 @@ contract GetLoginStorage {
         bool isActive;
         // todo define a uniform variable name
         bytes32 username;
+        uint64 appId;
     }
 
     struct UserInfo
@@ -60,13 +61,13 @@ contract GetLoginStorage {
         bool isActive;
     }
 
-    struct UserSession
+    struct AppSession
     {
         // todo define a uniform variable name
         bytes32 username;
         address wallet;
-        uint8 sessionType;
         uint64 appId;
+        bool isActive;
     }
 
     struct Application
@@ -86,7 +87,8 @@ contract GetLoginStorage {
     mapping(bytes32 => UserInfo) public Users;
     mapping(bytes32 => string) public UsersSettings;
     mapping(address => Username) public UsersAddressUsername;
-    mapping(bytes32 => UserSession[]) public UserSessions;
+    mapping(bytes32 => mapping(uint64 => AppSession[])) public AppSessions;
+    mapping(bytes32 => uint64[]) public AppSessionIndex;
     mapping(address => InviteInfo) public Invites;
     mapping(uint64 => Application) public Applications;
 
@@ -182,9 +184,8 @@ contract GetLoginStorage {
         delete Applications[_id].allowedContracts[_index];
     }
 
-    // todo check why do we need it?
-    function pushUserSession(bytes32 _usernameHash, address _wallet, uint8 _sessionType, uint64 _appId) onlyLogicAddress public {
-        UserSessions[_usernameHash].push(UserSession({username : _usernameHash, wallet : _wallet, sessionType : _sessionType, appId : _appId}));
+    function pushAppSession(uint64 _appId, bytes32 _usernameHash, address _wallet) onlyLogicAddress public {
+        AppSessions[_usernameHash][_appId].push(AppSession({username : _usernameHash, wallet : _wallet, appId : _appId, isActive : true}));
     }
 
     function getInvite(address _address) public view returns (InviteInfo memory) {
@@ -195,7 +196,19 @@ contract GetLoginStorage {
         Invites[_address] = _data;
     }
 
-    function getUserSessions(bytes32 _usernameHash) public view returns (UserSession[] memory) {
-        return UserSessions[_usernameHash];
+    function getAppSessions(uint64 _appId, bytes32 _usernameHash) public view returns (AppSession[] memory) {
+        return AppSessions[_usernameHash][_appId];
+    }
+
+    function setAppSession(uint64 _appId, bytes32 _usernameHash, uint _index, AppSession memory _appSession) onlyLogicAddress public {
+        AppSessions[_usernameHash][_appId][_index] = _appSession;
+    }
+
+    function getAppSessionIndex(bytes32 _usernameHash) public view returns (uint64[] memory) {
+        return AppSessionIndex[_usernameHash];
+    }
+
+    function pushAppSessionIndex(bytes32 _usernameHash, uint64 _appId) onlyLogicAddress public {
+        AppSessionIndex[_usernameHash].push(_appId);
     }
 }

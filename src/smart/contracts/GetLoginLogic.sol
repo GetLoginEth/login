@@ -68,10 +68,9 @@ contract GetLoginLogic {
         require(isAddressRegistered(_ownerWallet) == false, "Wallet already used");
 
         getLoginStorage.setUser(_usernameHash, GetLoginStorage.UserInfo({username : _usernameHash, isActive : true, mainAddress : _ownerWallet}));
-        getLoginStorage.setUsersAddressUsername(_ownerWallet, GetLoginStorage.Username({username : _usernameHash, isActive : true}));
+        getLoginStorage.setUsersAddressUsername(_ownerWallet, GetLoginStorage.Username({username : _usernameHash, isActive : true, appId : 0}));
         getLoginStorage.emitEventUserCreated(_usernameHash);
         getLoginStorage.incrementUsers();
-        _addSessionInit(_usernameHash, _ownerWallet, SESSION_MAIN, 0);
     }
 
     function _changeUserOwner(address _oldAddress, address _newAddress) private {
@@ -81,14 +80,12 @@ contract GetLoginLogic {
         GetLoginStorage.UserInfo memory user = getUserByAddress(_oldAddress);
         bytes32 usernameHash = user.username;
         // deactivate old main address
-        getLoginStorage.setUsersAddressUsername(_oldAddress, GetLoginStorage.Username({username : usernameHash, isActive : false}));
+        getLoginStorage.setUsersAddressUsername(_oldAddress, GetLoginStorage.Username({username : usernameHash, isActive : false, appId : 0}));
         // activate new address
-        getLoginStorage.setUsersAddressUsername(_newAddress, GetLoginStorage.Username({username : usernameHash, isActive : true}));
+        getLoginStorage.setUsersAddressUsername(_newAddress, GetLoginStorage.Username({username : usernameHash, isActive : true, appId : 0}));
         // set new main address and store changed user info
         user.mainAddress = _newAddress;
         getLoginStorage.setUser(usernameHash, user);
-        // add change to the history todo: why?
-        _addSessionInit(usernameHash, _newAddress, SESSION_MAIN, 0);
     }
 
     function _createApplication(bytes32 _usernameHash, string memory _title, string memory _description, string[] memory _allowedUrls, address[] memory _allowedContracts) private returns (uint64) {
@@ -122,16 +119,31 @@ contract GetLoginLogic {
         getLoginStorage.setApplication(_appId, app);
     }
 
-    function _addSessionInit(bytes32 _usernameHash, address _wallet, uint8 _sessionType, uint64 _appId) private {
-        getLoginStorage.pushUserSession(_usernameHash, _wallet, _sessionType, _appId);
-    }
+    function _pushAppSession(uint64 _appId, bytes32 _usernameHash, address _wallet) private {
+        GetLoginStorage.AppSession[] memory sessions = getAppSessions(_appId, _usernameHash);
+        uint64[] memory sessionIndex = getLoginStorage.getAppSessionIndex(_usernameHash);
+        if (sessions.length > 0) {
+            uint index = sessions.length - 1;
+            GetLoginStorage.AppSession memory session = sessions[index];
+            session.isActive = false;
+            getLoginStorage.setAppSession(_appId, _usernameHash, index, session);
+        }
 
-    //    function _addSession(address _wallet, uint8 _sessionType, uint64 _appId) private {
-    //        validateAppExists(_appId);
-    //        validateAddressRegistered(_wallet);
-    //        bytes32 usernameHash = getUsernameByAddress(_wallet);
-    //        getLoginStorage.pushUserSession(usernameHash, _wallet, _sessionType, _appId);
-    //    }
+        getLoginStorage.pushAppSession(_appId, _usernameHash, _wallet);
+
+        // push to session index only once
+        bool sessionIndexExists = false;
+        for (uint i = 0; i < sessionIndex.length; i++) {
+            if (sessionIndex[i] == _appId) {
+                sessionIndexExists = true;
+                break;
+            }
+        }
+
+        if (sessionIndexExists == false) {
+            getLoginStorage.pushAppSessionIndex(_usernameHash, _appId);
+        }
+    }
 
     function _setUserSettings(bytes32 _usernameHash, string memory _key, string memory _value) private {
         bytes32 keyHash = keccak256(abi.encode(_usernameHash, "_", _key));
@@ -143,12 +155,22 @@ contract GetLoginLogic {
         getLoginStorage.setSettings(keyHash, _value);
     }
 
+    function _createAppSession(uint64 _appId, address _senderAddress, address _sessionAddress) private {
+        validateMainAddress(_senderAddress);
+        validateAppExists(_appId);
+        validateAddressAvailable(_sessionAddress);
+
+        bytes32 usernameHash = getUsernameByAddress(_senderAddress);
+        // add new address to the global scope
+        getLoginStorage.setUsersAddressUsername(_sessionAddress, GetLoginStorage.Username({isActive : true, username : usernameHash, appId : _appId}));
+
+        _pushAppSession(_appId, usernameHash, _sessionAddress);
+    }
+
     /* End of private methods */
 
     /* Validators */
     function validateAppOwner(uint64 _appId, address _wallet) public view {
-        validateMainAddress(_wallet);
-
         require(isAppOwner(_appId, _wallet), "You do not have access to this application");
     }
 
@@ -266,12 +288,6 @@ contract GetLoginLogic {
         getLoginStorage.emitEventStoreWallet(usernameHash, _newOwner);
     }
 
-    // todo how to use sessions with these users? store not in chain, but in swarm? Do we have
-    // deps on side storing?
-    // todo implement session creation without wallet in the blockchain
-    // todo check every method with correct and incorrect behaviour
-    // todo validate events creation
-
     function createInvite(address payable[] memory _invites) public payable {
         validateMainAddress(msg.sender);
 
@@ -299,7 +315,7 @@ contract GetLoginLogic {
 
     function createUserFromInvite(bytes32 _usernameHash, address payable _walletAddress, string memory _ciphertext, string memory _iv, string memory _salt, string memory _mac, bool _allowReset) public payable {
         validateInviteActive(msg.sender);
-        require(isAddressRegistered(_walletAddress) == false, "Address already registered");
+        validateAddressAvailable(_walletAddress);
 
         GetLoginStorage.InviteInfo memory invite = getLoginStorage.getInvite(msg.sender);
         _createUser(_usernameHash, _walletAddress);
@@ -354,31 +370,38 @@ contract GetLoginLogic {
     }
 
     function createAppSession(uint64 _appId, address payable _sessionAddress, string memory _iv, string memory _ephemPublicKey, string memory _ciphertext, string memory _mac) public payable {
-        validateMainAddress(msg.sender);
-        validateAppExists(_appId);
-
-        bytes32 usernameHash = getUsernameByAddress(msg.sender);
-        // todo on close set active to false (when created new over old)
-        getLoginStorage.setUsersAddressUsername(_sessionAddress, GetLoginStorage.Username({isActive : true, username : usernameHash}));
+        _createAppSession(_appId, msg.sender, _sessionAddress);
         if (msg.value > 0) {
             _sessionAddress.transfer(msg.value);
         }
 
+        bytes32 usernameHash = getUsernameByAddress(msg.sender);
         getLoginStorage.emitEventAppSession(_appId, usernameHash, _iv, _ephemPublicKey, _ciphertext, _mac);
     }
 
     function createSimpleAppSession(uint64 _appId, address payable _sessionAddress) public payable {
-        validateMainAddress(msg.sender);
-        validateAppExists(_appId);
-
-        bytes32 usernameHash = getUsernameByAddress(msg.sender);
-        // todo on close set active to false (when created new over old)
-        getLoginStorage.setUsersAddressUsername(_sessionAddress, GetLoginStorage.Username({isActive : true, username : usernameHash}));
+        _createAppSession(_appId, msg.sender, _sessionAddress);
         if (msg.value > 0) {
             _sessionAddress.transfer(msg.value);
         }
 
+        bytes32 usernameHash = getUsernameByAddress(msg.sender);
         getLoginStorage.emitEventSimpleAppSession(_appId, usernameHash, _sessionAddress);
+    }
+
+    function closeAppSession(uint64 _appId) public {
+        validateMainAddress(msg.sender);
+
+        bytes32 usernameHash = getUsernameByAddress(msg.sender);
+        GetLoginStorage.AppSession[] memory sessions = getAppSessions(_appId, usernameHash);
+        if (sessions.length > 0) {
+            uint index = sessions.length - 1;
+            GetLoginStorage.AppSession memory session = sessions[index];
+            if (session.isActive) {
+                session.isActive = false;
+                getLoginStorage.setAppSession(_appId, usernameHash, index, session);
+            }
+        }
     }
 
     function setInviteReset(string memory _value) public {
@@ -391,7 +414,6 @@ contract GetLoginLogic {
     function setGlobalOnlyInvites(string memory value) onlyOwner public {
         _setGlobalSettings(settingsInvitesOnly, value);
     }
-
     /* End of public methods */
 
     /* View methods */
@@ -411,26 +433,29 @@ contract GetLoginLogic {
 
     function isAddressRegistered(address _address) public view returns (bool) {
         GetLoginStorage.Username memory currentUser = getLoginStorage.getUsersAddressUsername(_address);
-        if (currentUser.isActive != true) {
-            return false;
-        }
 
-        GetLoginStorage.UserInfo memory info = getLoginStorage.getUser(currentUser.username);
-
-        return info.isActive;
+        return currentUser.isActive;
     }
 
     function isAppOwner(uint64 _appId, address _checkAddress) public view returns (bool) {
-        // todo check that `checkAddress` is mainAddress of user
-        // todo remove validation from `validateAppOwner`
+        validateMainAddress(_checkAddress);
+
         bytes32 currentUsernameHash = getUsernameByAddress(_checkAddress);
         return getLoginStorage.getApplication(_appId).usernameHash == currentUsernameHash;
     }
 
     function getUserByAddress(address _address) public view returns (GetLoginStorage.UserInfo memory) {
-        // todo check that `_wallet` is not expired session address. maybe split getUser.. method to mainwallet/session wallet
         GetLoginStorage.Username memory currentUser = getLoginStorage.getUsersAddressUsername(_address);
+        if (currentUser.appId > 0) {
+            GetLoginStorage.AppSession[] memory sessions = getAppSessions(currentUser.appId, currentUser.username);
+            require(sessions.length > 0, "Sessions should not be empty");
+            GetLoginStorage.AppSession memory session = sessions[sessions.length - 1];
+            require(session.wallet == _address, "Session address should be the same");
+            require(session.isActive, "User session address is not active");
+        }
+
         require(currentUser.isActive, "User with this address not found");
+
         return getLoginStorage.getUser(currentUser.username);
     }
 
@@ -452,8 +477,26 @@ contract GetLoginLogic {
         return getLoginStorage.getInvite(_address);
     }
 
-    function getUserSessions(bytes32 _usernameHash) public view returns (GetLoginStorage.UserSession[] memory) {
-        return getLoginStorage.getUserSessions(_usernameHash);
+    function getAppSessions(uint64 _appId, bytes32 _usernameHash) public view returns (GetLoginStorage.AppSession[] memory) {
+        return getLoginStorage.getAppSessions(_appId, _usernameHash);
+    }
+
+    function getActiveAppSessions(bytes32 _usernameHash) public view returns (GetLoginStorage.AppSession[] memory) {
+        uint64[] memory sessionIndex = getLoginStorage.getAppSessionIndex(_usernameHash);
+        GetLoginStorage.AppSession[] memory result = new GetLoginStorage.AppSession[](sessionIndex.length);
+
+        for (uint i = 0; i < sessionIndex.length; i++) {
+            uint64 appId = sessionIndex[i];
+            GetLoginStorage.AppSession[] memory sessions = getAppSessions(appId, _usernameHash);
+            if (sessions.length > 0) {
+                GetLoginStorage.AppSession memory session = sessions[sessions.length - 1];
+                if (session.isActive) {
+                    result[i] = session;
+                }
+            }
+        }
+
+        return result;
     }
 
     function getAllSettings(bytes32 _usernameHash) public view returns (SettingsData memory) {

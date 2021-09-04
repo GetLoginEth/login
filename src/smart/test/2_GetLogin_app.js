@@ -64,7 +64,7 @@ contract("GetLogin", async accounts => {
             const allowedUrls = ['https://one.com/123', 'https://ya.com/321', 'https://google.com/777',];
             const allowedContracts = ['0xD66521103Cb882d6afEb051Ae3e986506Af56409', '0x25a7D3AD29dba10BE86496B1D6367224B06123D2', '0xbe171aa7da559a655e4b7a603ca335716864439d',];
 
-            // todo new test: create session and try to edit with session (cover al methods with session)
+            // todo new test: create session and try to edit with session (cover all methods with session)
             await getLoginLogic.editApplication(appId, title, description, allowedUrls, allowedContracts);
             const app = await getLoginLogic.getApplication(appId);
             assert.equal(app.title, title, "Incorrect app title");
