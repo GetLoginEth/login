@@ -137,59 +137,62 @@ function Settings() {
         </button>*/}
         <hr/>
 
-        <details>
-            <summary>My sessions</summary>
+        {mySessions.sessions.length > 0 &&
+        <Fragment>
+            <details>
+                <summary>My sessions</summary>
 
-            {mySessions.inProcessReceiving && <Spinner/>}
+                {mySessions.inProcessReceiving && <Spinner/>}
 
-            {mySessions.sessions.length > 0 && <table className="table table-bordered">
-                <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Tx hash</th>
-                    <th scope="col">Manage</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                {mySessions.sessions.map((item, i) =>
-                    <tr key={i}>
-                        <th scope="row">
-                            {item.returnValues.appId}
-                        </th>
-                        <td>
-                            <a target="_blank" rel="noopener noreferrer"
-                               href={`${app.explorerUrl}${item.transactionHash}`}>
-                                {item.transactionHash}
-                            </a>
-                        </td>
-                        <td>
-                            {item.returnValues.iv.length === 0 && <p>Session closed</p>}
-                            {item.returnValues.iv.length > 0 &&
-                            <WaitButton disabled={mySessions.inProcessClose && mySessions.closeId === item.id}>
-                                <button disabled={item.returnValues.iv === ''} className="btn btn-danger btn-sm"
-                                        onClick={_ => {
-                                            if (window.confirm('Really close? Tokens stored in this session will be lost. Move tokens before closing the session.')) {
-                                                closeSession(item.returnValues.appId, item.id).then();
-                                            }
-                                        }}>Close
-                                </button>
-                            </WaitButton>}
-                        </td>
+                {mySessions.sessions.length > 0 && <table className="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Tx hash</th>
+                        <th scope="col">Manage</th>
                     </tr>
-                )}
+                    </thead>
+                    <tbody>
 
-                {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <tr>
-                    <td colSpan="7">
-                        <div className="empty">No results found.</div>
-                    </td>
-                </tr>}
+                    {mySessions.sessions.map((item, i) =>
+                        <tr key={i}>
+                            <th scope="row">
+                                {item.returnValues.appId}
+                            </th>
+                            <td>
+                                <a target="_blank" rel="noopener noreferrer"
+                                   href={`${app.explorerUrl}${item.transactionHash}`}>
+                                    {item.transactionHash}
+                                </a>
+                            </td>
+                            <td>
+                                {item.returnValues.iv.length === 0 && <p>Session closed</p>}
+                                {item.returnValues.iv.length > 0 &&
+                                <WaitButton disabled={mySessions.inProcessClose && mySessions.closeId === item.id}>
+                                    <button disabled={item.returnValues.iv === ''} className="btn btn-danger btn-sm"
+                                            onClick={_ => {
+                                                if (window.confirm('Really close? Tokens stored in this session will be lost. Move tokens before closing the session.')) {
+                                                    closeSession(item.returnValues.appId, item.id).then();
+                                                }
+                                            }}>Close
+                                    </button>
+                                </WaitButton>}
+                            </td>
+                        </tr>
+                    )}
 
-                </tbody>
-            </table>}
-        </details>
+                    {!mySessions.inProcessReceiving && mySessions.sessions.length === 0 && <tr>
+                        <td colSpan="7">
+                            <div className="empty">No results found.</div>
+                        </td>
+                    </tr>}
 
-        <hr/>
+                    </tbody>
+                </table>}
+            </details>
+            <hr/>
+        </Fragment>}
+
         <details>
             <summary>App info</summary>
 
@@ -199,7 +202,6 @@ function Settings() {
             {/*<p>Provider: {config.websocketProviderUrl}</p>*/}
             {/*<p>Is Trezor enabled: {config.isTrezorEnabled.toString()}</p>*/}
         </details>
-
 
 
     </Fragment>;

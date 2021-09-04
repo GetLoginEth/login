@@ -26,9 +26,9 @@ function Header({isLoggedIn, isCheckingAuth, username, balance}) {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         {isLoggedIn && <Fragment>
-                            <Link
-                                className={`nav-link ${page === 'xsettings' ? 'active' : ''}`}
-                                to="./xsettings">Settings</Link>
+                            {/*<Link*/}
+                            {/*    className={`nav-link ${page === 'xsettings' ? 'active' : ''}`}*/}
+                            {/*    to="./xsettings">Settings</Link>*/}
                             <Link
                                 className={`nav-link ${page === 'xinvite' ? 'active' : ''}`}
                                 to="./xinvite">Invite</Link>
@@ -49,6 +49,7 @@ function Header({isLoggedIn, isCheckingAuth, username, balance}) {
                             <NavDropdown.Item disabled>{username}</NavDropdown.Item>
                             <NavDropdown.Item disabled>{!balance.web ? '...' : balance.web} {app.currency}</NavDropdown.Item>
                             <NavDropdown.Item disabled>{!balance.bzzWeb ? '...' : balance.bzzWeb} {app?.bzz?.name}</NavDropdown.Item>
+                            <Link to="./xsettings" className="dropdown-item">Settings</Link>
                             <NavDropdown.Divider/>
                             <Link to="./logout" className="dropdown-item">Logout</Link>
                         </NavDropdown>}
