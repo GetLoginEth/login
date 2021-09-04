@@ -64,8 +64,10 @@ contract("GetLogin", async accounts => {
 
             const usernameHash = web3.utils.keccak256('admin');
             const app = await getLoginLogic.getUserInfo(usernameHash);
+            const usersCount = await getLoginStorage.users();
 
             assert.equal(app.isActive, true, "Admin not created");
+            assert.equal(usersCount, 1, "Incorrect users count");
         });
 
         it("Disabled signup without invite", async () => {
@@ -87,6 +89,9 @@ contract("GetLogin", async accounts => {
         it("Create new user without invite", async () => {
             const usernameHash = web3.utils.keccak256('igor');
             await getLoginLogic.createUser(usernameHash, {from: accounts[1]});
+
+            const usersCount = await getLoginStorage.users();
+            assert.equal(usersCount, 2, "Incorrect users count");
         });
 
         it("Create new user from old address", async () => {
@@ -96,6 +101,10 @@ contract("GetLogin", async accounts => {
 
         it("Create invite", async () => {
             const account = demoAccounts.invite;
+
+            let usersCount = await getLoginStorage.invites();
+            assert.equal(usersCount, 0, "Incorrect invites count");
+
             await getLoginLogic.createInvite([account.address], {
                 from: accounts[0],
                 value: web3.utils.toWei(account.balance, "ether")
@@ -108,6 +117,9 @@ contract("GetLogin", async accounts => {
                 from: accounts[0],
                 value: web3.utils.toWei(demoAccounts.invite.balance, "ether")
             }), 'This address already used for invite');
+
+            usersCount = await getLoginStorage.invites();
+            assert.equal(usersCount, 1, "Incorrect invites count");
         });
 
         it("Create user from invite", async () => {
@@ -117,6 +129,9 @@ contract("GetLogin", async accounts => {
                 from: demoAccounts.invite.address,
                 value: web3.utils.toWei(account.balance, "ether")
             });
+
+            const usersCount = await getLoginStorage.users();
+            assert.equal(usersCount, 3, "Incorrect users count");
 
             const userInfo = await getLoginLogic.getUserInfo(usernameHash);
             assert.equal(userInfo.username, usernameHash, "Incorrect username hash");
@@ -152,7 +167,8 @@ contract("GetLogin", async accounts => {
         it("Change password", async () => {
             const usernameHash = web3.utils.keccak256('test_invite');
             const account = demoAccounts.changePassword;
-
+            // todo how to move access for admin user? to trezor or etc
+            // todo try to change password with session
             await getLoginLogic.changePassword(account.address, account.ciphertext, account.iv, account.salt, account.mac, [], {
                 from: demoAccounts.createdWithInvite.address,
                 value: web3.utils.toWei(account.balance, "ether")

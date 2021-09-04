@@ -10,9 +10,6 @@ contract("GetLogin", async accounts => {
             getLoginLogic = await GetLoginLogic.deployed();
             getLoginStorage = await GetLoginStorage.deployed();
             testLogic = await TestLogic.deployed();
-
-            await getLoginStorage.setLogicAddress(getLoginLogic.address);
-            await getLoginLogic.init();
         });
 
         beforeEach(async () => {

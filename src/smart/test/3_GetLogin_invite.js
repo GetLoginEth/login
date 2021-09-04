@@ -10,9 +10,6 @@ contract("GetLogin", async accounts => {
         before(async () => {
             getLoginLogic = await GetLoginLogic.deployed();
             getLoginStorage = await GetLoginStorage.deployed();
-
-            await getLoginStorage.setLogicAddress(getLoginLogic.address);
-            await getLoginLogic.init();
         });
 
         beforeEach(async () => {
@@ -29,6 +26,9 @@ contract("GetLogin", async accounts => {
             let balance = await web3.eth.getBalance(inviteAddress);
             balance = web3.utils.fromWei(balance, 'ether');
             assert.isAtLeast(Number(balance), Number('0.1'), 'Empty balance');
+
+            const usersCount = await getLoginStorage.invites();
+            assert.equal(usersCount, 1, "Incorrect invites count");
         });
 
         it("Create invite from non registered user", async () => {
