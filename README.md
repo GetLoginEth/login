@@ -155,3 +155,7 @@ In the project directory, you can run:
 ### App examples
 
 Reward system created with React - https://github.com/GetLoginEth/reward-system
+
+### Donate ETH address
+
+You can donate to developers of the project to Ethereum address: 0xde442ceD045ae30e076597C428876782b42D24cC
