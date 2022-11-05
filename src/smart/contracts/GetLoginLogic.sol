@@ -313,6 +313,14 @@ contract GetLoginLogic {
         }
     }
 
+    /**
+    Creates new user with invite
+
+    The wallet received from the invite must not be used as the owner of the account.
+    Therefore, using the current method, you can register a fresh wallet as an account owner and transfer finances to
+    this wallet from an invite.
+    The invite is emptied and cannot be used to gain access to the account.
+    **/
     function createUserFromInvite(bytes32 _usernameHash, address payable _walletAddress, string memory _ciphertext, string memory _iv, string memory _salt, string memory _mac, bool _allowReset) public payable {
         validateInviteActive(msg.sender);
         validateAddressAvailable(_walletAddress);
