@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.shadurin.getloginmobile",
+      "sha256_cert_fingerprints":
+      ["0C:79:D4:2A:4C:66:CF:26:AF:78:2E:86:07:C6:46:6C:48:93:F2:33:65:97:F3:AE:48:E5:60:A5:52:3B:8B:85"]
+    }
+  }
+]
