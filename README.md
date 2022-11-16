@@ -154,7 +154,7 @@ In the project directory, you can run:
 
 ### App examples
 
-Reward system created with React - https://github.com/GetLoginEth/reward-system.
+Reward system created with React - https://github.com/GetLoginEth/reward-system
 
 ### Donate ETH address
 
