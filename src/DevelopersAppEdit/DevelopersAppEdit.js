@@ -5,6 +5,24 @@ import {useStateValue} from "../reducers/state";
 import {Redirect} from "react-router-dom";
 import DevelopersForm from "../Developers/DevelopersForm";
 
+export const allowedProtocols = ['https://', 'ios:', 'android:']
+export function isAllUrlsAllowed(urls) {
+    for(const url of urls){
+        let isAllowed = false
+        for(const allowed of allowedProtocols){
+            if (url.startsWith(allowed)){
+                isAllowed = true
+            }
+        }
+
+        if (!isAllowed){
+            return false
+        }
+    }
+
+    return true
+}
+
 function DevelopersAppEdit({computedMatch, location}) {
     const appId = computedMatch.params.id;
 
@@ -30,8 +48,7 @@ function DevelopersAppEdit({computedMatch, location}) {
         {app && <DevelopersForm onSubmit={async formData => {
             console.log(formData);
             const {id, title, description, allowedUrls, allowedContracts} = formData;
-            const isAllHttps = allowedUrls.every(item => item.indexOf('https://') === 0);
-            if (!isAllHttps) {
+            if (!isAllUrlsAllowed(allowedUrls)) {
                 alert('Allowed only https url for allowed URLs. Please fix it and try again');
                 return;
             }
