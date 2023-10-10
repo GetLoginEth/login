@@ -144,11 +144,13 @@ Do the same with `src/smart-bzz` folder. This folder contains implementation of 
 
 ### Building project
 
+Use **Node**: 16
+
 In the project directory, you can run:
 
 `yarn` - install dependencies
 
-`yarn build` - build project
+`yarn build` - builds the project, or use `NODE_OPTIONS=--max_old_space_size=4096 yarn build` for machines with limited RAM.
 
 `yarn start` - start project locally
 
