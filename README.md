@@ -161,3 +161,7 @@ Reward system created with React - https://github.com/GetLoginEth/reward-system.
 ### Donate ETH address
 
 You can donate to developers of the project to Ethereum address: 0xde442ceD045ae30e076597C428876782b42D24cC
+
+---
+
+Try [YumCut](https://yumcut.com)! This is an AI video generator that turns a single prompt into a ready-to-post vertical short video in minutes. It creates the script, images, voice-over, subtitles, and edits everything into a final clip automatically. It’s built for fast testing and making lots of variations without spending hours in an editor.
